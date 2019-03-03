@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.shape.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="508.0" prefWidth="640.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+   <children>
+      <TabPane layoutY="-1.0" prefHeight="568.0" prefWidth="701.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Application">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="530.0" prefWidth="693.0">
+                     <children>
+                        <AnchorPane prefHeight="536.0" prefWidth="348.0">
+                           <children>
+                              <Label layoutX="9.0" layoutY="14.0" prefHeight="17.0" prefWidth="57.0" text="Airports" />
+                              <ChoiceBox layoutX="63.0" layoutY="9.0" prefHeight="22.0" prefWidth="95.0" />
+                              <Label layoutX="164.0" layoutY="13.0" text="Runway" />
+                              <ChoiceBox layoutX="218.0" layoutY="7.0" prefHeight="27.0" prefWidth="103.0" />
+                           </children>
+                        </AnchorPane>
+                        <AnchorPane layoutX="349.0" layoutY="2.0" prefHeight="533.0" prefWidth="353.0">
+                           <children>
+                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="278.0" prefWidth="354.0" tabClosingPolicy="UNAVAILABLE">
+                                <tabs>
+                                  <Tab text="Airport">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                  </Tab>
+                                  <Tab text="Runway">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                    </content>
+                                  </Tab>
+                                    <Tab text="Obstacles">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Calculations">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                    <Tab text="Print">
+                                       <content>
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                       </content>
+                                    </Tab>
+                                </tabs>
+                              </TabPane>
+                           </children>
+                        </AnchorPane>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Settings">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Label layoutX="16.0" layoutY="33.0" text="Color Scheme" />
+                        <ChoiceBox layoutX="117.0" layoutY="28.0" prefHeight="27.0" prefWidth="117.0" />
+                        <Button layoutX="260.0" layoutY="28.0" mnemonicParsing="false" text="Apply" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </children>
+</AnchorPane>
