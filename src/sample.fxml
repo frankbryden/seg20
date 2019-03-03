@@ -25,26 +25,47 @@
                         </AnchorPane>
                         <AnchorPane layoutX="369.0" prefHeight="535.0" prefWidth="333.0">
                            <children>
-                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="278.0" prefWidth="354.0" tabClosingPolicy="UNAVAILABLE">
+                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="541.0" prefWidth="334.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
                                   <Tab text="Airport">
                                     <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="245.0" prefWidth="447.0" />
                                     </content>
                                   </Tab>
                                   <Tab text="Runway">
                                     <content>
-                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="354.0" />
                                     </content>
                                   </Tab>
                                     <Tab text="Obstacles">
                                        <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="196.0" prefWidth="354.0" />
                                        </content>
                                     </Tab>
                                     <Tab text="Calculations">
                                        <content>
-                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="245.0" prefWidth="287.0">
+                                             <children>
+                                                <ScrollPane layoutY="21.0" prefHeight="141.0" prefWidth="334.0">
+                                                  <content>
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="174.0" prefWidth="200.0" />
+                                                  </content>
+                                                </ScrollPane>
+                                                <ScrollPane layoutY="186.0" prefHeight="131.0" prefWidth="335.0">
+                                                  <content>
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                                  </content>
+                                                </ScrollPane>
+                                                <ScrollPane layoutY="340.0" prefHeight="168.0" prefWidth="334.0">
+                                                  <content>
+                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
+                                                  </content>
+                                                </ScrollPane>
+                                                <Label layoutX="-1.0" layoutY="-2.0" prefHeight="24.0" prefWidth="335.0" text="Original Values" />
+                                                <Label layoutX="-1.0" layoutY="161.0" prefHeight="26.0" prefWidth="335.0" text="Re-Calculated Values" />
+                                                <Label layoutY="318.0" prefHeight="17.0" prefWidth="336.0" text="Legend" />
+                                             </children>
+                                          </AnchorPane>
                                        </content>
                                     </Tab>
                                     <Tab text="Print">
