@@ -15,7 +15,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="530.0" prefWidth="693.0">
                      <children>
-                        <AnchorPane prefHeight="536.0" prefWidth="348.0">
+                        <AnchorPane prefHeight="536.0" prefWidth="366.0">
                            <children>
                               <Label layoutX="9.0" layoutY="14.0" prefHeight="17.0" prefWidth="57.0" text="Airports" />
                               <ChoiceBox layoutX="63.0" layoutY="9.0" prefHeight="22.0" prefWidth="95.0" />
@@ -23,7 +23,7 @@
                               <ChoiceBox layoutX="218.0" layoutY="7.0" prefHeight="27.0" prefWidth="103.0" />
                            </children>
                         </AnchorPane>
-                        <AnchorPane layoutX="349.0" layoutY="2.0" prefHeight="533.0" prefWidth="353.0">
+                        <AnchorPane layoutX="369.0" prefHeight="535.0" prefWidth="333.0">
                            <children>
                               <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="278.0" prefWidth="354.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
@@ -64,8 +64,12 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Label layoutX="16.0" layoutY="33.0" text="Color Scheme" />
-                        <ChoiceBox layoutX="117.0" layoutY="28.0" prefHeight="27.0" prefWidth="117.0" />
-                        <Button layoutX="260.0" layoutY="28.0" mnemonicParsing="false" text="Apply" />
+                        <ChoiceBox layoutX="195.0" layoutY="28.0" prefHeight="27.0" prefWidth="117.0" />
+                        <Button layoutX="333.0" layoutY="28.0" mnemonicParsing="false" text="Apply" />
+                        <Label layoutX="16.0" layoutY="74.0" prefHeight="17.0" prefWidth="140.0" text="Save Current settings" />
+                        <Button layoutX="198.0" layoutY="69.0" mnemonicParsing="false" text="OK" />
+                        <Label layoutX="15.0" layoutY="116.0" prefHeight="17.0" prefWidth="144.0" text="Load settings from file" />
+                        <Button layoutX="198.0" layoutY="111.0" mnemonicParsing="false" text="Load" />
                      </children></AnchorPane>
             </content>
           </Tab>
