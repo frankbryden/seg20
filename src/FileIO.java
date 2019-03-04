@@ -36,8 +36,9 @@ public class FileIO {
             e.printStackTrace();
             return null;
         }
+        String airportName = document.getElementsByTagName("name").item(0).getTextContent();
         NodeList runways = document.getElementsByTagName("runway");
-        AirportConfig airportConfig = new AirportConfig("Heathrow");
+        AirportConfig airportConfig = new AirportConfig(airportName);
         for (int i = 0; i < runways.getLength(); i++){
             int tora, toda, asda, lda;
             tora = toda = asda = lda = -1;

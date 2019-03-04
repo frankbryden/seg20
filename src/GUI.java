@@ -9,6 +9,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -23,6 +24,7 @@ public class GUI extends Application {
     private ChoiceBox runwaySelect, airportSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
 
 
@@ -61,15 +63,37 @@ public class GUI extends Application {
         });
 
         runwaySelect = (ChoiceBox) primaryStage.getScene().lookup("#runwaySelect");
+        runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+            @Override
+            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
+                System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
+                AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
+                for (RunwayDesignator runwayDesignator : ac.getRunwayConfigs().keySet()){
+                    if (runwayDesignator.toString().equals(newValue)){
+                        updateRunwayInfoLabels(ac.getRunwayConfigs().get(runwayDesignator));
+                    }
+                }
+            }
+        });
         airportSelect = (ChoiceBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 System.out.println("Here");
                 System.out.println((String) newValue);
+                if (newValue == null){
+                    System.out.println("Selection cleared");
+                    return;
+                }
                 updateRunwaySelect((String) newValue);
             }
         });
+
+        runwayDesignatorLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl");
+        toraLbl = (Label) primaryStage.getScene().lookup("#toraLbl");
+        todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
+        asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
+        ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
 
         /*airportSelect.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -95,6 +119,14 @@ public class GUI extends Application {
         for (RunwayDesignator runwayDesignator : ac.getRunwayConfigs().keySet()){
             runwaySelect.getItems().add(runwayDesignator.toString());
         }
+    }
+
+    public void updateRunwayInfoLabels(RunwayConfig runwayConfig){
+        runwayDesignatorLbl.setText(runwayConfig.getRunwayDesignator().toString());
+        toraLbl.setText("TORA : " + runwayConfig.getTORA());
+        todaLbl.setText("TODA : " + runwayConfig.getTODA());
+        asdaLbl.setText("ASDA : " + runwayConfig.getASDA());
+        ldaLbl.setText("LDA : " + runwayConfig.getLDA());
     }
 
 
