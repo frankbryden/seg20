@@ -3,6 +3,8 @@ public class RunwayConfig {
     private int TODA;
     private int ASDA;
     private int LDA;
+    private int CLEARWAY;
+    private int STOPWAY;
     private RunwayDesignator runwayDesignator;
 
     public RunwayConfig(RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA){
@@ -11,6 +13,8 @@ public class RunwayConfig {
         this.TODA = TODA;
         this.ASDA = ASDA;
         this.LDA  = LDA;
+        this.STOPWAY = 0;
+        this.CLEARWAY = 0;
     }
 
     @Override
@@ -60,6 +64,14 @@ public class RunwayConfig {
 
     public void setLDA(int LDA) {
         this.LDA = LDA;
+    }
+
+    public int getClearway() {
+        return CLEARWAY;
+    }
+
+    public int getStopway() {
+        return STOPWAY;
     }
 
     public RunwayDesignator getRunwayDesignator() {

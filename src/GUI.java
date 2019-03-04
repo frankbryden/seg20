@@ -34,7 +34,7 @@ public class GUI extends Application {
         // temporary fix for now
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
         primaryStage.setTitle("Redeclaration Tool");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
         fileChooser = new FileChooser();
