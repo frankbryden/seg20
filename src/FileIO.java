@@ -18,11 +18,16 @@ public class FileIO {
 
     private DocumentBuilderFactory documentBuilderFactory;
     private DocumentBuilder documentBuilder = null;
+    private Document document;
+    private Element root;
 
     public FileIO(){
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            document = documentBuilder.newDocument();
+            root = document.createElement("Application");
+
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         }
@@ -75,21 +80,20 @@ public class FileIO {
     }
 
     public void write(AirportConfig airportConfig, String filePath){
-        Document document = documentBuilder.newDocument();
-        // root element
-        Element root = document.createElement("AirportConfiguration");
-        document.appendChild(root);
+        // airportRoot element
+        Element airportRoot = document.createElement("AirportConfiguration");
+        root.appendChild(airportRoot);
 
         Element airportName = document.createElement("name");
         airportName.appendChild(document.createTextNode(airportConfig.getName()));
-        root.appendChild(airportName);
+        airportRoot.appendChild(airportName);
 
         for (RunwayDesignator runwayDesignator : airportConfig.getRunwayConfigs().keySet()){
             RunwayConfig runwayConfig = airportConfig.getRunwayConfigs().get(runwayDesignator);
 
             Element runway = document.createElement("runway");
 
-            root.appendChild(runway);
+            airportRoot.appendChild(runway);
 
             //Add designator
             Element designator = document.createElement("designator");
@@ -116,26 +120,24 @@ public class FileIO {
             runway.appendChild(lda);
         }
 
-        write(root, filePath);
+        write(airportRoot, filePath);
 
     }
 
     public void write(Obstacle obstacle, String filePath){
-        Document document = documentBuilder.newDocument();
-        // root element
-        Element root = document.createElement("Obstacle");
-        document.appendChild(root);
+        // obstacleRoot element
+        Element obstacleRoot = document.createElement("Obstacle");
+        root.appendChild(obstacleRoot);
 
         Element obstacleName = document.createElement("name");
         obstacleName.appendChild(document.createTextNode(obstacle.getName()));
-        root.appendChild(obstacleName);
+        obstacleRoot.appendChild(obstacleName);
 
         Element obstacleHeight = document.createElement("height");
-        obstacleName.appendChild(document.createTextNode(String.valueOf(obstacle.getHeight())));
-        root.appendChild(obstacleHeight);
+        obstacleHeight.appendChild(document.createTextNode(String.valueOf(obstacle.getHeight())));
+        obstacleRoot.appendChild(obstacleHeight);
 
         write(root, filePath);
-
     }
 
     public void write(Element root, String filePath){

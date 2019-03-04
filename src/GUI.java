@@ -13,7 +13,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn;
     private TextField obstacleNameTxt, obstacleHeightTxt;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ChoiceBox runwaySelect, airportSelect;
@@ -33,6 +35,7 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> obstacles;
+    private Popup addAirportPopup;
 
 
     @Override
@@ -52,6 +55,8 @@ public class GUI extends Application {
         obstacles = new HashMap<>();
 
         airportConfigs = new HashMap<>();
+
+        addAirportPopup = createAddAirportPopup();
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -83,6 +88,7 @@ public class GUI extends Application {
                 }
             }
         });
+
         airportSelect = (ChoiceBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -123,6 +129,15 @@ public class GUI extends Application {
             }
         });
 
+        addAirportBtn = (Button) primaryStage.getScene().lookup("#addAirportBtn");
+        addAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Add airport");
+                addAirportPopup.show(primaryStage);
+            }
+        });
+
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
 
@@ -141,6 +156,7 @@ public class GUI extends Application {
                 System.out.println("Heeere");
             }
         });*/
+
     }
 
     public void updateAirportSelects(){
@@ -159,6 +175,30 @@ public class GUI extends Application {
         for (RunwayDesignator runwayDesignator : ac.getRunwayConfigs().keySet()){
             runwaySelect.getItems().add(runwayDesignator.toString());
         }
+    }
+
+    public Popup createAddAirportPopup(Stage primaryStage){
+        Stage stage = new Stage();
+        Button confirmButton = new Button("Add");
+        TextField airportName, airportCode;
+        Label airportNameLbl, airportCodeLbl;
+        airportNameLbl = new Label("Airport Name");
+        airportCodeLbl = new Label("Airport Code");
+        airportName = new TextField();
+        airportCode = new TextField();
+        GridPane gridPane = new GridPane();
+        gridPane.set
+        scene.getContent().add(airportNameLbl);
+        scene.getContent().add(airportName);
+        scene.getContent().add(airportCodeLbl);
+        scene.getContent().add(airportCode);
+        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+            }
+        });
+        return popup;
     }
 
     public void updateRunwayInfoLabels(RunwayConfig runwayConfig){
