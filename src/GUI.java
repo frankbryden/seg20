@@ -16,16 +16,18 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class GUI extends Application {
-    private Button loadAirportButton;
+    private Button loadAirportButton, addObstacleBtn;
     private ChoiceBox runwaySelect, airportSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
+    private ArrayList<Obstacle> obstacles;
 
 
     @Override
@@ -42,6 +44,7 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
+        obstacles = new ArrayList<>();
 
         airportConfigs = new HashMap<>();
 
@@ -89,6 +92,14 @@ public class GUI extends Application {
             }
         });
 
+        addObstacleBtn = (Button) primaryStage.getScene().lookup("#addObstacleBtn");
+        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Add obstacle");
+            }
+        });
+
         runwayDesignatorLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl");
         toraLbl = (Label) primaryStage.getScene().lookup("#toraLbl");
         todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
@@ -127,6 +138,11 @@ public class GUI extends Application {
         todaLbl.setText("TODA : " + runwayConfig.getTODA());
         asdaLbl.setText("ASDA : " + runwayConfig.getASDA());
         ldaLbl.setText("LDA : " + runwayConfig.getLDA());
+    }
+
+    public void addObstacle(String name, int height){
+        Obstacle obstacle = new Obstacle(name, height);
+        this.obstacles.add(obstacle);
     }
 
 
