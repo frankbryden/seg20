@@ -199,24 +199,12 @@
                                        <content>
                                           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="245.0" prefWidth="287.0">
                                              <children>
-                                                <ScrollPane layoutY="21.0" prefHeight="141.0" prefWidth="334.0">
-                                                  <content>
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="174.0" prefWidth="200.0" />
-                                                  </content>
-                                                </ScrollPane>
-                                                <ScrollPane layoutY="186.0" prefHeight="131.0" prefWidth="335.0">
-                                                  <content>
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-                                                  </content>
-                                                </ScrollPane>
-                                                <ScrollPane layoutY="340.0" prefHeight="168.0" prefWidth="334.0">
-                                                  <content>
-                                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0" />
-                                                  </content>
-                                                </ScrollPane>
                                                 <Label layoutX="-1.0" layoutY="-2.0" prefHeight="24.0" prefWidth="335.0" text="Original Values" />
                                                 <Label layoutX="-1.0" layoutY="161.0" prefHeight="26.0" prefWidth="335.0" text="Re-Calculated Values" />
                                                 <Label layoutY="318.0" prefHeight="17.0" prefWidth="336.0" text="Legend" />
+                                                <TextArea layoutY="20.0" prefHeight="147.0" prefWidth="335.0" />
+                                                <TextArea layoutX="-2.0" layoutY="186.0" prefHeight="132.0" prefWidth="337.0" />
+                                                <TextArea layoutX="-2.0" layoutY="340.0" prefHeight="168.0" prefWidth="338.0" />
                                              </children>
                                           </AnchorPane>
                                        </content>
