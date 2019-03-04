@@ -8,8 +8,8 @@ import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
@@ -20,17 +20,19 @@ import java.awt.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn;
     private TextField obstacleNameTxt, obstacleHeightTxt;
+    private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ChoiceBox runwaySelect, airportSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
-    private ArrayList<Obstacle> obstacles;
+    private Map<String, Obstacle> obstacles;
 
 
     @Override
@@ -47,7 +49,7 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
-        obstacles = new ArrayList<>();
+        obstacles = new HashMap<>();
 
         airportConfigs = new HashMap<>();
 
@@ -95,16 +97,34 @@ public class GUI extends Application {
             }
         });
 
-        //                                                                  <TextField fx:id="obstacleNameTxt" layoutX="85.0" layoutY="10.0" />
-        //                                                                  <TextField fx:id="obstacleHeightTxt" layoutX="85.0" layoutY="94.0" />
-
         addObstacleBtn = (Button) primaryStage.getScene().lookup("#addObstacleBtn");
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Add obstacle");
+                if (validateObstaclesForm()){
+                    addObstacle(obstacleNameTxt.getText(), Integer.parseInt(obstacleHeightTxt.getText()));
+                    updateObstaclesList();
+                }
             }
         });
+
+        saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
+        saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Save obstacles");
+                for (String name : obstacles.keySet()){
+                    fileIO.write(obstacles.get(name), "obstacles.xml");
+                }
+                /*userDefinedObstaclesLV.getItems().forEach((name) -> {
+                    System.out.println(name);
+                });*/
+            }
+        });
+
+        predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
+        userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
 
         obstacleNameTxt = (TextField) primaryStage.getScene().lookup("#obstacleNameTxt");
         obstacleHeightTxt = (TextField) primaryStage.getScene().lookup("#obstacleHeightTxt");
@@ -149,13 +169,28 @@ public class GUI extends Application {
         ldaLbl.setText("LDA : " + runwayConfig.getLDA());
     }
 
+    public void updateObstaclesList(){
+        userDefinedObstaclesLV.getItems().clear();
+        userDefinedObstaclesLV.getItems().addAll(obstacles.keySet());
+    }
+
     public Boolean validateObstaclesForm(){
-        
+        if (obstacleNameTxt.getText().length() < 1){
+            return false;
+        }
+
+        try {
+            Integer.parseInt(obstacleHeightTxt.getText());
+        } catch (NumberFormatException e){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     public void addObstacle(String name, int height){
         Obstacle obstacle = new Obstacle(name, height);
-        this.obstacles.add(obstacle);
+        this.obstacles.put(name, obstacle);
     }
 
 

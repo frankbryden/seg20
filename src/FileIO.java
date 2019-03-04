@@ -115,6 +115,30 @@ public class FileIO {
             runway.appendChild(asda);
             runway.appendChild(lda);
         }
+
+        write(root, filePath);
+
+    }
+
+    public void write(Obstacle obstacle, String filePath){
+        Document document = documentBuilder.newDocument();
+        // root element
+        Element root = document.createElement("Obstacle");
+        document.appendChild(root);
+
+        Element obstacleName = document.createElement("name");
+        obstacleName.appendChild(document.createTextNode(obstacle.getName()));
+        root.appendChild(obstacleName);
+
+        Element obstacleHeight = document.createElement("height");
+        obstacleName.appendChild(document.createTextNode(String.valueOf(obstacle.getHeight())));
+        root.appendChild(obstacleHeight);
+
+        write(root, filePath);
+
+    }
+
+    public void write(Element root, String filePath){
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
             tr.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -127,7 +151,6 @@ public class FileIO {
         } catch (TransformerException | FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
-
     }
 
     public void write(String data){
