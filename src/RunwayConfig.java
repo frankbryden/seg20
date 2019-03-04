@@ -13,6 +13,23 @@ public class RunwayConfig {
         this.LDA  = LDA;
     }
 
+    @Override
+    public String toString(){
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.runwayDesignator);
+        sb.append(" -> TORA : ");
+        sb.append(this.TORA);
+        sb.append(", TODA : ");
+        sb.append(this.TODA);
+        sb.append(", ASDA : ");
+        sb.append(this.ASDA);
+        sb.append(", LDA : ");
+        sb.append(this.LDA);
+        return sb.toString();
+    }
+
+    //Getters and setters
+
     public int getTORA() {
         return TORA;
     }
