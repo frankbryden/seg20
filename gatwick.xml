@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><AirportConfiguration>
+    <name>Gatwick</name>
+    <runway>
+        <designator>18L</designator>
+        <TORA>8660</TORA>
+        <TODA>7660</TODA>
+        <ASDA>8660</ASDA>
+        <LDA>7660</LDA>
+    </runway>
+    <runway>
+        <designator>36R</designator>
+        <TORA>32660</TORA>
+        <TODA>32260</TODA>
+        <ASDA>3760</ASDA>
+        <LDA>5353</LDA>
+    </runway>
+</AirportConfiguration>

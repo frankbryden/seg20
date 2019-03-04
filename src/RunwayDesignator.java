@@ -37,6 +37,10 @@ public class RunwayDesignator {
 
     @Override
     public String toString(){
-        return this.angle + this.direction.toString();
+        String s = "0" + this.angle;
+        if (s.length() > 2){
+            s = s.substring(1);
+        }
+        return s + this.direction.toString();
     }
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?><AirportConfiguration>
+    <name>Heathrow</name>
+    <runway>
+        <designator>27L</designator>
+        <TORA>3660</TORA>
+        <TODA>3660</TODA>
+        <ASDA>3660</ASDA>
+        <LDA>3660</LDA>
+    </runway>
+    <runway>
+        <designator>09R</designator>
+        <TORA>3660</TORA>
+        <TODA>3660</TODA>
+        <ASDA>3660</ASDA>
+        <LDA>3353</LDA>
+    </runway>
+</AirportConfiguration>

@@ -1,6 +1,5 @@
-import org.w3c.dom.Attr;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.w3c.dom.*;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -13,6 +12,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class FileIO {
 
@@ -29,7 +29,48 @@ public class FileIO {
     }
 
     public AirportConfig read(String filePath){
-        return null;
+        Document document;
+        try {
+            document = documentBuilder.parse(filePath);
+        } catch (SAXException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        NodeList runways = document.getElementsByTagName("runway");
+        AirportConfig airportConfig = new AirportConfig("Heathrow");
+        for (int i = 0; i < runways.getLength(); i++){
+            int tora, toda, asda, lda;
+            tora = toda = asda = lda = -1;
+            RunwayDesignator runwayDesignator = null;
+            NodeList runwayData = runways.item(i).getChildNodes();
+            for (int j = 0; j < runwayData.getLength(); j++){
+                Node node = runwayData.item(j);
+                switch (node.getNodeName()){
+                    case "TORA":
+                        tora = Integer.parseInt(node.getTextContent());
+                        break;
+                    case "TODA":
+                        toda = Integer.parseInt(node.getTextContent());
+                        break;
+                    case "ASDA":
+                        asda = Integer.parseInt(node.getTextContent());
+                        break;
+                    case "LDA":
+                        lda = Integer.parseInt(node.getTextContent());
+                        break;
+                    case "designator":
+                        runwayDesignator = new RunwayDesignator(node.getTextContent());
+                        break;
+                    default:
+                        break;
+                }
+                System.out.println(node.getNodeName() + ": " + node.getTextContent());
+            }
+            RunwayConfig runwayConfig = new RunwayConfig(runwayDesignator, tora, toda, asda, lda);
+            airportConfig.addRunway(runwayConfig);
+        }
+
+        return airportConfig;
     }
 
     public void write(AirportConfig airportConfig, String filePath){
@@ -37,6 +78,10 @@ public class FileIO {
         // root element
         Element root = document.createElement("AirportConfiguration");
         document.appendChild(root);
+
+        Element airportName = document.createElement("name");
+        airportName.appendChild(document.createTextNode(airportConfig.getName()));
+        root.appendChild(airportName);
 
         for (RunwayDesignator runwayDesignator : airportConfig.getRunwayConfigs().keySet()){
             RunwayConfig runwayConfig = airportConfig.getRunwayConfigs().get(runwayDesignator);
