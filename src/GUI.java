@@ -1,3 +1,4 @@
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -10,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -22,6 +24,7 @@ import java.util.Map;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn;
+    private TextField obstacleNameTxt, obstacleHeightTxt;
     private ChoiceBox runwaySelect, airportSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
@@ -92,6 +95,9 @@ public class GUI extends Application {
             }
         });
 
+        //                                                                  <TextField fx:id="obstacleNameTxt" layoutX="85.0" layoutY="10.0" />
+        //                                                                  <TextField fx:id="obstacleHeightTxt" layoutX="85.0" layoutY="94.0" />
+
         addObstacleBtn = (Button) primaryStage.getScene().lookup("#addObstacleBtn");
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -99,6 +105,9 @@ public class GUI extends Application {
                 System.out.println("Add obstacle");
             }
         });
+
+        obstacleNameTxt = (TextField) primaryStage.getScene().lookup("#obstacleNameTxt");
+        obstacleHeightTxt = (TextField) primaryStage.getScene().lookup("#obstacleHeightTxt");
 
         runwayDesignatorLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl");
         toraLbl = (Label) primaryStage.getScene().lookup("#toraLbl");
@@ -138,6 +147,10 @@ public class GUI extends Application {
         todaLbl.setText("TODA : " + runwayConfig.getTODA());
         asdaLbl.setText("ASDA : " + runwayConfig.getASDA());
         ldaLbl.setText("LDA : " + runwayConfig.getLDA());
+    }
+
+    public Boolean validateObstaclesForm(){
+        
     }
 
     public void addObstacle(String name, int height){
