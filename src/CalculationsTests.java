@@ -52,7 +52,7 @@ public class CalculationsTests {
     private Obstacle obstacleScenario4 = new Obstacle("testObstacle", 20);
     private RunwayConfig recalculatedRunwayScenario4 = calculationsScenario4.recalculateParams(obstacleScenario4, 3546, Calculations.Direction.TOWARDS);
 
-    private RunwayDesignator runwayDesignatorScenario42 = new RunwayDesignator("09L");
+    private RunwayDesignator runwayDesignatorScenario42 = new RunwayDesignator("27R");
     private RunwayConfig initialRunwayScenario42 = new RunwayConfig(runwayDesignatorScenario42, 3884, 3962, 3884, 3884, 0);
     private Calculations calculationsScenario42 = new Calculations(initialRunwayScenario42);
     private Obstacle obstacleScenario42 = new Obstacle("testObstacle", 20);

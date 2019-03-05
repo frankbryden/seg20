@@ -16,7 +16,7 @@ public class RunwayConfig {
         this.LDA  = LDA;
         this.displacementThreshold = displacementThreshold;
         this.STOPWAY = 0;
-        this.CLEARWAY = 0;
+        this.CLEARWAY = TODA - TORA;
     }
 
     @Override

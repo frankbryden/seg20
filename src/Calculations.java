@@ -24,12 +24,12 @@ public class Calculations {
             addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - (" + obstacle.getHeight() + " * 50) - " + STRIP_END);
 
             //TODA
-            recalculatedTODA = recalculatedTORA + originalConfig.getClearway();
-            addCalcStep("TODA = " + recalculatedTORA + " + " + originalConfig.getClearway());
+            recalculatedTODA = recalculatedTORA;
+            addCalcStep("TODA = " + recalculatedTORA);
 
             //ASDA
-            recalculatedASDA = recalculatedTORA + originalConfig.getStopway();
-            addCalcStep("ASDA = " + recalculatedTORA + " + " + originalConfig.getStopway());
+            recalculatedASDA = recalculatedTORA;
+            addCalcStep("ASDA = " + recalculatedTORA);
 
             //LDA
             recalculatedLDA = distanceFromThreshold  - STRIP_END - RESA;
@@ -49,12 +49,12 @@ public class Calculations {
             }
 
             //TODA
-            recalculatedTODA = recalculatedTORA + originalConfig.getStopway();
-            addCalcStep(recalculatedTORA + " + " + originalConfig.getStopway());
+            recalculatedTODA = recalculatedTORA + originalConfig.getClearway();
+            addCalcStep(recalculatedTORA + " + " + originalConfig.getClearway());
 
             //ASDA
-            recalculatedASDA = recalculatedTORA + originalConfig.getClearway();
-            addCalcStep(recalculatedTORA + " + " + originalConfig.getClearway());
+            recalculatedASDA = recalculatedTORA + originalConfig.getStopway();
+            addCalcStep(recalculatedTORA + " + " + originalConfig.getStopway());
 
             //LDA
             recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP_END - (obstacle.getHeight() * 50);
