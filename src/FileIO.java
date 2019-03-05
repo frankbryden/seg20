@@ -73,7 +73,7 @@ public class FileIO {
                 System.out.println(node.getNodeName() + ": " + node.getTextContent());
             }
             RunwayConfig runwayConfig = new RunwayConfig(runwayDesignator, tora, toda, asda, lda);
-            airportConfig.addRunway(runwayConfig);
+            //airportConfig.addRunwayPair(runwayConfig);
         }
 
         return airportConfig;
@@ -88,7 +88,7 @@ public class FileIO {
         airportName.appendChild(document.createTextNode(airportConfig.getName()));
         airportRoot.appendChild(airportName);
 
-        for (RunwayDesignator runwayDesignator : airportConfig.getRunwayConfigs().keySet()){
+        /*for (RunwayDesignator runwayDesignator : airportConfig.getRunwayConfigs().keySet()){
             RunwayConfig runwayConfig = airportConfig.getRunwayConfigs().get(runwayDesignator);
 
             Element runway = document.createElement("runway");
@@ -120,7 +120,7 @@ public class FileIO {
             runway.appendChild(lda);
         }
 
-        write(airportRoot, filePath);
+        write(airportRoot, filePath);*/
 
     }
 

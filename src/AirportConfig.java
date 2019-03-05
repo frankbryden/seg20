@@ -3,19 +3,19 @@ import java.util.Map;
 
 public class AirportConfig {
     private String name;
-    private Map<RunwayDesignator, RunwayConfig> runwayConfigs;
+    private Map<String, RunwayPair> runways;
 
     public AirportConfig(String name){
         this.name = name;
-        this.runwayConfigs = new HashMap<>();
+        this.runways = new HashMap<>();
     }
 
-    public void addRunway(RunwayConfig runwayConfig){
-        this.runwayConfigs.put(runwayConfig.getRunwayDesignator(), runwayConfig);
+    public void addRunwayPair(RunwayPair runway){
+        this.runways.put(runway.getName(), runway);
     }
 
-    public Map<RunwayDesignator, RunwayConfig> getRunwayConfigs() {
-        return runwayConfigs;
+    public Map<String, RunwayPair> getRunways() {
+        return runways;
     }
 
     public String getName() {
@@ -26,8 +26,8 @@ public class AirportConfig {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("Airport name : " + getName());
-        for(RunwayDesignator rd : this.runwayConfigs.keySet()){
-            sb.append(this.runwayConfigs.get(rd).toString()).append("\n");
+        for(String runwayPairName : this.runways.keySet()){
+            sb.append(this.runways.get(runwayPairName).toString()).append("\n");
         }
         return sb.toString();
     }
@@ -36,8 +36,7 @@ public class AirportConfig {
         AirportConfig airportConfig = new AirportConfig("Heathrow");
         RunwayConfig runway09R = new RunwayConfig(new RunwayDesignator("09R"), 3660, 3660, 3660, 3353);
         RunwayConfig runway27L = new RunwayConfig(new RunwayDesignator("27L"), 3660, 3660, 3660, 3660);
-        airportConfig.addRunway(runway09R);
-        airportConfig.addRunway(runway27L);
+        airportConfig.addRunwayPair(new RunwayPair(runway09R, runway27L));
 
         FileIO fileIO = new FileIO();
         fileIO.write(airportConfig, "heathrow.xml");

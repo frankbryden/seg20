@@ -41,6 +41,7 @@ public class GUI extends Application {
     private Stage addAirportPopup, addRunwayPopup;
 
 
+
     @Override
     public void start(Stage primaryStage) throws Exception{
         // getClass().getResource("sample.fxml") gives me a null pointer exception - caused by the way the IDE loads the resource files
@@ -85,9 +86,9 @@ public class GUI extends Application {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
                 AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
-                for (RunwayDesignator runwayDesignator : ac.getRunwayConfigs().keySet()){
-                    if (runwayDesignator.toString().equals(newValue)){
-                        updateRunwayInfoLabels(ac.getRunwayConfigs().get(runwayDesignator));
+                for (String runwayPairName : ac.getRunways().keySet()){
+                    if (runwayPairName.equals(newValue)){
+                        updateRunwayInfoLabels(ac.getRunways().get(runwayPairName));
                     }
                 }
             }
@@ -185,8 +186,8 @@ public class GUI extends Application {
     public void updateRunwaySelect(String airportName){
         runwaySelect.getItems().clear();
         AirportConfig ac = airportConfigs.get(airportName);
-        for (RunwayDesignator runwayDesignator : ac.getRunwayConfigs().keySet()){
-            runwaySelect.getItems().add(runwayDesignator.toString());
+        for (String runwayPairName : ac.getRunways().keySet()){
+            runwaySelect.getItems().add(runwayPairName);
         }
     }
 
@@ -252,7 +253,7 @@ public class GUI extends Application {
         //Components for the popups
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF;
+        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2;
         Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
         runwayDesignatorLbl = new Label("Runway Designator");
         toraLbl = new Label("TORA");
@@ -264,6 +265,11 @@ public class GUI extends Application {
         todaTF = new TextField();
         asdaTF = new TextField();
         ldaTF = new TextField();
+        runwayDesignatorTF2 = new TextField();
+        toraTF2 = new TextField();
+        todaTF2 = new TextField();
+        asdaTF2 = new TextField();
+        ldaTF2 = new TextField();
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox();
@@ -273,6 +279,8 @@ public class GUI extends Application {
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
+
+        //Left column
         gridPane.add(runwayDesignatorLbl, 0, 0);
         gridPane.add(runwayDesignatorTF, 1, 0);
         gridPane.add(toraLbl, 0, 1);
@@ -283,7 +291,15 @@ public class GUI extends Application {
         gridPane.add(asdaTF, 1, 3);
         gridPane.add(ldaLbl, 0, 4);
         gridPane.add(ldaTF, 1, 4);
-        gridPane.add(hbox, 1, 5);
+
+        //Right Column
+        gridPane.add(runwayDesignatorTF2, 2, 0);
+        gridPane.add(toraTF2, 2, 1);
+        gridPane.add(todaTF2, 2, 2);
+        gridPane.add(asdaTF2, 2, 3);
+        gridPane.add(ldaTF2, 2, 4);
+
+        gridPane.add(hbox, 3, 5);
         Scene scene = new Scene(gridPane);
 
         //Add some spacing around and in between the cells
@@ -312,12 +328,12 @@ public class GUI extends Application {
         return stage;
     }
 
-    public void updateRunwayInfoLabels(RunwayConfig runwayConfig){
-        runwayDesignatorLbl.setText(runwayConfig.getRunwayDesignator().toString());
-        toraLbl.setText("TORA : " + runwayConfig.getTORA());
-        todaLbl.setText("TODA : " + runwayConfig.getTODA());
-        asdaLbl.setText("ASDA : " + runwayConfig.getASDA());
-        ldaLbl.setText("LDA : " + runwayConfig.getLDA());
+    public void updateRunwayInfoLabels(RunwayPair runwayPair){
+        runwayDesignatorLbl.setText(runwayPair.getName());
+        toraLbl.setText("TORA : " + runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
+        todaLbl.setText("TODA : " + runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
+        asdaLbl.setText("ASDA : " + runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
+        ldaLbl.setText("LDA : " + runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
     }
 
     public void updateObstaclesList(){
