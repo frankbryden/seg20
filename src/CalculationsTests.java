@@ -50,13 +50,13 @@ public class CalculationsTests {
     public void scenario2TestNewLDA(){ assertThat( 2553, is(equalTo(recalculatedRunwayScenario2.getLDA()))); }
 
     @Test
-    public void scenario22TestNewTORA(){ assertThat(  2860, is(equalTo( recalculatedRunwayScenario2.getTORA()))  ); }
+    public void scenario22TestNewTORA(){ assertThat(  2860, is(equalTo( recalculatedRunwayScenario22.getTORA()))  ); }
     @Test
-    public void scenario22TestNewTODA(){ assertThat( 2860, is(equalTo(recalculatedRunwayScenario2.getTODA()))); }
+    public void scenario22TestNewTODA(){ assertThat( 2860, is(equalTo(recalculatedRunwayScenario22.getTODA()))); }
     @Test
-    public void scenario22TestNewASDA(){ assertThat( 2860, is(equalTo(recalculatedRunwayScenario2.getASDA()))); }
+    public void scenario22TestNewASDA(){ assertThat( 2860, is(equalTo(recalculatedRunwayScenario22.getASDA()))); }
     @Test
-    public void scenario22TestNewLDA(){ assertThat( 1850,  is(equalTo(recalculatedRunwayScenario2.getLDA()))); }
+    public void scenario22TestNewLDA(){ assertThat( 1850,  is(equalTo(recalculatedRunwayScenario22.getLDA()))); }
 
 
 }
