@@ -15,8 +15,6 @@ public class RunwayDesignator {
         Pattern pattern = Pattern.compile("([0-9]+)([LR])");
         Matcher matcher = pattern.matcher(designator);
         if (matcher.find()){
-            System.out.println(matcher.group(1));
-            System.out.println(matcher.group(2));
             Direction direction = null;
             switch (matcher.group(2)){
                 case "R":
