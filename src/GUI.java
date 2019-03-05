@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -14,6 +15,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -35,7 +38,7 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> obstacles;
-    private Popup addAirportPopup;
+    private Stage addAirportPopup;
 
 
     @Override
@@ -56,7 +59,7 @@ public class GUI extends Application {
 
         airportConfigs = new HashMap<>();
 
-        addAirportPopup = createAddAirportPopup();
+        addAirportPopup = createAddAirportPopup(primaryStage);
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -134,7 +137,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Add airport");
-                addAirportPopup.show(primaryStage);
+                addAirportPopup.show();
             }
         });
 
@@ -177,28 +180,112 @@ public class GUI extends Application {
         }
     }
 
-    public Popup createAddAirportPopup(Stage primaryStage){
+    public Stage createAddAirportPopup(Stage primaryStage){
         Stage stage = new Stage();
+
+        //Components for the popups
         Button confirmButton = new Button("Add");
+        Button cancelButton = new Button("Cancel");
         TextField airportName, airportCode;
         Label airportNameLbl, airportCodeLbl;
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
         airportCode = new TextField();
+
+        //VBox containing confirm and cancel button
+        HBox hbox = new HBox();
+        hbox.getChildren().add(confirmButton);
+        hbox.getChildren().add(cancelButton);
+        hbox.setSpacing(10);
+
+        //GridPane - root of the popup
         GridPane gridPane = new GridPane();
-        gridPane.set
-        scene.getContent().add(airportNameLbl);
-        scene.getContent().add(airportName);
-        scene.getContent().add(airportCodeLbl);
-        scene.getContent().add(airportCode);
+        gridPane.add(airportNameLbl, 0, 0);
+        gridPane.add(airportName, 1, 0);
+        gridPane.add(airportCodeLbl, 0, 1);
+        gridPane.add(airportCode, 1, 1);
+        gridPane.add(hbox, 1, 2);
+        Scene scene = new Scene(gridPane);
+
+        //Add some spacing around and in between the cells
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(5, 5, 5, 5));
+
+        //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+                addAirportPopup.hide();
             }
         });
-        return popup;
+
+        //Simply close the popup, discarding the data
+        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                addAirportPopup.hide();
+            }
+        });
+
+        stage.setScene(scene);
+        return stage;
+    }
+
+    public Stage createAddRunwayPopup(Stage primaryStage){
+        Stage stage = new Stage();
+
+        //Components for the popups
+        Button confirmButton = new Button("Add");
+        Button cancelButton = new Button("Cancel");
+        TextField runwayDesignator, toraLbl, todaLbl, asdaLbl, ldaLbl;
+        Label airportNameLbl, airportCodeLbl;
+        airportNameLbl = new Label("Airport Name");
+        airportCodeLbl = new Label("Airport Code");
+        airportName = new TextField();
+        airportCode = new TextField();
+
+        //VBox containing confirm and cancel button
+        HBox hbox = new HBox();
+        hbox.getChildren().add(confirmButton);
+        hbox.getChildren().add(cancelButton);
+        hbox.setSpacing(10);
+
+        //GridPane - root of the popup
+        GridPane gridPane = new GridPane();
+        gridPane.add(airportNameLbl, 0, 0);
+        gridPane.add(airportName, 1, 0);
+        gridPane.add(airportCodeLbl, 0, 1);
+        gridPane.add(airportCode, 1, 1);
+        gridPane.add(hbox, 1, 2);
+        Scene scene = new Scene(gridPane);
+
+        //Add some spacing around and in between the cells
+        gridPane.setHgap(10);
+        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(5, 5, 5, 5));
+
+        //On confirm button, add the airport to the list of known airports
+        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+                addAirportPopup.hide();
+            }
+        });
+
+        //Simply close the popup, discarding the data
+        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                addAirportPopup.hide();
+            }
+        });
+
+        stage.setScene(scene);
+        return stage;
     }
 
     public void updateRunwayInfoLabels(RunwayConfig runwayConfig){
