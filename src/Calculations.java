@@ -2,6 +2,7 @@ public class Calculations {
     private RunwayConfig originalConfig;
     private final int RESA = 240;
     private final int STRIP = 60;
+    private final int BLAST_PROTECTION = 300;
     public enum Direction {TOWARDS, AWAY};
     private StringBuilder calcSummary;
 
@@ -19,8 +20,8 @@ public class Calculations {
         if (direction == Direction.TOWARDS){
             // In the case of taking off towards from the obstacle / landing over it
             //TORA
-            recalculatedTORA = originalConfig.getTORA() - 300 - distanceFromThreshold;
-            addCalcStep("TORA = " + originalConfig.getTORA() + " - " + 300 + " - " + distanceFromThreshold);
+            recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - (obstacle.getHeight() * 50) - STRIP;
+            addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - (" + obstacle.getHeight() + " * 50) - " + STRIP);
 
             //TODA
             recalculatedTODA = recalculatedTORA + originalConfig.getClearway();
@@ -31,14 +32,26 @@ public class Calculations {
             addCalcStep("ASDA = " + recalculatedTORA + " + " + originalConfig.getStopway());
 
             //LDA
-            recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - (obstacle.getHeight() * 50) - STRIP;
-            addCalcStep("LDA = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - (" + obstacle.getHeight() + " * 50) - " + STRIP);
+            recalculatedLDA = distanceFromThreshold  - STRIP - RESA;
+            addCalcStep("LDA = " + distanceFromThreshold + " - " + STRIP + " - " + RESA);
         } else {
             // In the case of taking off and landing towards the obstacle
-            recalculatedTORA = originalConfig.getTORA() - originalConfig.getDisplacementThreshold() - distanceFromThreshold - (obstacle.getHeight() * 50) - STRIP;
-            recalculatedTODA = recalculatedTORA;
-            recalculatedASDA = recalculatedTORA;
-            recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - RESA - STRIP;
+
+            //TORA
+            recalculatedTORA = originalConfig.getTORA() - BLAST_PROTECTION - distanceFromThreshold - originalConfig.getDisplacementThreshold();
+            addCalcStep(originalConfig.getTORA() + " - " + BLAST_PROTECTION + " - " + distanceFromThreshold + " - " + originalConfig.getDisplacementThreshold());
+
+            //TODA
+            recalculatedTODA = recalculatedTORA + originalConfig.getStopway();
+            addCalcStep(recalculatedTORA + " + " + originalConfig.getStopway());
+
+            //ASDA
+            recalculatedASDA = recalculatedTORA + originalConfig.getClearway();
+            addCalcStep(recalculatedTORA + " + " + originalConfig.getClearway());
+
+            //LDA
+            recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP - (obstacle.getHeight() * 50);
+            addCalcStep(originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + STRIP + " - (" + obstacle.getHeight() + " * 50)");
         }
 
         System.out.println(getCalculationResults());
