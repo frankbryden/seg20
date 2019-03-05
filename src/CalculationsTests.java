@@ -8,11 +8,12 @@ import org.junit.Test;
 
 public class CalculationsTests {
 
+    //Scenario 2 tests
     private RunwayDesignator runwayDesignator = new RunwayDesignator("09R");
     private RunwayConfig initialRunway = new RunwayConfig(runwayDesignator, 3660, 3660, 3660, 3353, 307);
     private Calculations calculations = new Calculations(initialRunway);
-    private Obstacle obstacle = new Obstacle("testObstacle", 12);
-    private RunwayConfig recalculatedRunway = calculations.recalculateParams(obstacle, 50, Calculations.Direction.AWAY);
+    private Obstacle obstacle = new Obstacle("testObstacle", 25);
+    private RunwayConfig recalculatedRunway = calculations.recalculateParams(obstacle, 2853, Calculations.Direction.TOWARDS);
 
 
     @Test
