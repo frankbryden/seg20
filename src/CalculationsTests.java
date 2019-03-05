@@ -9,7 +9,7 @@ import org.junit.Test;
 public class CalculationsTests {
 
     private RunwayDesignator runwayDesignator = new RunwayDesignator("09R");
-    private RunwayConfig initialRunway = new RunwayConfig(runwayDesignator, 3660, 3660, 3660, 3353);
+    private RunwayConfig initialRunway = new RunwayConfig(runwayDesignator, 3660, 3660, 3660, 3353, 307);
     private Calculations calculations = new Calculations(initialRunway);
     private Obstacle obstacle = new Obstacle("testObstacle", 12);
     private RunwayConfig recalculatedRunway = calculations.recalculateParams(obstacle, 50, Calculations.Direction.AWAY);

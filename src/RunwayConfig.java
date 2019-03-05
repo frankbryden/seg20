@@ -5,14 +5,16 @@ public class RunwayConfig {
     private int LDA;
     private int CLEARWAY;
     private int STOPWAY;
+    private int displacementThreshold;
     private RunwayDesignator runwayDesignator;
 
-    public RunwayConfig(RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA){
+    public RunwayConfig(RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA, int displacementThreshold){
         this.runwayDesignator = runwayDesignator;
         this.TORA = TORA;
         this.TODA = TODA;
         this.ASDA = ASDA;
         this.LDA  = LDA;
+        this.displacementThreshold = displacementThreshold;
         this.STOPWAY = 0;
         this.CLEARWAY = 0;
     }
@@ -29,6 +31,8 @@ public class RunwayConfig {
         sb.append(this.ASDA);
         sb.append(", LDA : ");
         sb.append(this.LDA);
+        sb.append(", Displacement Threshold :");
+        sb.append(this.displacementThreshold);
         return sb.toString();
     }
 
@@ -72,6 +76,10 @@ public class RunwayConfig {
 
     public int getStopway() {
         return STOPWAY;
+    }
+
+    public int getDisplacementThreshold() {
+        return displacementThreshold;
     }
 
     public RunwayDesignator getRunwayDesignator() {

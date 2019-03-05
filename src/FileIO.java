@@ -67,8 +67,8 @@ public class FileIO {
     }
 
     public RunwayConfig parseRunwayConfig(Node runwayConfigNode){
-        int tora, toda, asda, lda;
-        tora = toda = asda = lda = -1;
+        int tora, toda, asda, lda, displacementThreshold;
+        tora = toda = asda = lda = displacementThreshold = -1;
         RunwayDesignator runwayDesignator = null;
         NodeList runwayData = runwayConfigNode.getChildNodes();
         for (int j = 0; j < runwayData.getLength(); j++) {
@@ -89,12 +89,14 @@ public class FileIO {
                 case "designator":
                     runwayDesignator = new RunwayDesignator(node.getTextContent());
                     break;
+                case "displacement":
+                    displacementThreshold = Integer.parseInt(node.getTextContent());
                 default:
                     break;
             }
             System.out.println(node.getNodeName() + ": " + node.getTextContent());
         }
-        return new RunwayConfig(runwayDesignator, tora, toda, asda, lda);
+        return new RunwayConfig(runwayDesignator, tora, toda, asda, lda, displacementThreshold);
     }
 
 

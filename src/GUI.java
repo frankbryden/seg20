@@ -253,23 +253,27 @@ public class GUI extends Application {
         //Components for the popups
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2;
-        Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
+        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2, displacementThresholdTF2;
+        Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, displacementThresholdLbl;
         runwayDesignatorLbl = new Label("Runway Designator");
         toraLbl = new Label("TORA");
         todaLbl = new Label("TODA");
         asdaLbl = new Label("ASDA");
         ldaLbl = new Label("LDA");
+        displacementThresholdLbl = new Label("Displacement Threshold");
+
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
         todaTF = new TextField();
         asdaTF = new TextField();
         ldaTF = new TextField();
+        displacementThresholdTF = new TextField();
         runwayDesignatorTF2 = new TextField();
         toraTF2 = new TextField();
         todaTF2 = new TextField();
         asdaTF2 = new TextField();
         ldaTF2 = new TextField();
+        displacementThresholdTF2 = new TextField();
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox();
@@ -291,6 +295,8 @@ public class GUI extends Application {
         gridPane.add(asdaTF, 1, 3);
         gridPane.add(ldaLbl, 0, 4);
         gridPane.add(ldaTF, 1, 4);
+        gridPane.add(displacementThresholdLbl, 0, 5);
+        gridPane.add(displacementThresholdTF, 1, 5);
 
         //Right Column
         gridPane.add(runwayDesignatorTF2, 2, 0);
@@ -298,8 +304,9 @@ public class GUI extends Application {
         gridPane.add(todaTF2, 2, 2);
         gridPane.add(asdaTF2, 2, 3);
         gridPane.add(ldaTF2, 2, 4);
+        gridPane.add(displacementThresholdTF2, 2, 5);
 
-        gridPane.add(hbox, 3, 5);
+        gridPane.add(hbox, 3, 6);
         Scene scene = new Scene(gridPane);
 
         //Add some spacing around and in between the cells

@@ -35,8 +35,8 @@ public class AirportConfig {
 
     public static void main (String[] args){
         AirportConfig airportConfig = new AirportConfig("Heathrow");
-        RunwayConfig runway09R = new RunwayConfig(new RunwayDesignator("09R"), 3660, 3660, 3660, 3353);
-        RunwayConfig runway27L = new RunwayConfig(new RunwayDesignator("27L"), 3660, 3660, 3660, 3660);
+        RunwayConfig runway09R = new RunwayConfig(new RunwayDesignator("09R"), 3660, 3660, 3660, 3353, 307);
+        RunwayConfig runway27L = new RunwayConfig(new RunwayDesignator("27L"), 3660, 3660, 3660, 3660, 0);
         airportConfig.addRunwayPair(new RunwayPair(runway09R, runway27L));
 
         FileIO fileIO = new FileIO();
