@@ -23,7 +23,7 @@ public class Calculations {
             recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - (obstacle.getHeight() * 50) - STRIP;
         } else {
             // In the case of taking off and landing towards the obstacle
-            recalculatedTORA = originalConfig.getTORA() - distanceFromThreshold - (obstacle.getHeight() * 50) - STRIP;
+            recalculatedTORA = originalConfig.getTORA() - originalConfig.getDisplacementThreshold() - distanceFromThreshold - (obstacle.getHeight() * 50) - STRIP;
             recalculatedTODA = recalculatedTORA;
             recalculatedASDA = recalculatedTORA;
             recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - RESA - STRIP;
