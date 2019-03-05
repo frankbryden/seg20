@@ -12,10 +12,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
@@ -29,13 +31,17 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn;
-    private TextField obstacleNameTxt, obstacleHeightTxt;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn;
+    private Pane calculationsPane;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, runwayThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ChoiceBox runwaySelect, airportSelect;
+    private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl;
+    private TextArea originalValuesTA;
+    private VBox calculationsRootBox, viewCalculationResultsVBox;
+    private HBox centerlineHBox, thresholdHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> obstacles;
     private Stage addAirportPopup, addRunwayPopup;
@@ -151,6 +157,52 @@ public class GUI extends Application {
                 addRunwayPopup.show();
             }
         });
+        //Calculations Pane - selection view
+        calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
+        obstacleSelect = new ChoiceBox();
+        thresholdSelect = new ChoiceBox();
+        centrelineDistanceLbl = new Label("Distance from runway centreline");
+        runwayThresholdLbl = new Label("Distance from runway threshold");
+        centrelineTF = new TextField();
+        runwayThresholdTF = new TextField();
+        calculateBtn = new Button("Calculate");
+        calculationsRootBox = new VBox();
+        centerlineHBox = new HBox();
+        centerlineHBox.getChildren().add(centrelineDistanceLbl);
+        centerlineHBox.getChildren().add(centrelineTF);
+        thresholdHBox = new HBox();
+        thresholdHBox.getChildren().add(runwayThresholdLbl);
+        thresholdHBox.getChildren().add(runwayThresholdTF);
+        calculationsRootBox.getChildren().add(obstacleSelect);
+        calculationsRootBox.getChildren().add(centerlineHBox);
+        calculationsRootBox.getChildren().add(thresholdSelect);
+        calculationsRootBox.getChildren().add(thresholdHBox);
+        calculationsRootBox.getChildren().add(calculateBtn);
+
+        calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                switchCalculationsTabToView();
+            }
+        });
+
+        //Calculations Pane - calculation results view
+        originalValuesLbl = new Label("Original Values");
+        originalValuesTA = new TextArea();
+        calculationsBackBtn = new Button("Back");
+        viewCalculationResultsVBox = new VBox();
+        viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
+        viewCalculationResultsVBox.getChildren().add(originalValuesTA);
+        viewCalculationResultsVBox.getChildren().add(calculationsBackBtn);
+
+        calculationsBackBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resetCalculationsTab();
+            }
+        });
+
+        resetCalculationsTab();
 
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
@@ -333,6 +385,16 @@ public class GUI extends Application {
 
         stage.setScene(scene);
         return stage;
+    }
+
+    public void resetCalculationsTab(){
+        calculationsPane.getChildren().remove(viewCalculationResultsVBox);
+        calculationsPane.getChildren().add(calculationsRootBox);
+    }
+
+    public void switchCalculationsTabToView(){
+        calculationsPane.getChildren().remove(calculationsRootBox);
+        calculationsPane.getChildren().add(viewCalculationResultsVBox);
     }
 
     public void updateRunwayInfoLabels(RunwayPair runwayPair){
