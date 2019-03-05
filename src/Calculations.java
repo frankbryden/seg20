@@ -44,7 +44,7 @@ public class Calculations {
                 recalculatedTORA -= BLAST_PROTECTION;
                 addCalcStep("    Took blast protection into account");
             } else {
-                recalculatedTORA -= STRIP_END - RESA;
+                recalculatedTORA -= (STRIP_END + RESA);
                 addCalcStep(("    Took RESA and STRIP_END into account"));
             }
 
