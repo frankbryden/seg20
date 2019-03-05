@@ -16,6 +16,17 @@ public class RunwayPair {
         }
     }
 
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Runway Pair : ").append(this.name);
+        sb.append("\n");
+        sb.append(r1.toString());
+        sb.append("\n");
+        sb.append(r2.toString());
+        return sb.toString();
+    }
+
     public RunwayConfig getR1() {
         return r1;
     }
