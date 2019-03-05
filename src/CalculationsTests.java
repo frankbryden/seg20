@@ -38,6 +38,13 @@ public class CalculationsTests {
     private Obstacle obstacleScenario3 = new Obstacle("testObstacle", 15);
     private RunwayConfig recalculatedRunwayScenario3 = calculationsScenario3.recalculateParams(obstacleScenario3, 150, Calculations.Direction.AWAY);
 
+    private RunwayDesignator runwayDesignatorScenario32 = new RunwayDesignator("27R");
+    private RunwayConfig initialRunwayScenario32 = new RunwayConfig(runwayDesignatorScenario32, 3884, 3962, 3884, 3884, 0);
+    private Calculations calculationsScenario32 = new Calculations(initialRunwayScenario32);
+    private Obstacle obstacleScenario32 = new Obstacle("testObstacle", 15);
+    private RunwayConfig recalculatedRunwayScenario32 = calculationsScenario32.recalculateParams(obstacleScenario32, 3203, Calculations.Direction.TOWARDS);
+
+
     //Scenario 4 tests -modify input
     private RunwayDesignator runwayDesignatorScenario4 = new RunwayDesignator("09R");
     private RunwayConfig initialRunwayScenario4 = new RunwayConfig(runwayDesignatorScenario4, 3660, 3660, 3660, 3353, 307);
@@ -92,6 +99,16 @@ public class CalculationsTests {
     public void scenario3TestNewASDA(){ assertThat( recalculatedRunwayScenario3.getASDA(), is(equalTo(2903))); }
     @Test
     public void scenario3TestNewLDA(){ assertThat( recalculatedRunwayScenario3.getLDA(), is(equalTo(2393))); }
+
+    @Test
+    public void scenario32TestNewTORA(){ assertThat( recalculatedRunwayScenario32.getTORA()  , is(equalTo( 2393))); }
+    @Test
+    public void scenario32TestNewTODA(){ assertThat(recalculatedRunwayScenario32.getTODA() , is(equalTo(2393))); }
+    @Test
+    public void scenario32TestNewASDA(){ assertThat( recalculatedRunwayScenario32.getASDA(), is(equalTo(2393))); }
+    @Test
+    public void scenario32TestNewLDA(){ assertThat( recalculatedRunwayScenario32.getLDA(), is(equalTo(2903))); }
+
 
 
 }
