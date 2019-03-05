@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn;
     private TextField obstacleNameTxt, obstacleHeightTxt;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ChoiceBox runwaySelect, airportSelect;
@@ -38,7 +38,7 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> obstacles;
-    private Stage addAirportPopup;
+    private Stage addAirportPopup, addRunwayPopup;
 
 
     @Override
@@ -60,6 +60,7 @@ public class GUI extends Application {
         airportConfigs = new HashMap<>();
 
         addAirportPopup = createAddAirportPopup(primaryStage);
+        addRunwayPopup = createAddRunwayPopup(primaryStage);
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -141,6 +142,15 @@ public class GUI extends Application {
             }
         });
 
+        addRunwayBtn = (Button) primaryStage.getScene().lookup("#addRunwayBtn");
+        addRunwayBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Add airport");
+                addRunwayPopup.show();
+            }
+        });
+
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
 
@@ -182,6 +192,7 @@ public class GUI extends Application {
 
     public Stage createAddAirportPopup(Stage primaryStage){
         Stage stage = new Stage();
+        stage.setTitle("Add Airport");
 
         //Components for the popups
         Button confirmButton = new Button("Add");
@@ -236,16 +247,23 @@ public class GUI extends Application {
 
     public Stage createAddRunwayPopup(Stage primaryStage){
         Stage stage = new Stage();
+        stage.setTitle("Add Runway");
 
         //Components for the popups
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        TextField runwayDesignator, toraLbl, todaLbl, asdaLbl, ldaLbl;
-        Label airportNameLbl, airportCodeLbl;
-        airportNameLbl = new Label("Airport Name");
-        airportCodeLbl = new Label("Airport Code");
-        airportName = new TextField();
-        airportCode = new TextField();
+        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF;
+        Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl;
+        runwayDesignatorLbl = new Label("Runway Designator");
+        toraLbl = new Label("TORA");
+        todaLbl = new Label("TODA");
+        asdaLbl = new Label("ASDA");
+        ldaLbl = new Label("LDA");
+        runwayDesignatorTF = new TextField();
+        toraTF = new TextField();
+        todaTF = new TextField();
+        asdaTF = new TextField();
+        ldaTF = new TextField();
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox();
@@ -255,24 +273,30 @@ public class GUI extends Application {
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
-        gridPane.add(airportNameLbl, 0, 0);
-        gridPane.add(airportName, 1, 0);
-        gridPane.add(airportCodeLbl, 0, 1);
-        gridPane.add(airportCode, 1, 1);
-        gridPane.add(hbox, 1, 2);
+        gridPane.add(runwayDesignatorLbl, 0, 0);
+        gridPane.add(runwayDesignatorTF, 1, 0);
+        gridPane.add(toraLbl, 0, 1);
+        gridPane.add(toraTF, 1, 1);
+        gridPane.add(todaLbl, 0, 2);
+        gridPane.add(todaTF, 1, 2);
+        gridPane.add(asdaLbl, 0, 3);
+        gridPane.add(asdaTF, 1, 3);
+        gridPane.add(ldaLbl, 0, 4);
+        gridPane.add(ldaTF, 1, 4);
+        gridPane.add(hbox, 1, 5);
         Scene scene = new Scene(gridPane);
 
         //Add some spacing around and in between the cells
         gridPane.setHgap(10);
         gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(5, 5, 5, 5));
+        gridPane.setPadding(new Insets(15, 15, 15, 15));
 
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
-                addAirportPopup.hide();
+                System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
+                addRunwayPopup.hide();
             }
         });
 
@@ -280,7 +304,7 @@ public class GUI extends Application {
         cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                addAirportPopup.hide();
+                addRunwayPopup.hide();
             }
         });
 

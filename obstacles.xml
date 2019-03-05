@@ -1,4 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><Obstacle>
-    <name>Jash180</name>
-    <height/>
-</Obstacle>
+<?xml version="1.0" encoding="UTF-8"?><Application>
+    <Obstacle>
+        <name>Ariane</name>
+        <height>180</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Jash</name>
+        <height>180</height>
+    </Obstacle>
+</Application>
