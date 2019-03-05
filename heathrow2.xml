@@ -16,4 +16,20 @@
             <LDA>3660</LDA>
         </RunwayConfig>
     </RunwayPair>
+    <RunwayPair>
+        <RunwayConfig>
+            <designator>08R</designator>
+            <TORA>2660</TORA>
+            <TODA>2660</TODA>
+            <ASDA>2660</ASDA>
+            <LDA>3253</LDA>
+        </RunwayConfig>
+        <RunwayConfig>
+            <designator>26L</designator>
+            <TORA>2660</TORA>
+            <TODA>2660</TODA>
+            <ASDA>2660</ASDA>
+            <LDA>3260</LDA>
+        </RunwayConfig>
+    </RunwayPair>
 </AirportConfiguration>

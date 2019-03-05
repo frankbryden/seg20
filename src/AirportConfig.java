@@ -26,6 +26,7 @@ public class AirportConfig {
     public String toString(){
         StringBuilder sb = new StringBuilder();
         sb.append("Airport name : " + getName());
+        sb.append("\n");
         for(String runwayPairName : this.runways.keySet()){
             sb.append(this.runways.get(runwayPairName).toString()).append("\n");
         }
@@ -40,7 +41,7 @@ public class AirportConfig {
 
         FileIO fileIO = new FileIO();
         fileIO.write(airportConfig, "heathrow.xml");
-        AirportConfig ac2 = fileIO.read("heathrow.xml");
+        AirportConfig ac2 = fileIO.read("heathrow2.xml");
         System.out.println(airportConfig.toString());
         System.out.println(ac2.toString());
     }
