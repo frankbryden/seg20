@@ -22,7 +22,10 @@
         <tabs>
             <Tab text="File">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="loadAirportBtn" layoutX="41.0" layoutY="47.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="167.0" text="Load Airport Config" />
+                     </children></AnchorPane>
               </content>
             </Tab>
           <Tab text="Application">
@@ -35,12 +38,11 @@
                               <ChoiceBox fx:id="airportSelect" layoutX="63.0" layoutY="9.0" prefHeight="22.0" prefWidth="95.0" />
                               <Label layoutX="164.0" layoutY="13.0" text="Runway" />
                               <ChoiceBox fx:id="runwaySelect" layoutX="218.0" layoutY="7.0" prefHeight="27.0" prefWidth="103.0" />
-                              <Button fx:id="loadAirportBtn" layoutX="218.0" layoutY="47.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="126.0" text="Load Airport Config" />
                            </children>
                         </AnchorPane>
                         <AnchorPane layoutX="369.0" prefHeight="535.0" prefWidth="333.0">
                            <children>
-                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="371.0" prefWidth="334.0" tabClosingPolicy="UNAVAILABLE">
+                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="305.0" prefWidth="334.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
                                   <Tab text="Airport">
                                     <content>
@@ -101,6 +103,14 @@
                                     </Tab>
                                 </tabs>
                               </TabPane>
+                              <AnchorPane layoutX="-2.0" layoutY="282.0" prefHeight="252.0" prefWidth="332.0">
+                                 <children>
+                                    <Button layoutX="190.0" layoutY="61.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="117.0" text="TODA" />
+                                    <Button layoutX="25.0" layoutY="61.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="117.0" text="ASDA" />
+                                    <Button layoutX="25.0" layoutY="136.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="117.0" text="TORA" />
+                                    <Button layoutX="192.0" layoutY="136.0" mnemonicParsing="false" prefHeight="44.0" prefWidth="115.0" text="LDA" />
+                                 </children>
+                              </AnchorPane>
                            </children>
                         </AnchorPane>
                      </children></AnchorPane>
