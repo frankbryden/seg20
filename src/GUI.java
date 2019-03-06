@@ -20,6 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import javax.swing.table.TableColumn;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +33,8 @@ public class GUI extends Application {
     private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
+    private GridPane calculationResultsGrid;
     private TextArea originalValuesTA;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
@@ -210,6 +212,7 @@ public class GUI extends Application {
                 int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
                 RunwayConfig recalculatedParams = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
                 System.out.println(recalculatedParams.toString());
+                updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
             }
         });
@@ -218,9 +221,49 @@ public class GUI extends Application {
         originalValuesLbl = new Label("Original Values");
         originalValuesTA = new TextArea();
         calculationsBackBtn = new Button("Back");
+        calculationResultsGrid = new GridPane();
+        Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
+        originalValuesGridLbl = new Label("Original Values");
+        recalculatedlValuesGridLbl = new Label("Recalculated Values");
+        todaRowLbl = new Label("TODA");
+        toraRowLbl = new Label("TORA");
+        asdaRowLbl = new Label("ASDA");
+        ldaRowLbl = new Label("LDA");
+        originalToda = new Label();
+        originalTora = new Label();
+        originalAsda = new Label();
+        originalLda = new Label();
+        recalculatedToda = new Label();
+        recalculatedTora = new Label();
+        recalculatedAsda = new Label();
+        recalculatedLda = new Label();
+
+        //Add all the labels, col by col,  to create a table
+
+        //Col 0 : the value names (TODA, TORA, ASDA, LDA)
+        calculationResultsGrid.add(todaRowLbl, 0, 1);
+        calculationResultsGrid.add(toraRowLbl, 0, 2);
+        calculationResultsGrid.add(asdaRowLbl, 0, 3);
+        calculationResultsGrid.add(ldaRowLbl, 0, 4);
+
+        //Col 1 : the original values
+        calculationResultsGrid.add(originalValuesGridLbl, 1, 0);
+        calculationResultsGrid.add(originalToda, 1, 1);
+        calculationResultsGrid.add(originalTora, 1, 2);
+        calculationResultsGrid.add(originalAsda, 1, 3);
+        calculationResultsGrid.add(originalLda, 1, 4);
+
+        //Col 2 : the recalculated values
+        calculationResultsGrid.add(recalculatedlValuesGridLbl, 2, 0);
+        calculationResultsGrid.add(recalculatedToda, 2, 1);
+        calculationResultsGrid.add(recalculatedTora, 2, 2);
+        calculationResultsGrid.add(recalculatedAsda, 2, 3);
+        calculationResultsGrid.add(recalculatedLda, 2, 4);
+
         viewCalculationResultsVBox = new VBox();
         viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
         viewCalculationResultsVBox.getChildren().add(originalValuesTA);
+        viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
         viewCalculationResultsVBox.getChildren().add(calculationsBackBtn);
 
         calculationsBackBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -415,38 +458,53 @@ public class GUI extends Application {
         return stage;
     }
 
-    public void resetCalculationsTab(){
+    private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
     }
 
-    public void switchCalculationsTabToView(){
+    private void switchCalculationsTabToView(){
         calculationsPane.getChildren().remove(calculationsRootBox);
         calculationsPane.getChildren().add(viewCalculationResultsVBox);
     }
 
-    public void updateRunwayInfoLabels(RunwayPair runwayPair){
+    private void updateRunwayInfoLabels(RunwayPair runwayPair){
         runwayDesignatorLbl.setText(runwayPair.getName());
+        System.out.println("R1 and R2");
+        System.out.println(runwayPair.getR1());
+        System.out.println(runwayPair.getR2());
         toraLbl.setText("TORA : " + runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
         todaLbl.setText("TODA : " + runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
         asdaLbl.setText("ASDA : " + runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
         ldaLbl.setText("LDA : " + runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
     }
 
-    public void updateThresholdList(RunwayPair runwayPair){
+    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated){
+        originalToda.setText(Integer.toString(original.getTODA()));
+        originalTora.setText(Integer.toString(original.getTORA()));
+        originalAsda.setText(Integer.toString(original.getASDA()));
+        originalLda.setText(Integer.toString(original.getLDA()));
+
+        recalculatedToda.setText(Integer.toString(recalculated.getTODA()));
+        recalculatedTora.setText(Integer.toString(recalculated.getTORA()));
+        recalculatedAsda.setText(Integer.toString(recalculated.getASDA()));
+        recalculatedLda.setText(Integer.toString(recalculated.getLDA()));
+    }
+
+    private void updateThresholdList(RunwayPair runwayPair){
         thresholdSelect.getItems().clear();
         thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
     }
 
-    public void updateObstaclesList(){
+    private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(obstacles.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(obstacles.keySet());
     }
 
-    public Boolean validateObstaclesForm(){
+    private Boolean validateObstaclesForm(){
         if (obstacleNameTxt.getText().length() < 1){
             return false;
         }
@@ -460,7 +518,7 @@ public class GUI extends Application {
         return true;
     }
 
-    public void clearObstaclesForm(){
+    private void clearObstaclesForm(){
         obstacleNameTxt.clear();
         obstacleHeightTxt.clear();
     }
