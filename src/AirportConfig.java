@@ -39,6 +39,8 @@ public class AirportConfig {
         RunwayConfig runway27L = new RunwayConfig(new RunwayDesignator("27L"), 3660, 3660, 3660, 3660, 0);
         airportConfig.addRunwayPair(new RunwayPair(runway09R, runway27L));
 
+
+        System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
         FileIO fileIO = new FileIO();
         fileIO.write(airportConfig, "heathrow.xml");
         AirportConfig ac2 = fileIO.read("heathrow2.xml");

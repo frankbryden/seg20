@@ -16,3 +16,12 @@
     -fx-font-family: "Verdana";
     -fx-font-size: 38px;
 }
+
+#plane{
+    -fx-rotate: 0;
+    transition: -fx-rotate 1s;
+}
+
+#plane:hover{
+    -fx-rotate: -20deg;
+}
