@@ -172,7 +172,7 @@ public class GUI extends Application {
 
 
         editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
-        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
+        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/edit.png")));
         editObstacleImgView.setFitWidth(15); editObstacleImgView.setFitHeight(15);
         editObstacleBtn.setGraphic(editObstacleImgView);
 
@@ -184,9 +184,9 @@ public class GUI extends Application {
         });
 
         deleteObstacleBtn = (Button) primaryStage.getScene().lookup("#deleteObstacleBtn");
-        ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
+        ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
         deleteObstacleImgView.setFitWidth(15); deleteObstacleImgView.setFitHeight(15);
-        editObstacleBtn.setGraphic(deleteObstacleImgView);
+        deleteObstacleBtn.setGraphic(deleteObstacleImgView);
 
         deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -196,7 +196,7 @@ public class GUI extends Application {
         });
 
         saveObstacleBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
-        ImageView saveObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
+        ImageView saveObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/save.png")));
         saveObstacleImgView.setFitHeight(15); saveObstacleImgView.setFitWidth(15);
         saveObstacleBtn.setGraphic(saveObstacleImgView);
 
