@@ -31,7 +31,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popObstacleBtn, editObstacleBtn, deleteObstacleBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -156,6 +156,19 @@ public class GUI extends Application {
                 }
             }
         });
+
+        popObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
+        ImageView popAddObstacle = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
+        popAddObstacle.setFitHeight(15); popAddObstacle.setFitWidth(20);
+        popObstacleBtn.setGraphic(popAddObstacle);
+
+        popAddObstacle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+            }
+        });
+
 
         saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
