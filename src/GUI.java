@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -23,9 +24,11 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -63,6 +66,30 @@ public class GUI extends Application {
 
         addAirportPopup = createAddAirportPopup(primaryStage);
         addRunwayPopup = createAddRunwayPopup(primaryStage);
+
+        printerBtn = (Button) primaryStage.getScene().lookup("#printerBtn");
+        ImageView printerImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/printer.png")));
+        printerImgView.setFitHeight(15); printerImgView.setFitWidth(20);
+        printerBtn.setGraphic(printerImgView);
+
+        printerBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+            }
+        });
+
+        outArrowBtn = (Button) primaryStage.getScene().lookup("#outArrowBtn");
+        ImageView outArrowImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/outArrow.png")));
+        outArrowImgView.setFitHeight(15); outArrowImgView.setFitWidth(20);
+        outArrowBtn.setGraphic(outArrowImgView);
+
+        outArrowBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
+            }
+        });
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
