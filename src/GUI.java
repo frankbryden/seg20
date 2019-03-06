@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 
 import javax.swing.table.TableColumn;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.image.Image;
@@ -33,7 +35,7 @@ public class GUI extends Application {
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect;
+    private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect, addRunwayAirportSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
@@ -247,7 +249,6 @@ public class GUI extends Application {
         //Calculations Pane - calculation results view
         originalValuesLbl = new Label("Original Values");
         originalValuesTA = new TextArea();
-        calculationsBackBtn = new Button("Back");
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
         originalValuesGridLbl = new Label("Original Values");
@@ -264,6 +265,11 @@ public class GUI extends Application {
         recalculatedTora = new Label();
         recalculatedAsda = new Label();
         recalculatedLda = new Label();
+        calculationsBackBtn = new Button("Back");
+        VBox calculateBackBtnVBox = new VBox();
+        calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
+        calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
+        calculateBackBtnVBox.setPadding(new Insets(0, 20, 0, 0));
 
         //Add all the labels, col by col,  to create a table
 
@@ -291,7 +297,7 @@ public class GUI extends Application {
         viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
         viewCalculationResultsVBox.getChildren().add(originalValuesTA);
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
-        viewCalculationResultsVBox.getChildren().add(calculationsBackBtn);
+        viewCalculationResultsVBox.getChildren().add(calculateBackBtnVBox);
 
         calculationsBackBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -299,6 +305,7 @@ public class GUI extends Application {
                 resetCalculationsTab();
             }
         });
+
 
         resetCalculationsTab();
 
@@ -326,10 +333,12 @@ public class GUI extends Application {
     public void updateAirportSelects(){
         runwaySelect.getItems().clear();
         airportSelect.getItems().clear();
+        addRunwayAirportSelect.getItems().clear();
 
         for (String name : airportConfigs.keySet()){
             AirportConfig ac = airportConfigs.get(name);
             airportSelect.getItems().add(name);
+            addRunwayAirportSelect.getItems().add(name);
         }
     }
 
@@ -380,7 +389,10 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+                AirportConfig airportConfig = new AirportConfig(airportName.getText());
+                airportConfigs.put(airportConfig.getName(), airportConfig);
                 addAirportPopup.hide();
+                addRunwayPopup.show();
             }
         });
 
@@ -411,6 +423,7 @@ public class GUI extends Application {
         asdaLbl = new Label("ASDA");
         ldaLbl = new Label("LDA");
         displacementThresholdLbl = new Label("Displacement Threshold");
+        addRunwayAirportSelect = new ChoiceBox();
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
@@ -457,7 +470,11 @@ public class GUI extends Application {
         gridPane.add(displacementThresholdTF2, 2, 5);
 
         gridPane.add(hbox, 3, 6);
-        Scene scene = new Scene(gridPane);
+
+        VBox addRunwayRoot = new VBox(20);
+        addRunwayRoot.getChildren().add(addRunwayAirportSelect);
+        addRunwayRoot.getChildren().add(gridPane);
+        Scene scene = new Scene(addRunwayRoot);
 
         //Add some spacing around and in between the cells
         gridPane.setHgap(10);
@@ -468,6 +485,12 @@ public class GUI extends Application {
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+
+                if (validateForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), todaTF.getText(), asdaTF.getText(), ldaTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), todaTF2.getText(), asdaTF2.getText(), ldaTF2.getText(), displacementThresholdTF2.getText())))){
+                    System.out.println("valid form");
+                } else {
+                    System.err.println("Invalid form");
+                }
                 System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
                 addRunwayPopup.hide();
             }
@@ -541,6 +564,17 @@ public class GUI extends Application {
         } catch (NumberFormatException e){
             e.printStackTrace();
             return false;
+        }
+        return true;
+    }
+
+    private Boolean validateForm(ArrayList<String> intVals){
+        for (String s : intVals){
+            try {
+                Integer.parseInt(s);
+            } catch (NumberFormatException e){
+                return false;
+            }
         }
         return true;
     }
