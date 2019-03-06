@@ -373,7 +373,7 @@ public class GUI extends Application {
 
         Label nameLbl, heightLbl;
         TextField nameTF, heightTF;
-        Button addObstacleBtn;
+        Button addObstacleBtn, cancelBtn;
 
         nameLbl = new Label("Name");
         heightLbl = new Label("Height");
@@ -382,6 +382,7 @@ public class GUI extends Application {
         heightTF = new TextField();
 
         addObstacleBtn = new Button("Add");
+        cancelBtn = new Button("Cancel");
 
         nameBox.getChildren().add(nameLbl);
         nameBox.getChildren().add(nameTF);
@@ -392,6 +393,7 @@ public class GUI extends Application {
         rootBox.getChildren().add(nameBox);
         rootBox.getChildren().add(heightBox);
         rootBox.getChildren().add(addObstacleBtn);
+        rootBox.getChildren().add(cancelBtn);
 
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
@@ -409,6 +411,16 @@ public class GUI extends Application {
                 }
             }
         });
+
+        cancelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                nameTF.clear();
+                heightTF.clear();
+                addObstaclePopup.hide();
+            }
+        });
+
 
         popup.getContent().add(rootBox);
 
