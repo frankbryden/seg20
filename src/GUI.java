@@ -28,14 +28,16 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn,
+                  calculationsBackBtn, printerBtn, outArrowBtn, popObstacleBtn, editObstacleBtn, deleteObstacleBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl,
+            runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl;
     private TextArea originalValuesTA;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
@@ -150,6 +152,18 @@ public class GUI extends Application {
                     clearObstaclesForm();
                     updateObstaclesList();
                 }
+            }
+        });
+
+        popObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
+        ImageView popAddObstacle = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
+        popAddObstacle.setFitHeight(15); popAddObstacle.setFitWidth(20);
+        popObstacleBtn.setGraphic(popAddObstacle);
+
+        popAddObstacle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+
             }
         });
 
