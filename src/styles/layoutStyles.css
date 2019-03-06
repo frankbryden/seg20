@@ -1,0 +1,11 @@
+.popup{
+    -fx-background-color: #65a196;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-border-color: black;
+    -fx-border-insets: 5;
+    -fx-border-width: 3;
+    -fx-border-style: dashed;
+    -fx-font-family: "Ravie";
+    -fx-font-size: 1.2em;
+}

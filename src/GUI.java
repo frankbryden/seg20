@@ -19,19 +19,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-import javax.swing.table.TableColumn;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popObstacleBtn, editObstacleBtn, deleteObstacleBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -44,6 +43,7 @@ public class GUI extends Application {
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
+    private Popup addObstaclePopup;
     private Map<String, Obstacle> obstacles;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
@@ -70,6 +70,7 @@ public class GUI extends Application {
 
         addAirportPopup = createAddAirportPopup(primaryStage);
         addRunwayPopup = createAddRunwayPopup(primaryStage);
+        addObstaclePopup = createAddObstaclePopup();
 
         printerBtn = (Button) primaryStage.getScene().lookup("#printerBtn");
         ImageView printerImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/printer.png")));
@@ -151,21 +152,21 @@ public class GUI extends Application {
                 System.out.println("Add obstacle");
                 if (validateObstaclesForm()){
                     addObstacle(obstacleNameTxt.getText(), Integer.parseInt(obstacleHeightTxt.getText()));
-                    clearObstaclesForm();
                     updateObstaclesList();
                 }
             }
         });
 
-        popObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
+        popAddObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
         ImageView popAddObstacle = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
-        popAddObstacle.setFitHeight(15); popAddObstacle.setFitWidth(20);
-        popObstacleBtn.setGraphic(popAddObstacle);
+        popAddObstacle.setFitHeight(15);
+        popAddObstacle.setFitWidth(20);
+        popAddObstacleBtn.setGraphic(popAddObstacle);
 
-        popAddObstacle.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
+                addObstaclePopup.show(primaryStage);
             }
         });
 
@@ -363,6 +364,61 @@ public class GUI extends Application {
         }
     }
 
+    public Popup createAddObstaclePopup(){
+        Popup popup = new Popup();
+
+        VBox rootBox = new VBox(20);
+        HBox nameBox = new HBox(20);
+        HBox heightBox = new HBox(20);
+
+        Label nameLbl, heightLbl;
+        TextField nameTF, heightTF;
+        Button addObstacleBtn;
+
+        nameLbl = new Label("Name");
+        heightLbl = new Label("Height");
+
+        nameTF = new TextField();
+        heightTF = new TextField();
+
+        addObstacleBtn = new Button("Add");
+
+        nameBox.getChildren().add(nameLbl);
+        nameBox.getChildren().add(nameTF);
+
+        heightBox.getChildren().add(heightLbl);
+        heightBox.getChildren().add(heightTF);
+
+        rootBox.getChildren().add(nameBox);
+        rootBox.getChildren().add(heightBox);
+        rootBox.getChildren().add(addObstacleBtn);
+
+        rootBox.getStyleClass().add("popup");
+        rootBox.getStylesheets().add("styles/layoutStyles.css");
+
+        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (validateIntForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))){
+                    System.out.println("Add obstacle");
+                    addObstacle(nameTF.getText(), Integer.parseInt(heightTF.getText()));
+                    nameTF.clear();
+                    heightTF.clear();
+                    updateObstaclesList();
+                    addObstaclePopup.hide();
+                }
+            }
+        });
+
+        popup.getContent().add(rootBox);
+
+        for (String f :javafx.scene.text.Font.getFamilies()){
+            System.out.println(f);
+        }
+
+        return popup;
+    }
+
     public Stage createAddAirportPopup(Stage primaryStage){
         Stage stage = new Stage();
         stage.setTitle("Add Airport");
@@ -499,7 +555,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-                if (validateForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), todaTF.getText(), asdaTF.getText(), ldaTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), todaTF2.getText(), asdaTF2.getText(), ldaTF2.getText(), displacementThresholdTF2.getText())))){
+                if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), todaTF.getText(), asdaTF.getText(), ldaTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), todaTF2.getText(), asdaTF2.getText(), ldaTF2.getText(), displacementThresholdTF2.getText())))){
                     System.out.println("valid form");
                 } else {
                     System.err.println("Invalid form");
@@ -581,7 +637,7 @@ public class GUI extends Application {
         return true;
     }
 
-    private Boolean validateForm(ArrayList<String> intVals){
+    private Boolean validateIntForm(ArrayList<String> intVals){
         for (String s : intVals){
             try {
                 Integer.parseInt(s);
@@ -592,9 +648,13 @@ public class GUI extends Application {
         return true;
     }
 
-    private void clearObstaclesForm(){
-        obstacleNameTxt.clear();
-        obstacleHeightTxt.clear();
+    private Boolean validateStrForm(ArrayList<String> strVals){
+        for (String s : strVals){
+            if (s.length() < 1){
+                return false;
+            }
+        }
+        return true;
     }
 
     public void addObstacle(String name, int height){
