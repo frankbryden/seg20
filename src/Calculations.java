@@ -10,7 +10,7 @@ public class Calculations {
         this.originalConfig = runwayConfig;
     }
 
-    public RunwayConfig recalculateParams(Obstacle obstacle, int distanceFromThreshold, Direction direction){
+    public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, Direction direction){
         //We need to determine what side of the runway the obstacle is lying before performing any calculations.
         int recalculatedTORA;
         int recalculatedTODA;
@@ -63,7 +63,7 @@ public class Calculations {
 
         System.out.println(getCalculationResults());
 
-        return new RunwayConfig(originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold());
+        return new CalculationResults(new RunwayConfig(originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold()), getCalculationResults());
     }
 
     private void beginCalculation(){

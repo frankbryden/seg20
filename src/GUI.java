@@ -3,6 +3,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
@@ -14,10 +15,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -39,7 +37,7 @@ public class GUI extends Application {
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
     private GridPane calculationResultsGrid;
-    private TextArea originalValuesTA;
+    private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
@@ -166,7 +164,10 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
                 addObstaclePopup.show(primaryStage);
+                addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth()/2);
+                addObstaclePopup.setAnchorY(bounds.getMinY() - addObstaclePopup.getHeight());
             }
         });
 
@@ -291,7 +292,9 @@ public class GUI extends Application {
                 }
                 Calculations calculations = new Calculations(runwayConfig);
                 int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
-                RunwayConfig recalculatedParams = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
+                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
+                RunwayConfig recalculatedParams = results.getRecalculatedParams();
+                calculationDetails.setText(results.getCalculationDetails());
                 System.out.println(recalculatedParams.toString());
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
@@ -300,7 +303,7 @@ public class GUI extends Application {
 
         //Calculations Pane - calculation results view
         originalValuesLbl = new Label("Original Values");
-        originalValuesTA = new TextArea();
+        calculationDetails = new TextArea();
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
         originalValuesGridLbl = new Label("Original Values");
@@ -347,7 +350,7 @@ public class GUI extends Application {
 
         viewCalculationResultsVBox = new VBox();
         viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
-        viewCalculationResultsVBox.getChildren().add(originalValuesTA);
+        viewCalculationResultsVBox.getChildren().add(calculationDetails);
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
         viewCalculationResultsVBox.getChildren().add(calculateBackBtnVBox);
 
@@ -408,7 +411,10 @@ public class GUI extends Application {
         VBox rootBox = new VBox(20);
         HBox nameBox = new HBox(20);
         HBox heightBox = new HBox(20);
-
+        HBox buttonsBox = new HBox();
+        Region nameRegion = new Region();
+        Region heightRegion = new Region();
+        Region buttonsRegion = new Region();
         Label nameLbl, heightLbl;
         TextField nameTF, heightTF;
         Button addObstacleBtn, cancelBtn;
@@ -422,16 +428,25 @@ public class GUI extends Application {
         addObstacleBtn = new Button("Add");
         cancelBtn = new Button("Cancel");
 
+        HBox.setHgrow(nameRegion, Priority.ALWAYS);
+        HBox.setHgrow(heightRegion, Priority.ALWAYS);
+        HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
+
         nameBox.getChildren().add(nameLbl);
+        nameBox.getChildren().add(nameRegion);
         nameBox.getChildren().add(nameTF);
 
         heightBox.getChildren().add(heightLbl);
+        heightBox.getChildren().add(heightRegion);
         heightBox.getChildren().add(heightTF);
+
+        buttonsBox.getChildren().add(addObstacleBtn);
+        buttonsBox.getChildren().add(buttonsRegion);
+        buttonsBox.getChildren().add(cancelBtn);
 
         rootBox.getChildren().add(nameBox);
         rootBox.getChildren().add(heightBox);
-        rootBox.getChildren().add(addObstacleBtn);
-        rootBox.getChildren().add(cancelBtn);
+        rootBox.getChildren().add(buttonsBox);
 
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
