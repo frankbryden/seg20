@@ -477,9 +477,6 @@ public class GUI extends Application {
 
         popup.getContent().add(rootBox);
 
-        for (String f :javafx.scene.text.Font.getFamilies()){
-            System.out.println(f);
-        }
 
         return popup;
     }
