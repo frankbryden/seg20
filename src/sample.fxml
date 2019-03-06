@@ -42,7 +42,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="369.0" prefHeight="535.0" prefWidth="333.0">
                            <children>
-                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="339.0" prefWidth="334.0" tabClosingPolicy="UNAVAILABLE">
+                              <TabPane layoutX="-2.0" layoutY="-6.0" prefHeight="384.0" prefWidth="334.0" tabClosingPolicy="UNAVAILABLE">
                                 <tabs>
                                   <Tab text="Airport">
                                     <content>
@@ -98,12 +98,12 @@
                                     </Tab>
                                     <Tab text="Calculations">
                                        <content>
-                                          <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="245.0" prefWidth="287.0" />
+                                          <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="334.0" />
                                        </content>
                                     </Tab>
                                 </tabs>
                               </TabPane>
-                              <AnchorPane layoutX="-2.0" layoutY="282.0" prefHeight="252.0" prefWidth="332.0">
+                              <AnchorPane layoutX="-2.0" layoutY="330.0" prefHeight="204.0" prefWidth="332.0">
                                  <children>
                                     <Button layoutX="190.0" layoutY="61.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="117.0" text="TODA" />
                                     <Button layoutX="25.0" layoutY="61.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="117.0" text="ASDA" />
