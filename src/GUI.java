@@ -1,12 +1,10 @@
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -20,31 +18,28 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 
-import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn;
     private Pane calculationsPane;
-    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, runwayThresholdTF;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl;
     private TextArea originalValuesTA;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
-    private HBox centerlineHBox, thresholdHBox;
+    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> obstacles;
     private Stage addAirportPopup, addRunwayPopup;
+    private RunwayPair currentlySelectedRunway = null;
 
 
 
@@ -94,7 +89,11 @@ public class GUI extends Application {
                 AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
                 for (String runwayPairName : ac.getRunways().keySet()){
                     if (runwayPairName.equals(newValue)){
-                        updateRunwayInfoLabels(ac.getRunways().get(runwayPairName));
+                        RunwayPair selectedRunwayPair = ac.getRunways().get(runwayPairName);
+                        updateRunwayInfoLabels(selectedRunwayPair);
+                        updateThresholdList(selectedRunwayPair);
+                        currentlySelectedRunway = selectedRunwayPair;
+                        break;
                     }
                 }
             }
@@ -121,6 +120,7 @@ public class GUI extends Application {
                 System.out.println("Add obstacle");
                 if (validateObstaclesForm()){
                     addObstacle(obstacleNameTxt.getText(), Integer.parseInt(obstacleHeightTxt.getText()));
+                    clearObstaclesForm();
                     updateObstaclesList();
                 }
             }
@@ -158,30 +158,58 @@ public class GUI extends Application {
             }
         });
         //Calculations Pane - selection view
+        final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         obstacleSelect = new ChoiceBox();
         thresholdSelect = new ChoiceBox();
         centrelineDistanceLbl = new Label("Distance from runway centreline");
         runwayThresholdLbl = new Label("Distance from runway threshold");
+        obstacleSelectLbl = new Label("Select obstacle");
+        thresholdSelectLbl = new Label("Select threshold");
         centrelineTF = new TextField();
-        runwayThresholdTF = new TextField();
+        distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
-        calculationsRootBox = new VBox();
-        centerlineHBox = new HBox();
+        calculationsRootBox = new VBox(20);
+        calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
+        obstacleSelectHBox = new HBox(HBOX_SPACING);
+        obstacleSelectHBox.getChildren().add(obstacleSelectLbl);
+        obstacleSelectHBox.getChildren().add(obstacleSelect);
+        thresholdSelectHBox = new HBox(HBOX_SPACING);
+        thresholdSelectHBox.getChildren().add(thresholdSelectLbl);
+        thresholdSelectHBox.getChildren().add(thresholdSelect);
+        centerlineHBox = new HBox(HBOX_SPACING);
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
         centerlineHBox.getChildren().add(centrelineTF);
-        thresholdHBox = new HBox();
+        thresholdHBox = new HBox(HBOX_SPACING);
         thresholdHBox.getChildren().add(runwayThresholdLbl);
-        thresholdHBox.getChildren().add(runwayThresholdTF);
-        calculationsRootBox.getChildren().add(obstacleSelect);
+        thresholdHBox.getChildren().add(distanceFromThresholdTF);
+        VBox calculateBtnVBox = new VBox();
+        calculateBtnVBox.getChildren().add(calculateBtn);
+        calculateBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
+        calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
+        calculationsRootBox.getChildren().add(obstacleSelectHBox);
         calculationsRootBox.getChildren().add(centerlineHBox);
-        calculationsRootBox.getChildren().add(thresholdSelect);
+        calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
-        calculationsRootBox.getChildren().add(calculateBtn);
+        calculationsRootBox.getChildren().add(calculateBtnVBox);
 
         calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                //Get currently selected obstacle
+                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
+                Obstacle currentlySelectedObstacle = obstacles.get(obstacleName);
+                String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
+                RunwayConfig runwayConfig;
+                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                    runwayConfig = currentlySelectedRunway.getR1();
+                } else {
+                    runwayConfig = currentlySelectedRunway.getR2();
+                }
+                Calculations calculations = new Calculations(runwayConfig);
+                int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
+                RunwayConfig recalculatedParams = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
+                System.out.println(recalculatedParams.toString());
                 switchCalculationsTabToView();
             }
         });
@@ -405,9 +433,17 @@ public class GUI extends Application {
         ldaLbl.setText("LDA : " + runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
     }
 
+    public void updateThresholdList(RunwayPair runwayPair){
+        thresholdSelect.getItems().clear();
+        thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
+        thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
+    }
+
     public void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(obstacles.keySet());
+        obstacleSelect.getItems().clear();
+        obstacleSelect.getItems().addAll(obstacles.keySet());
     }
 
     public Boolean validateObstaclesForm(){
@@ -422,6 +458,11 @@ public class GUI extends Application {
             return false;
         }
         return true;
+    }
+
+    public void clearObstaclesForm(){
+        obstacleNameTxt.clear();
+        obstacleHeightTxt.clear();
     }
 
     public void addObstacle(String name, int height){
