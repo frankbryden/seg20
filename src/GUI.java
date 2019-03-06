@@ -144,7 +144,7 @@ public class GUI extends Application {
             }
         });
 
-        addObstacleBtn = (Button) primaryStage.getScene().lookup("#addObstacleBtn");
+        addObstacleBtn = new Button("Add Button");
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
