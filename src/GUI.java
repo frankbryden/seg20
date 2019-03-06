@@ -302,7 +302,7 @@ public class GUI extends Application {
         });
 
         //Calculations Pane - calculation results view
-        originalValuesLbl = new Label("Original Values");
+        originalValuesLbl = new Label("Breakdown of the calculations");
         calculationDetails = new TextArea();
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
