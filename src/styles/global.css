@@ -1,3 +1,49 @@
 .Button{
     -fx-font-family: "Vivaldi";
 }
+
+.tab-pane .tab-header-area .tab-header-background {
+    -fx-opacity: 0;
+}
+
+.tab-pane
+{
+    -fx-tab-min-width:110px;
+}
+
+.tab-pane .mini-tabs {
+    -fx-tab-min-width: 60px;
+}
+
+.tab{
+    -fx-background-insets: 0 1 0 1,0,0;
+    -fx-border-radius: 0 0 0 0;
+    -fx-background-radius: 0 0 0 0;
+}
+
+.tab-pane .tab{
+    -fx-end-margin: 3px 10px 3px 10px;
+    -fx-border-radius: 0px;
+}
+
+.tab-pane .tab
+{
+    -fx-background-color: #1ec0ff;
+}
+
+.tab-pane .tab:selected
+{
+    -fx-background-color: #1cade6;
+}
+
+.tab .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #575757;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.tab:selected .tab-label {
+    -fx-alignment: CENTER;
+    -fx-text-fill: #ffffff;
+}

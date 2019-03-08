@@ -40,11 +40,12 @@ public class AirportConfig {
         airportConfig.addRunwayPair(new RunwayPair(runway09R, runway27L));
 
 
-        System.out.println(com.sun.javafx.runtime.VersionInfo.getRuntimeVersion());
         FileIO fileIO = new FileIO();
         fileIO.write(airportConfig, "heathrow.xml");
         AirportConfig ac2 = fileIO.read("heathrow2.xml");
-        System.out.println(airportConfig.toString());
-        System.out.println(ac2.toString());
+        Map<String, AirportConfig> airportConfigs = fileIO.readRunwayDB("runways.csv");
+        for (String name : airportConfigs.keySet()){
+            System.out.println(name + " -> " + airportConfigs.get(name));
+        }
     }
 }

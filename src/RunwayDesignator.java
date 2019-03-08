@@ -2,7 +2,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RunwayDesignator {
-    enum Direction {L, R};
+    enum Direction {L, R, C, NONE};
     public int angle;
     public Direction direction;
 
@@ -12,7 +12,7 @@ public class RunwayDesignator {
     }
 
     public RunwayDesignator(String designator){
-        Pattern pattern = Pattern.compile("([0-9]+)([LR])");
+        Pattern pattern = Pattern.compile("([0-9]+)([LR]?)");
         Matcher matcher = pattern.matcher(designator);
         if (matcher.find()){
             Direction direction = null;
@@ -22,6 +22,12 @@ public class RunwayDesignator {
                     break;
                 case "L":
                     direction = Direction.L;
+                    break;
+                case "C":
+                    direction = Direction.C;
+                    break;
+                case "":
+                    direction = Direction.NONE;
                     break;
                 default:
                     System.err.println("Invalid direction letter : " + matcher.group(2));
@@ -38,6 +44,9 @@ public class RunwayDesignator {
         String s = "0" + this.angle;
         if (s.length() > 2){
             s = s.substring(1);
+        }
+        if (direction == Direction.NONE){
+            return s;
         }
         return s + this.direction.toString();
     }

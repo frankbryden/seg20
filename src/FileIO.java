@@ -10,9 +10,10 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileIO {
 
@@ -156,6 +157,57 @@ public class FileIO {
         } catch (TransformerException | FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
+    }
+
+    public Map<String, AirportConfig> readRunwayDB(String filePath){
+        File file = new File(filePath);
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return null;
+        }
+        InputStreamReader isr = new InputStreamReader(fis);
+        BufferedReader bufferedReader = new BufferedReader(isr);
+        Map<String, AirportConfig> airportConfigs = new HashMap<>();
+        String line;
+        RunwayPair runwayPair = new RunwayPair();
+        try {
+            while ((line = bufferedReader.readLine()) != null){
+                String[] parts = line.split(",");
+                //TORA TODA ASDA LDA
+                String name = parts[0];
+                String designator = parts[1];
+                int tora = Integer.valueOf(parts[2]);
+                int toda = Integer.valueOf(parts[3]);
+                int asda = Integer.valueOf(parts[4]);
+                int lda = Integer.valueOf(parts[5]);
+                RunwayConfig runwayConfig = new RunwayConfig(new RunwayDesignator(designator), tora, toda, asda, lda, 0);
+
+                if (runwayPair.getR1() == null){
+                    runwayPair.setR1(runwayConfig);
+                } else if (runwayPair.getR2() == null){
+                    runwayPair.setR2(runwayConfig);
+                    //Needed to configure name, now that both runways have been added
+                    runwayPair.init();
+                    System.out.println("This runway is ready for addition to an airport");
+                    System.out.println(runwayPair.toString());
+                    if (airportConfigs.containsKey(name)){
+                        airportConfigs.get(name).addRunwayPair(runwayPair);
+                    } else {
+                        AirportConfig airportConfig = new AirportConfig(name);
+                        airportConfig.addRunwayPair(runwayPair);
+                        airportConfigs.put(name, airportConfig);
+                    }
+
+                    runwayPair = new RunwayPair();
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return airportConfigs;
     }
 
     public void write(String data){

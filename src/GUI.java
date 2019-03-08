@@ -45,6 +45,7 @@ public class GUI extends Application {
     private Map<String, Obstacle> obstacles;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
+    private TabPane tabPane;
 
 
 
@@ -108,6 +109,7 @@ public class GUI extends Application {
                 AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
                 airportConfigs.put(ac.getName(), ac);
                 updateAirportSelects();
+                tabPane.getSelectionModel().select(1);
             }
         });
 
@@ -207,8 +209,6 @@ public class GUI extends Application {
 
             }
         });
-
-
 
         saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -326,6 +326,8 @@ public class GUI extends Application {
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
         calculateBackBtnVBox.setPadding(new Insets(0, 20, 0, 0));
 
+        tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
+
         //Add all the labels, col by col,  to create a table
 
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
@@ -382,6 +384,9 @@ public class GUI extends Application {
                 System.out.println("Heeere");
             }
         });*/
+        Map<String, AirportConfig> airportConfigsDB = fileIO.readRunwayDB("runways.csv");
+        airportConfigs.putAll(airportConfigsDB);
+        updateAirportSelects();
 
     }
 
@@ -390,7 +395,10 @@ public class GUI extends Application {
         airportSelect.getItems().clear();
         addRunwayAirportSelect.getItems().clear();
 
-        for (String name : airportConfigs.keySet()){
+        String[] names = airportConfigs.keySet().toArray(new String[0]);
+        Arrays.sort(names);
+
+        for (String name : names){
             AirportConfig ac = airportConfigs.get(name);
             airportSelect.getItems().add(name);
             addRunwayAirportSelect.getItems().add(name);
@@ -522,6 +530,7 @@ public class GUI extends Application {
                 System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
                 AirportConfig airportConfig = new AirportConfig(airportName.getText());
                 airportConfigs.put(airportConfig.getName(), airportConfig);
+                updateAirportSelects();
                 addAirportPopup.hide();
                 addRunwayPopup.show();
             }

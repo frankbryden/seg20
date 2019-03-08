@@ -5,10 +5,19 @@ public class RunwayPair {
     public RunwayPair (RunwayConfig r1, RunwayConfig r2){
         this.r1 = r1;
         this.r2 = r2;
+        this.init();
+    }
+
+    public RunwayPair(){
+        this.r1 = null;
+        this.r2 = null;
+    }
+
+    public void init(){
         this.name = generatePairName();
     }
 
-    public String generatePairName(){
+    private String generatePairName(){
         if (r1.getRunwayDesignator().angle < r2.getRunwayDesignator().angle){
             return r1.getRunwayDesignator().toString() + "/" + r2.getRunwayDesignator().toString();
         } else {
@@ -25,6 +34,18 @@ public class RunwayPair {
         sb.append("\n");
         sb.append(r2.toString());
         return sb.toString();
+    }
+
+    public void setR1(RunwayConfig r1) {
+        this.r1 = r1;
+    }
+
+    public void setR2(RunwayConfig r2) {
+        this.r2 = r2;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public RunwayConfig getR1() {
