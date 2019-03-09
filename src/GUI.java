@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.canvas.Canvas;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -45,6 +46,7 @@ public class GUI extends Application {
     private Map<String, Obstacle> obstacles;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
+    private Canvas canvas;
     private TabPane tabPane;
 
 
@@ -125,6 +127,7 @@ public class GUI extends Application {
                         updateRunwayInfoLabels(selectedRunwayPair);
                         updateThresholdList(selectedRunwayPair);
                         currentlySelectedRunway = selectedRunwayPair;
+                        selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
                         break;
                     }
                 }
@@ -327,6 +330,7 @@ public class GUI extends Application {
         calculateBackBtnVBox.setPadding(new Insets(0, 20, 0, 0));
 
         tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
+        canvas = (Canvas) primaryStage.getScene().lookup("#canvas");
 
         //Add all the labels, col by col,  to create a table
 

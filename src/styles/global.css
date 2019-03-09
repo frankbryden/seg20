@@ -47,3 +47,8 @@
     -fx-alignment: CENTER;
     -fx-text-fill: #ffffff;
 }
+
+.Canvas {
+    -fx-border-width: 2px;
+    -fx-border-color: #545454;
+}
