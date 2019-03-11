@@ -46,6 +46,8 @@ public class RunwayConfig {
     }
 
     public void render(GraphicsContext gc){
+        // clearway + stopway start after zebra crossing
+
         int maxLen = this.TORA;
 
         //canvas dimensions

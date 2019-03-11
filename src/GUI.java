@@ -107,6 +107,7 @@ public class GUI extends Application {
                     System.err.println("User did not select a file");
                     return;
                 }
+                //setTabMinHeight(double v)
                 System.out.println("Loading " + xmlFileToLoad.getName());
                 AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
                 airportConfigs.put(ac.getName(), ac);

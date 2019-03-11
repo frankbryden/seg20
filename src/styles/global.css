@@ -8,12 +8,26 @@
 
 .tab-pane
 {
-    -fx-tab-min-width:110px;
+    -fx-tab-min-width:158px;
+    -fx-tab-min-height: 34px;
 }
 
 .tab-pane .mini-tabs {
-    -fx-tab-min-width: 60px;
+    -fx-tab-min-width: 153px;
+    -fx-tab-min-height: 40px;
 }
+
+.label {
+    -fx-font-family: "Verdana";
+    -fx-font-size: 18px;
+    -fx-text-fill: #4a5366;
+}
+
+.tab-pane .large-tabs{
+    -fx-tab-min-width: 156px;
+    -fx-tab-min-height: 64px;
+}
+
 
 .tab{
     -fx-background-insets: 0 1 0 1,0,0;
@@ -24,10 +38,6 @@
 .tab-pane .tab{
     -fx-end-margin: 3px 10px 3px 10px;
     -fx-border-radius: 0px;
-}
-
-.tab-pane .tab
-{
     -fx-background-color: #1ec0ff;
 }
 
@@ -39,7 +49,7 @@
 .tab .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: #575757;
-    -fx-font-size: 12px;
+    -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
