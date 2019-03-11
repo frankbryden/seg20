@@ -2,6 +2,7 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -48,6 +49,8 @@ public class GUI extends Application {
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas;
     private TabPane tabPane;
+    private Pane planePane;
+    private ImageView planeImg;
 
 
 
@@ -245,6 +248,22 @@ public class GUI extends Application {
                 addRunwayPopup.show();
             }
         });
+
+        //Home screen plane rotation
+        planePane = (Pane) primaryStage.getScene().lookup("#planePane");
+        planeImg = (ImageView) primaryStage.getScene().lookup("#planeImg");
+        planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
+
+                if (rotate){
+                    planeImg.setRotate(-20);
+                } else {
+                    planeImg.setRotate(0);
+                }
+            }
+        });
+
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
