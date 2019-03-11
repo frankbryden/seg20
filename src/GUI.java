@@ -268,7 +268,9 @@ public class GUI extends Application {
         final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         obstacleSelect = new ChoiceBox();
+        obstacleSelect.setId("obstacleChoiceBox");
         thresholdSelect = new ChoiceBox();
+        thresholdSelect.setId("thresholdChoiceBox");
         centrelineDistanceLbl = new Label("Distance from runway centreline");
         runwayThresholdLbl = new Label("Distance from runway threshold");
         obstacleSelectLbl = new Label("Select obstacle");
@@ -290,15 +292,19 @@ public class GUI extends Application {
         thresholdHBox = new HBox(HBOX_SPACING);
         thresholdHBox.getChildren().add(runwayThresholdLbl);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
-        VBox calculateBtnVBox = new VBox();
+        HBox calculateBtnVBox = new HBox();
+        Region calculateBtnRegion = new Region();
+        HBox.setHgrow(calculateBtnRegion, Priority.ALWAYS);
+        calculateBtnVBox.getChildren().add(calculateBtnRegion);
         calculateBtnVBox.getChildren().add(calculateBtn);
-        calculateBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
         calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
+        calculationsRootBox.setMinWidth(calculationsPane.getWidth());
         calculationsRootBox.getChildren().add(obstacleSelectHBox);
         calculationsRootBox.getChildren().add(centerlineHBox);
         calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
         calculationsRootBox.getChildren().add(calculateBtnVBox);
+        calculationsRootBox.getStyleClass().add("customCol");
 
         calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override

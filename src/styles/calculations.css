@@ -3,6 +3,19 @@
     -fx-text-fill: #4a5366;
 }
 
-.choice-box{
-    -fx-min-width: 150px;
+#thresholdChoiceBox{
+    -fx-pref-width: 75px;
+    -fx-alignment: right;
+}
+
+#obstacleChoiceBox{
+    -fx-pref-width: 200px;
+}
+
+.backColor{
+    -fx-background-color: #000000;
+}
+
+.customCol{
+    -fx-background-color: #ff0000;
 }

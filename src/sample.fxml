@@ -68,7 +68,7 @@
                         </AnchorPane>
                         <AnchorPane layoutX="780.0" prefHeight="906.0" prefWidth="643.0">
                            <children>
-                              <TabPane fx:id="miniTabPane" layoutY="-6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="694.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                              <TabPane fx:id="miniTabPane" layoutY="-6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="661.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                 <tabs>
                                   <Tab text="Airport">
                                     <content>
@@ -127,7 +127,7 @@
                                     </Tab>
                                     <Tab text="Calculations">
                                        <content>
-                                          <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="350.0" prefWidth="334.0" stylesheets="@styles/calculations.css" />
+                                          <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css" />
                                        </content>
                                     </Tab>
                                 </tabs>
