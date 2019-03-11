@@ -1,21 +1,33 @@
 .label {
+    -fx-label-padding: 5 5 5 5;
     -fx-font-size: 18px;
     -fx-text-fill: #4a5366;
 }
 
-#thresholdChoiceBox{
+#thresholdChoiceBox {
     -fx-pref-width: 75px;
-    -fx-alignment: right;
+    -fx-pref-height: 35px;
+}
+
+.choice-box .label{
+    -fx-padding: 0 0 0 0;
+    -fx-font: 14px;
 }
 
 #obstacleChoiceBox{
     -fx-pref-width: 200px;
+    -fx-pref-height: 35px;
+    -fx-text-alignment: center;
 }
 
-.backColor{
-    -fx-background-color: #000000;
+.text-field{
+    -fx-pref-height: 35px;
+    -fx-pref-width: 75px;
+    -fx-font-size: 14px;
 }
 
-.customCol{
-    -fx-background-color: #ff0000;
+#calcButton{
+    -fx-pref-height: 35px;
+    -fx-pref-width: 100px;
+    -fx-font-size: 18px;
 }

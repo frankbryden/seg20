@@ -19,7 +19,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" stylesheets="@styles/global.css" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0">
+      <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <tabs>
             <Tab text="File">
               <content>
@@ -62,7 +62,7 @@
                               <Label layoutX="9.0" layoutY="14.0" prefHeight="23.0" prefWidth="96.0" text="Airports" />
                               <ChoiceBox fx:id="airportSelect" layoutX="108.0" layoutY="9.0" prefHeight="35.0" prefWidth="235.0" />
                               <Label layoutX="366.0" layoutY="13.0" text="Runway" />
-                              <ChoiceBox fx:id="runwaySelect" layoutX="461.0" layoutY="9.0" prefHeight="27.0" prefWidth="103.0" />
+                              <ChoiceBox fx:id="runwaySelect" layoutX="461.0" layoutY="9.0" prefHeight="27.0" prefWidth="110.0" />
                               <Canvas fx:id="canvas" height="938.0" layoutY="34.0" width="772.0" />
                            </children>
                         </AnchorPane>

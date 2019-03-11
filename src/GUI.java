@@ -259,13 +259,14 @@ public class GUI extends Application {
         obstacleSelect.setId("obstacleChoiceBox");
         thresholdSelect = new ChoiceBox();
         thresholdSelect.setId("thresholdChoiceBox");
-        centrelineDistanceLbl = new Label("Distance from runway centreline");
-        runwayThresholdLbl = new Label("Distance from runway threshold");
+        centrelineDistanceLbl = new Label("Distance from runway centreline (m)");
+        runwayThresholdLbl = new Label("Distance from runway threshold (m)");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
+        calculateBtn.setId("calcButton");
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
@@ -320,7 +321,9 @@ public class GUI extends Application {
 
         //Calculations Pane - calculation results view
         originalValuesLbl = new Label("Breakdown of the calculations");
+        originalValuesLbl.setId("breakdownTitle");
         calculationDetails = new TextArea();
+        calculationDetails.setId("calcBreakdown");
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
         originalValuesGridLbl = new Label("Original Values");

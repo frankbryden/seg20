@@ -13,7 +13,7 @@
 }
 
 .tab-pane .mini-tabs {
-    -fx-tab-min-width: 153px;
+    -fx-tab-min-width: 145px;
     -fx-tab-min-height: 40px;
 }
 
