@@ -132,7 +132,8 @@ public class GUI extends Application {
                         updateRunwayInfoLabels(selectedRunwayPair);
                         updateThresholdList(selectedRunwayPair);
                         currentlySelectedRunway = selectedRunwayPair;
-                        selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
+                        selectedRunwayPair.render(canvas.getGraphicsContext2D());
+                        //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
                         break;
                     }
                 }
