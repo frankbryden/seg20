@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
@@ -249,20 +250,7 @@ public class GUI extends Application {
             }
         });
 
-        //Home screen plane rotation
-        planePane = (Pane) primaryStage.getScene().lookup("#planePane");
-        planeImg = (ImageView) primaryStage.getScene().lookup("#planeImg");
-        planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
 
-                if (rotate){
-                    planeImg.setRotate(-20);
-                } else {
-                    planeImg.setRotate(0);
-                }
-            }
-        });
 
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
@@ -407,6 +395,22 @@ public class GUI extends Application {
         todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
         asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
+
+        //Home screen plane rotation
+        planePane = (Pane) primaryStage.getScene().lookup("#planePane");
+        planePane.getStyleClass().add("myPane");
+        planeImg = (ImageView) primaryStage.getScene().lookup("#planeImg");
+        planeImg = (ImageView) planePane.getChildren().get(0);
+        planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
+                if (rotate){
+                    planeImg.setRotate(-20);
+                } else {
+                    planeImg.setRotate(0);
+                }
+            }
+        });
 
         /*airportSelect.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override

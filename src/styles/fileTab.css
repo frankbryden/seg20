@@ -19,10 +19,10 @@
 }
 
 #plane{
-    -fx-rotate: 0;
+    /*-fx-rotate: 0;*/
     transition: -fx-rotate 1s;
 }
 
 #plane:hover{
-    -fx-rotate: -20deg;
+    /*-fx-rotate: -20deg;*/
 }
