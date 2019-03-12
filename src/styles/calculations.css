@@ -11,7 +11,7 @@
 
 .choice-box .label{
     -fx-padding: 0 0 0 0;
-    -fx-font: 14px;
+    -fx-font-size: 14px;
 }
 
 #obstacleChoiceBox{
