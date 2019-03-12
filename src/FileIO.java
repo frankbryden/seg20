@@ -53,7 +53,6 @@ public class FileIO {
             int k = 0;
             for (int j = 0; j <runwayConfigs.getLength(); j++){
                 if (runwayConfigs.item(j).getNodeName().equals("RunwayConfig")){
-                    System.out.println("adding runway config node");
                     runwayConfigNodes[k] = runwayConfigs.item(j);
                     k += 1;
                 }
@@ -95,7 +94,6 @@ public class FileIO {
                 default:
                     break;
             }
-            System.out.println(node.getNodeName() + ": " + node.getTextContent());
         }
         return new RunwayConfig(runwayDesignator, tora, toda, asda, lda, displacementThreshold);
     }
@@ -191,8 +189,6 @@ public class FileIO {
                     runwayPair.setR2(runwayConfig);
                     //Needed to configure name, now that both runways have been added
                     runwayPair.init();
-                    System.out.println("This runway is ready for addition to an airport");
-                    System.out.println(runwayPair.toString());
                     if (airportConfigs.containsKey(name)){
                         airportConfigs.get(name).addRunwayPair(runwayPair);
                     } else {

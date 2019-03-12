@@ -1,3 +1,7 @@
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -24,11 +28,10 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+
 import javafx.scene.image.Image;
+import javafx.util.Duration;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn;
@@ -98,25 +101,6 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-            }
-        });
-
-        loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
-        loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Click !");
-                File xmlFileToLoad = fileChooser.showOpenDialog(primaryStage);
-                if (xmlFileToLoad == null){
-                    System.err.println("User did not select a file");
-                    return;
-                }
-                //setTabMinHeight(double v)
-                System.out.println("Loading " + xmlFileToLoad.getName());
-                AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
-                airportConfigs.put(ac.getName(), ac);
-                updateAirportSelects();
-                tabPane.getSelectionModel().select(1);
             }
         });
 
@@ -252,7 +236,6 @@ public class GUI extends Application {
         });
 
 
-
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
@@ -271,23 +254,30 @@ public class GUI extends Application {
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
+        Region obstacleSelectRegion = getHGrowingRegion();
         obstacleSelectHBox.getChildren().add(obstacleSelectLbl);
+        obstacleSelectHBox.getChildren().add(obstacleSelectRegion);
         obstacleSelectHBox.getChildren().add(obstacleSelect);
         thresholdSelectHBox = new HBox(HBOX_SPACING);
+        Region thresholdSelectRegion = getHGrowingRegion();
         thresholdSelectHBox.getChildren().add(thresholdSelectLbl);
+        thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
         centerlineHBox = new HBox(HBOX_SPACING);
+        Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
+        centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
+        Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
+        thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
         HBox calculateBtnVBox = new HBox();
-        Region calculateBtnRegion = new Region();
-        HBox.setHgrow(calculateBtnRegion, Priority.ALWAYS);
+        Region calculateBtnRegion = getHGrowingRegion();
         calculateBtnVBox.getChildren().add(calculateBtnRegion);
         calculateBtnVBox.getChildren().add(calculateBtn);
-        calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
+        //calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
         calculationsRootBox.setMinWidth(calculationsPane.getWidth());
         calculationsRootBox.getChildren().add(obstacleSelectHBox);
         calculationsRootBox.getChildren().add(centerlineHBox);
@@ -405,13 +395,61 @@ public class GUI extends Application {
         planePane.getStyleClass().add("myPane");
         planeImg = (ImageView) primaryStage.getScene().lookup("#planeImg");
         planeImg = (ImageView) planePane.getChildren().get(0);
+
+        //Animate one way...
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(0.8), planeImg);
+        rotateTransition.setFromAngle(0);
+        rotateTransition.setToAngle(-20);
+        rotateTransition.setCycleCount(1);
+
+        //...and the other !
+        RotateTransition reverseRotateTransition = new RotateTransition(Duration.seconds(0.6), planeImg);
+        reverseRotateTransition.setFromAngle(-20);
+        reverseRotateTransition.setToAngle(0);
+        reverseRotateTransition.setCycleCount(1);
+
+        //Animate plane taking off
+        TranslateTransition takeOffTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
+        takeOffTransition.setFromY(0);
+        takeOffTransition.setToY(-900);
+        takeOffTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+            @Override
+            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                System.out.println("Finished running take off transition");
+                if (newValue == Animation.Status.STOPPED){
+                    tabPane.getSelectionModel().select(1);
+                }
+            }
+        });
+
+        loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
+        loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Click !");
+                File xmlFileToLoad = fileChooser.showOpenDialog(primaryStage);
+                if (xmlFileToLoad == null){
+                    System.err.println("User did not select a file");
+                    return;
+                }
+                //setTabMinHeight(double v)
+                takeOffTransition.play();
+                System.out.println("Loading " + xmlFileToLoad.getName());
+                AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
+                airportConfigs.put(ac.getName(), ac);
+                updateAirportSelects();
+
+                //tabPane.getSelectionModel().select(1);
+            }
+        });
+
         planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
                 if (rotate){
-                    planeImg.setRotate(-20);
+                    rotateTransition.play();
                 } else {
-                    planeImg.setRotate(0);
+                    reverseRotateTransition.play();
                 }
             }
         });
@@ -426,6 +464,12 @@ public class GUI extends Application {
         airportConfigs.putAll(airportConfigsDB);
         updateAirportSelects();
 
+    }
+
+    private Region getHGrowingRegion(){
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS);
+        return region;
     }
 
     public void updateAirportSelects(){
