@@ -19,25 +19,30 @@ public class Calculations {
         beginCalculation();
         if (direction == Direction.TOWARDS){
 
-            addCalcStep ( originalConfig.getRunwayDesignator().toString() + " (" + "Take Off " + direction);
+            addCalcStep ( originalConfig.getRunwayDesignator().toString() + " (" + "Take Off " + direction, true);
             addCalcStep("," + "Landing Towards");
 
             // In the case of taking off towards from the obstacle / landing over it
             //TORA
             recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - (obstacle.getHeight() * 50) - STRIP_END;
             addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - (" + obstacle.getHeight() + " * 50) - " + STRIP_END);
+            addCalcStep( "           =" + recalculatedTORA);
 
             //TODA
             recalculatedTODA = recalculatedTORA;
             addCalcStep("TODA = " + recalculatedTORA);
+            addCalcStep("           = " + recalculatedTODA);
 
             //ASDA
             recalculatedASDA = recalculatedTORA;
             addCalcStep("ASDA = " + recalculatedTORA);
+            addCalcStep("           = " + recalculatedASDA);
 
             //LDA
             recalculatedLDA = distanceFromThreshold  - STRIP_END - RESA;
             addCalcStep("LDA = " + distanceFromThreshold + " - " + STRIP_END + " - " + RESA);
+            addCalcStep("        = " + recalculatedLDA);
+
         } else {
 
             addCalcStep ( originalConfig.getRunwayDesignator().toString() + " (" + "Take Off " + direction, true);
@@ -56,19 +61,18 @@ public class Calculations {
                 recalculatedTORA -= (STRIP_END + RESA);
                 addCalcStep(("    Took RESA and STRIP_END into account"));
             }
-
-            addCalcStep( "        =" + recalculatedTORA);
+            addCalcStep( "           =" + recalculatedTORA);
 
 
             //TODA
             recalculatedTODA = recalculatedTORA + originalConfig.getClearway();
-            addCalcStep( "TODA = " +  recalculatedTORA + " + " + originalConfig.getClearway());
-            addCalcStep("        = " + recalculatedTODA);
+            addCalcStep("TODA = " +  recalculatedTORA + " + " + originalConfig.getClearway());
+            addCalcStep("           = " + recalculatedTODA);
 
             //ASDA
             recalculatedASDA = recalculatedTORA + originalConfig.getStopway();
-            addCalcStep( "ASDA = " +  recalculatedTORA + " + " + originalConfig.getStopway());
-            addCalcStep("        = " + recalculatedASDA);
+            addCalcStep("ASDA = " +  recalculatedTORA + " + " + originalConfig.getStopway());
+            addCalcStep("           = " + recalculatedASDA);
 
             //LDA
             recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP_END - (obstacle.getHeight() * 50);

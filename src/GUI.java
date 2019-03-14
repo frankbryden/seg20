@@ -394,7 +394,6 @@ public class GUI extends Application {
         //Home screen plane rotation
         planePane = (Pane) primaryStage.getScene().lookup("#planePane");
         planePane.getStyleClass().add("myPane");
-        planeImg = (ImageView) primaryStage.getScene().lookup("#planeImg");
         planeImg = (ImageView) planePane.getChildren().get(0);
 
         //Animate one way...

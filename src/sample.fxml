@@ -16,48 +16,76 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
-            <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="-1.0">
+            <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-1.0">
               <tabs>
                   <Tab text="File">
                     <content>
-                      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="984.0" prefWidth="1440.0" snapToPixel="false" stylesheets="@styles/fileTab.css">
+                        <GridPane>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1385.0" minWidth="10.0" prefWidth="806.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="787.0" minWidth="10.0" prefWidth="634.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <Button id="loadAirportBtn" fx:id="loadAirportBtn" layoutX="843.0" layoutY="503.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="167.0" text="Load Airport Config" />
-                              <Label layoutX="843.0" layoutY="287.0" prefHeight="63.0" prefWidth="241.0" styleClass="mainLabels" stylesheets="@styles/fileTab.css" text="RUNWAY">
-                                 <font>
-                                    <Font size="42.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="843.0" layoutY="347.0" prefHeight="63.0" prefWidth="356.0" styleClass="mainLabels" stylesheets="@styles/fileTab.css" text="RE-DECLARATION">
-                                 <font>
-                                    <Font size="42.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="843.0" layoutY="403.0" prefHeight="63.0" prefWidth="241.0" styleClass="mainLabels" stylesheets="@styles/fileTab.css" text="TOOL">
-                                 <font>
-                                    <Font size="42.0" />
-                                 </font>
-                              </Label>
-                              <Pane fx:id="planePane" layoutX="120.0" layoutY="144.0" prefHeight="629.0" prefWidth="534.0">
+                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                                 <center>
+                                    <Pane fx:id="planePane" prefHeight="941.0" prefWidth="766.0">
+                                       <children>
+                                          <ImageView id="plane" fx:id="planeImg" fitHeight="626.0" fitWidth="616.0" layoutX="135.0" layoutY="149.0" pickOnBounds="true" preserveRatio="true">
+                                             <image>
+                                                <Image url="@rec/planeSm.png" />
+                                             </image>
+                                          </ImageView>
+                                       </children>
+                                    </Pane>
+                                 </center>
+                              </BorderPane>
+                              <GridPane GridPane.columnIndex="1">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints maxHeight="429.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="852.0" minHeight="10.0" prefHeight="395.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="425.0" minHeight="10.0" prefHeight="308.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
                                  <children>
-                                    <ImageView id="plane" fx:id="planeImg" fitHeight="626.0" fitWidth="616.0" layoutX="14.0" layoutY="2.0" pickOnBounds="true" preserveRatio="true">
-                                       <image>
-                                          <Image url="@rec/planeSm.png" />
-                                       </image>
-                                    </ImageView>
+                                    <GridPane prefHeight="370.0" prefWidth="634.0" GridPane.rowIndex="1">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints maxHeight="404.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="310.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="173.0" minHeight="0.0" prefHeight="67.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="174.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="264.0" text="Load Airport Config" GridPane.rowIndex="4">
+                                             <font>
+                                                <Font size="24.0" />
+                                             </font>
+                                          </Button>
+                                          <Label prefHeight="73.0" prefWidth="258.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RUNWAY" />
+                                          <Label prefHeight="73.0" prefWidth="510.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RE-DECLARATION" GridPane.rowIndex="1" />
+                                          <Label styleClass="head-label" stylesheets="@styles/fileTab.css" text="TOOL" GridPane.rowIndex="2" />
+                                          <Line endX="410.5" startX="-100.0" strokeWidth="3.0" GridPane.rowIndex="3" />
+                                       </children>
+                                    </GridPane>
                                  </children>
-                              </Pane>
+                              </GridPane>
                            </children>
-                           <padding>
-                              <Insets bottom="87.0" left="87.0" right="787.0" top="87.0" />
-                           </padding>
-                        </AnchorPane>
+                        </GridPane>
                     </content>
                   </Tab>
                 <Tab text="Application">
@@ -73,7 +101,7 @@
                                     <Canvas fx:id="canvas" height="938.0" layoutY="34.0" width="772.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane layoutX="780.0" prefHeight="906.0" prefWidth="643.0">
+                              <AnchorPane layoutX="780.0" prefHeight="983.0" prefWidth="685.0">
                                  <children>
                                     <TabPane fx:id="miniTabPane" layoutY="-6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="661.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
@@ -139,11 +167,11 @@
                                           </Tab>
                                       </tabs>
                                     </TabPane>
-                                    <AnchorPane layoutX="485.0" layoutY="696.0" prefHeight="210.0" prefWidth="200.0" />
+                                    <AnchorPane layoutX="1.0" layoutY="696.0" prefHeight="210.0" prefWidth="684.0" />
                                     <Button layoutX="348.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" />
                                     <Button layoutX="148.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" />
                                     <Button layoutX="148.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" />
-                                    <Button layoutX="348.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" style="-fx-background-color: selected:blue;" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" />
+                                    <Button layoutX="348.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" />
                                  </children>
                               </AnchorPane>
                            </children>
