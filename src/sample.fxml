@@ -20,15 +20,15 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1024.0" prefWidth="1440.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
+      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
-            <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="-1.0">
+            <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-1.0">
               <tabs>
                   <Tab text="File">
                     <content>
-                      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="984.0" prefWidth="1440.0" snapToPixel="false" stylesheets="@styles/fileTab.css">
+                      <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="986.0" prefWidth="1440.0" snapToPixel="false" stylesheets="@styles/fileTab.css">
                            <children>
-                              <Button id="loadAirportBtn" fx:id="loadAirportBtn" layoutX="843.0" layoutY="503.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="167.0" text="Load Airport Config" />
+                              <Button id="loadAirportBtn" fx:id="loadAirportBtn" layoutX="843.0" layoutY="523.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="167.0" text="Load Airport Config" />
                               <Label layoutX="843.0" layoutY="287.0" prefHeight="63.0" prefWidth="241.0" styleClass="mainLabels" stylesheets="@styles/fileTab.css" text="RUNWAY">
                                  <font>
                                     <Font size="42.0" />
@@ -73,7 +73,7 @@
                                     <Canvas fx:id="canvas" height="938.0" layoutY="34.0" width="772.0" />
                                  </children>
                               </AnchorPane>
-                              <AnchorPane layoutX="780.0" prefHeight="906.0" prefWidth="643.0">
+                              <AnchorPane layoutX="780.0" prefHeight="983.0" prefWidth="685.0">
                                  <children>
                                     <TabPane fx:id="miniTabPane" layoutY="-6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="661.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
@@ -139,11 +139,11 @@
                                           </Tab>
                                       </tabs>
                                     </TabPane>
-                                    <AnchorPane layoutX="485.0" layoutY="696.0" prefHeight="210.0" prefWidth="200.0" />
+                                    <AnchorPane layoutX="1.0" layoutY="696.0" prefHeight="210.0" prefWidth="684.0" />
                                     <Button layoutX="348.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" />
                                     <Button layoutX="148.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" />
                                     <Button layoutX="148.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" />
-                                    <Button layoutX="348.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" style="-fx-background-color: selected:blue;" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" />
+                                    <Button layoutX="348.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" />
                                  </children>
                               </AnchorPane>
                            </children>
