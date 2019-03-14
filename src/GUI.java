@@ -58,6 +58,7 @@ public class GUI extends Application {
     private Pane planePane;
     private ImageView planeImg;
     private RunwayRenderer runwayRenderer;
+    private BorderPane canvasBorderPane;
 
 
 
@@ -343,6 +344,15 @@ public class GUI extends Application {
 
         tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
         canvas = (Canvas) primaryStage.getScene().lookup("#canvas");
+        canvasBorderPane = (BorderPane) primaryStage.getScene().lookup("#canvasBorderPane");
+        /*canvasBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                canvas.setWidth(newVal/2);
+            }
+        });
+        canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
 
         //Add all the labels, col by col,  to create a table
 
@@ -439,7 +449,7 @@ public class GUI extends Application {
                 }
             }
         });
-        planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
+        //planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
 
         primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
             @Override

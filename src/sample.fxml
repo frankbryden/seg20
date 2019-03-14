@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
@@ -36,17 +36,17 @@
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <BorderPane prefHeight="200.0" prefWidth="200.0">
+                              <BorderPane prefHeight="988.0" prefWidth="806.0">
                                  <center>
-                                    <Pane fx:id="planePane" prefHeight="838.0" prefWidth="681.0">
+                                    <HBox fx:id="planePane" alignment="CENTER" prefHeight="932.0" prefWidth="768.0">
                                        <children>
-                                          <ImageView id="plane" fx:id="planeImg" fitHeight="626.0" fitWidth="616.0" layoutX="135.0" layoutY="149.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView id="plane" fx:id="planeImg" fitHeight="626.0" fitWidth="616.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@rec/planeSm.png" />
                                              </image>
                                           </ImageView>
                                        </children>
-                                    </Pane>
+                                    </HBox>
                                  </center>
                               </BorderPane>
                               <GridPane GridPane.columnIndex="1">
@@ -71,7 +71,7 @@
                                           <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="264.0" text="Load Airport Config" GridPane.rowIndex="4">
+                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -167,7 +167,7 @@
                               </AnchorPane>
                            </right>
                            <center>
-                              <BorderPane BorderPane.alignment="CENTER">
+                              <BorderPane fx:id="canvasBorderPane" BorderPane.alignment="CENTER">
                                  <top>
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="45.0" prefWidth="779.0" BorderPane.alignment="CENTER">
                                        <children>
