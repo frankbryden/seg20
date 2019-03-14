@@ -23,6 +23,7 @@ import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.MediaPlayer;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -397,13 +398,13 @@ public class GUI extends Application {
         planeImg = (ImageView) planePane.getChildren().get(0);
 
         //Animate one way...
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(0.8), planeImg);
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
         rotateTransition.setFromAngle(0);
         rotateTransition.setToAngle(-20);
         rotateTransition.setCycleCount(1);
 
         //...and the other !
-        RotateTransition reverseRotateTransition = new RotateTransition(Duration.seconds(0.6), planeImg);
+        RotateTransition reverseRotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
         reverseRotateTransition.setFromAngle(-20);
         reverseRotateTransition.setToAngle(0);
         reverseRotateTransition.setCycleCount(1);
@@ -412,12 +413,27 @@ public class GUI extends Application {
         TranslateTransition takeOffTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
         takeOffTransition.setFromY(0);
         takeOffTransition.setToY(-900);
+
+        //Animate plane landing
+        TranslateTransition landTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
+        landTransition.setFromY(-900);
+        landTransition.setToY(0);
+
         takeOffTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
                 System.out.println("Finished running take off transition");
                 if (newValue == Animation.Status.STOPPED){
                     tabPane.getSelectionModel().select(1);
+                }
+            }
+        });
+
+        tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if ((int) newValue == 0){
+                    landTransition.play();
                 }
             }
         });
@@ -446,6 +462,12 @@ public class GUI extends Application {
         planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
             @Override
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
+                //Ignore the hover property when the plane is taking off or landing
+                if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
+                    return;
+                }
+
+                //Rotate on mouse over, return to original state on mouse leave
                 if (rotate){
                     rotateTransition.play();
                 } else {
