@@ -8,9 +8,10 @@
     -fx-font-size: 18px;
 }
 
-#loadAirportBtn:hover{
+#loadAirportBtn:hover, #loadAirportBtn:focused{
     -fx-background-color: #707a83;
 }
+
 
 .mainLabels{
     -fx-font-family: "Verdana";
