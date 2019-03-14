@@ -24,6 +24,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -56,6 +57,7 @@ public class GUI extends Application {
     private TabPane tabPane;
     private Pane planePane;
     private ImageView planeImg;
+    private RunwayRenderer runwayRenderer;
 
 
 
@@ -117,7 +119,8 @@ public class GUI extends Application {
                         updateRunwayInfoLabels(selectedRunwayPair);
                         updateThresholdList(selectedRunwayPair);
                         currentlySelectedRunway = selectedRunwayPair;
-                        selectedRunwayPair.render(canvas.getGraphicsContext2D());
+                        runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
+                        runwayRenderer.render();
                         //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
                         break;
                     }
@@ -436,6 +439,28 @@ public class GUI extends Application {
                 }
             }
         });
+        planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
+                System.out.println(planeImg.getX());
+            }
+        });
+
+        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
+                planeImg.setLayoutY(planePane.getHeight() - 1.4*planeImg.getFitHeight());
+                System.out.println(planeImg.getY());
+            }
+        });
+
+
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {

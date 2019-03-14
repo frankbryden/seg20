@@ -31,3 +31,7 @@
     -fx-font-size: 56px;
     -fx-font-family: "Verdana";
 }
+
+.myCol {
+    -fx-background-color: #ff1290;
+}
