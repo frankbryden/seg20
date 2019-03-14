@@ -1,11 +1,12 @@
 public class RunwayRenderParams {
     //Layout properties
-    private double margin;
+    private int margin;
     private double halfVert;
 
     //Runway
     private int runwayLength;
     private int runwayHeight;
+    private int centerLineY;
 
     //Zebra margin : margin on either side of each zebra crossing
     private int zebraMarginInner;
@@ -18,26 +19,24 @@ public class RunwayRenderParams {
     private int zebraDashLength;
     private int zebraDashOn = 4;
     private int zebraDashOff = 4;
-    private int zebraVertLength = zebraDashOn + zebraDashOff;
-    private int zebraDashCount = runwayHeight/zebraVertLength;
-    private int zebraDashShift = runwayHeight % zebraVertLength;
+    private int zebraVertLength;
+    private int zebraDashCount;
+    private int zebraDashShift;
 
     //Runway dashes
-    private int dashOn = 40;
-    private int dashOff = 25;
-    private int dashLength = dashOn + dashOff;
-    private int dashHeight = 5;
-    private int remainingRunwayLength = runwayLength - 2*(zebraMarginInner + zebraMarginOuter + zebraDashLength) - 2*identifierMargin;
-    private int dashCount = (int) (remainingRunwayLength/dashLength);
-    private int dashShift = (int) (remainingRunwayLength % dashLength);
-    if (dashShift > dashLength/2){
-        dashShift /= 2;
-    }
+    private int dashOn;
+    private int dashOff;
+    private int dashLength;
+    private int dashHeight;
+    private int remainingRunwayLength;
+    private int dashCount;
+    private int dashShift;
 
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
-        this.margin = 0.01*maxWidth;
+        //User configurable values below
+        this.margin = (int) (0.01*maxWidth);
         this.halfVert = 0.5*maxWidth;
-        this.runwayLength = (int) (maxWidth - margin);
+        this.runwayLength = maxWidth - margin;
         this.runwayHeight = runwayHeight;
         this.zebraMarginInner = zebraMarginInner;
         this.zebraMarginOuter = zebraMarginOuter;
@@ -48,16 +47,97 @@ public class RunwayRenderParams {
         this.dashOn = dashOn;
         this.dashOff = dashOff;
         this.dashHeight = dashHeight;
+
+        //initialise all the variables which depend on the parameterised values
+        this.init();
     }
 
-    private void init(){
+    public RunwayRenderParams() {
+
+    }
+
+    public void init(){
         //Init zebra params based on the zebra lengths
-        zebraVertLength = zebraDashOn + zebraDashOff;
-        private int zebraDashCount = runwayHeight/zebraVertLength;
-        private int zebraDashShift = runwayHeight % zebraVertLength;
+        this.zebraVertLength = zebraDashOn + zebraDashOff;
+        this.zebraDashCount = runwayHeight/zebraVertLength;
+        this.zebraDashShift = runwayHeight % zebraVertLength;
+
+        //dash params
+        this.dashLength = dashOn + dashOff;
+        //Middle part of the runway where dashes need to be drawn
+        this.remainingRunwayLength = runwayLength - 2*(zebraMarginInner + zebraMarginOuter + zebraDashLength) - 2*identifierMargin;
+        this.dashCount = remainingRunwayLength/dashLength;
+        //determine wasted remaining length at the end. eg runway length 10, dash length 3, we can't cover the entire runway.
+        //therefore, we do 10 % 3 = 1, and we shift all the dashes to the right by that amount
+        this.dashShift = remainingRunwayLength % dashLength;
+        //shift the dashes by at most half the length of a dash
+        if (dashShift > dashLength/2){
+            this.dashShift /= 2;
+        }
+
     }
 
-    public double getMargin() {
+    public int getCenterLineY() {
+        return centerLineY;
+    }
+
+    public void setCenterLineY(int centerLineY) {
+        this.centerLineY = centerLineY;
+    }
+
+    public void setMargin(int margin) {
+        this.margin = margin;
+    }
+
+    public void setHalfVert(double halfVert) {
+        this.halfVert = halfVert;
+    }
+
+    public void setRunwayLength(int runwayLength) {
+        this.runwayLength = runwayLength;
+    }
+
+    public void setRunwayHeight(int runwayHeight) {
+        this.runwayHeight = runwayHeight;
+    }
+
+    public void setZebraMarginInner(int zebraMarginInner) {
+        this.zebraMarginInner = zebraMarginInner;
+    }
+
+    public void setZebraMarginOuter(int zebraMarginOuter) {
+        this.zebraMarginOuter = zebraMarginOuter;
+    }
+
+    public void setIdentifierMargin(int identifierMargin) {
+        this.identifierMargin = identifierMargin;
+    }
+
+    public void setZebraDashOn(int zebraDashOn) {
+        this.zebraDashOn = zebraDashOn;
+    }
+
+    public void setZebraDashOff(int zebraDashOff) {
+        this.zebraDashOff = zebraDashOff;
+    }
+
+    public void setZebraDashLength(int zebraDashLength) {
+        this.zebraDashLength = zebraDashLength;
+    }
+
+    public void setDashOn(int dashOn) {
+        this.dashOn = dashOn;
+    }
+
+    public void setDashOff(int dashOff) {
+        this.dashOff = dashOff;
+    }
+
+    public void setDashHeight(int dashHeight) {
+        this.dashHeight = dashHeight;
+    }
+
+    public int getMargin() {
         return margin;
     }
 
