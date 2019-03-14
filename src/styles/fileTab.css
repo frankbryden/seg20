@@ -26,3 +26,8 @@
 #plane:hover{
     /*-fx-rotate: -20deg;*/
 }
+
+.head-label{
+    -fx-font-size: 56px;
+    -fx-font-family: "Verdana";
+}
