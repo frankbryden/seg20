@@ -10,7 +10,13 @@ public class Calculations {
         this.originalConfig = runwayConfig;
     }
 
-    public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, Direction direction){
+    public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, Direction direction){
+
+        //determine if calculations need to be redone
+        if (distanceFromCenterline > 75 || distanceFromThreshold < -60 || distanceFromThreshold > (originalConfig.getTORA() + 60)){
+            return new CalculationResults(originalConfig, "No redeclaration needed.");
+        }
+
         //We need to determine what side of the runway the obstacle is lying before performing any calculations.
         int recalculatedTORA;
         int recalculatedTODA;
@@ -24,8 +30,14 @@ public class Calculations {
 
             // In the case of taking off towards from the obstacle / landing over it
             //TORA
-            recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - (obstacle.getHeight() * 50) - STRIP_END;
-            addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - (" + obstacle.getHeight() + " * 50) - " + STRIP_END);
+            int slopeCalculation = obstacle.getHeight() * 50;
+            if (slopeCalculation <= RESA){
+                recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - RESA - STRIP_END;
+                addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - " + RESA + " - " +STRIP_END);
+            } else {
+                recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - slopeCalculation - STRIP_END;
+                addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - " + slopeCalculation +" - (" + obstacle.getHeight() + " * 50) - " + STRIP_END);
+            }
             addCalcStep( "           =" + recalculatedTORA);
 
             //TODA
@@ -75,9 +87,15 @@ public class Calculations {
             addCalcStep("           = " + recalculatedASDA);
 
             //LDA
-            recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP_END - (obstacle.getHeight() * 50);
-            addCalcStep("LDA = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + STRIP_END + " - (" + obstacle.getHeight() + " * 50)");
-            addCalcStep("        = " + recalculatedLDA);
+            int slopeCalculationLDA = (obstacle.getHeight() * 50);
+            slopeCalculationLDA = Math.max(slopeCalculationLDA, RESA);
+            if ((slopeCalculationLDA + STRIP_END) <= BLAST_PROTECTION){
+                recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - BLAST_PROTECTION;
+                addCalcStep("LDA = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + BLAST_PROTECTION);
+            } else {
+                recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP_END - slopeCalculationLDA;
+                addCalcStep("LDA = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + STRIP_END + " - (" + obstacle.getHeight() + " * 50)");
+            }
         }
 
         System.out.println(getCalculationResults());

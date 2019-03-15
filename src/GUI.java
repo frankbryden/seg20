@@ -304,8 +304,15 @@ public class GUI extends Application {
                     runwayConfig = currentlySelectedRunway.getR2();
                 }
                 Calculations calculations = new Calculations(runwayConfig);
-                int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
-                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
+                int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
+                Calculations.Direction runwayDirection;
+                if (distanceFromThreshold < runwayConfig.getTORA()/2){
+                    runwayDirection = Calculations.Direction.AWAY;
+                } else {
+                    runwayDirection = Calculations.Direction.TOWARDS;
+                }
+                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
                 RunwayConfig recalculatedParams = results.getRecalculatedParams();
                 calculationDetails.setText(results.getCalculationDetails());
                 System.out.println(recalculatedParams.toString());
