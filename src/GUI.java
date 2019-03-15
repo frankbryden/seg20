@@ -51,7 +51,7 @@ public class GUI extends Application {
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
-    private Map<String, Obstacle> obstacles, predefinedObstacles;
+    private Map<String, Obstacle> userObstaclesSorted, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas;
@@ -77,8 +77,9 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
-        obstacles = new HashMap<>();
-        predefinedObstacles = new HashMap<>();
+        userObstaclesSorted = new TreeMap<>();
+        predefinedObstaclesSorted = new TreeMap<>();
+        allObstaclesSorted = new TreeMap<>();
 
         airportConfigs = new HashMap<>();
 
@@ -215,8 +216,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                for (String name : obstacles.keySet()){
-                    fileIO.write(obstacles.get(name), "obstacles.xml");
+                for (String name : userObstaclesSorted.keySet()){
+                    fileIO.write(userObstaclesSorted.get(name), "obstacles.xml");
                 }
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
                     System.out.println(name);
@@ -298,7 +299,9 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 //Get currently selected obstacle
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
-                Obstacle currentlySelectedObstacle = obstacles.get(obstacleName);
+                Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
+
+
                 int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
                 RunwayConfig runwayConfig;
@@ -832,9 +835,14 @@ public class GUI extends Application {
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(obstacles.keySet());
+
+        userDefinedObstaclesLV.getItems().addAll(userObstaclesSorted.keySet());
+
         obstacleSelect.getItems().clear();
-        obstacleSelect.getItems().addAll(obstacles.keySet());
+
+
+        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
+
     }
 
     private void populatePredefinedList() {
@@ -851,15 +859,11 @@ public class GUI extends Application {
         obstacles.add(new Obstacle("Telehandler", 12));
         obstacles.add(new Obstacle("Large A380", 25));
         for (Obstacle obstacle : obstacles){
-            predefinedObstacles.put(obstacle.getName(), obstacle);
+            predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
+            allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
-        Object[] names = predefinedObstacles.keySet().toArray();
-        Arrays.sort(names);
-        predefinedObstaclesLV.getItems().addAll(names);
-
-
-
-
+        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
+        obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
     }
 
     private Boolean validateObstaclesForm(){
@@ -898,7 +902,8 @@ public class GUI extends Application {
 
     public void addObstacle(String name, int height){
         Obstacle obstacle = new Obstacle(name, height);
-        this.obstacles.put(name, obstacle);
+        this.userObstaclesSorted.put(name, obstacle);
+        this.allObstaclesSorted.put(name, obstacle);
     }
 
 
