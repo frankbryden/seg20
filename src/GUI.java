@@ -195,7 +195,8 @@ public class GUI extends Application {
         deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
+                removeUserObstacle();
+                updateObstaclesList();
             }
         });
 
@@ -832,6 +833,22 @@ public class GUI extends Application {
         thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
     }
+
+    private void removeUserObstacle() {
+      //  String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
+     //   Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+        String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+        Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+        userDefinedObstaclesLV.getItems().remove(selectedObstacle);
+        obstacleSelect.getItems().remove(selectedObstacle);
+
+        userObstaclesSorted.remove(obstacleName);
+        allObstaclesSorted.remove(obstacleName);
+
+    }
+
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
