@@ -30,7 +30,7 @@ public class Calculations {
 
             // In the case of taking off towards from the obstacle / landing over it
             //TORA
-            int slopeCalculation = obstacle.getHeight() * 50;
+            int slopeCalculation = (int) (obstacle.getHeight() * 50);
             if (slopeCalculation <= RESA){
                 recalculatedTORA = distanceFromThreshold + originalConfig.getDisplacementThreshold() - RESA - STRIP_END;
                 addCalcStep("TORA = " + distanceFromThreshold + " + " + originalConfig.getDisplacementThreshold() + " - " + RESA + " - " +STRIP_END);
@@ -87,7 +87,7 @@ public class Calculations {
             addCalcStep("           = " + recalculatedASDA);
 
             //LDA
-            int slopeCalculationLDA = (obstacle.getHeight() * 50);
+            int slopeCalculationLDA = (int) (obstacle.getHeight() * 50);
             slopeCalculationLDA = Math.max(slopeCalculationLDA, RESA);
             if ((slopeCalculationLDA + STRIP_END) <= BLAST_PROTECTION){
                 recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - BLAST_PROTECTION;

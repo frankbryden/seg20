@@ -30,6 +30,7 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.lang.reflect.Array;
 import java.util.*;
 
 import javafx.scene.image.Image;
@@ -298,6 +299,7 @@ public class GUI extends Application {
                 //Get currently selected obstacle
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                 Obstacle currentlySelectedObstacle = obstacles.get(obstacleName);
+                int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
                 RunwayConfig runwayConfig;
                 if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
@@ -306,8 +308,8 @@ public class GUI extends Application {
                     runwayConfig = currentlySelectedRunway.getR2();
                 }
                 Calculations calculations = new Calculations(runwayConfig);
-                int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
-                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
+                int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
                 RunwayConfig recalculatedParams = results.getRecalculatedParams();
                 calculationDetails.setText(results.getCalculationDetails());
                 System.out.println(recalculatedParams.toString());
@@ -395,6 +397,8 @@ public class GUI extends Application {
 
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
+
+        populatePredefinedList();
 
         obstacleNameTxt = (TextField) primaryStage.getScene().lookup("#obstacleNameTxt");
         obstacleHeightTxt = (TextField) primaryStage.getScene().lookup("#obstacleHeightTxt");
@@ -834,10 +838,24 @@ public class GUI extends Application {
     }
 
     private void populatePredefinedList() {
-
-
-        predefinedObstacles.put("", new Obstacle("", ))
-        predefinedObstaclesLV.getItems().addAll(predefinedObstacles.keySet());
+        ArrayList<Obstacle> obstacles = new ArrayList<>();
+        obstacles.add(new Obstacle("Boeing 747", 19.4));
+        obstacles.add(new Obstacle("Boeing 767", 16.8));
+        obstacles.add(new Obstacle("Boeing 777", 18.5));
+        obstacles.add(new Obstacle("Boeing 787", 18.5));
+        obstacles.add(new Obstacle("A320", 11.8));
+        obstacles.add(new Obstacle("A330", 17.9));
+        obstacles.add(new Obstacle("A340", 17.1));
+        obstacles.add(new Obstacle("A350", 16.9));
+        obstacles.add(new Obstacle("A380", 24.1));
+        obstacles.add(new Obstacle("Telehandler", 12));
+        obstacles.add(new Obstacle("Large A380", 25));
+        for (Obstacle obstacle : obstacles){
+            predefinedObstacles.put(obstacle.getName(), obstacle);
+        }
+        Object[] names = predefinedObstacles.keySet().toArray();
+        Arrays.sort(names);
+        predefinedObstaclesLV.getItems().addAll(names);
 
 
 
