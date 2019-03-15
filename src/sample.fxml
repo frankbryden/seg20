@@ -19,18 +19,26 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="960.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
+      <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@styles/global.css">
          <children>
-            <TabPane fx:id="tabPane" layoutY="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="1024.0" prefWidth="1440.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="-1.0">
+            <GridPane layoutY="-2.0" prefHeight="42.0" prefWidth="1286.0" style="-fx-background-color: #1ec0ff;" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+            </GridPane>
+            <TabPane fx:id="tabPane" layoutX="3.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" prefWidth="1278.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="-1.0">
               <tabs>
                   <Tab text="File">
                     <content>
-                        <GridPane>
+                        <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="710.0" prefWidth="1024.0">
                            <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1385.0" minWidth="10.0" prefWidth="806.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="787.0" minWidth="10.0" prefWidth="634.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="1385.0" minWidth="10.0" prefWidth="701.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="787.0" minWidth="10.0" prefWidth="576.0" />
                            </columnConstraints>
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
@@ -38,9 +46,9 @@
                            <children>
                               <BorderPane prefHeight="988.0" prefWidth="806.0">
                                  <center>
-                                    <HBox fx:id="planePane" alignment="CENTER" prefHeight="932.0" prefWidth="768.0">
+                                    <HBox fx:id="planePane" alignment="CENTER" prefHeight="917.0" prefWidth="698.0">
                                        <children>
-                                          <ImageView id="plane" fx:id="planeImg" fitHeight="626.0" fitWidth="616.0" pickOnBounds="true" preserveRatio="true">
+                                          <ImageView id="plane" fx:id="planeImg" fitHeight="487.0" fitWidth="506.0" pickOnBounds="true" preserveRatio="true">
                                              <image>
                                                 <Image url="@rec/planeSm.png" />
                                              </image>
@@ -54,9 +62,9 @@
                                   <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                 </columnConstraints>
                                 <rowConstraints>
-                                  <RowConstraints maxHeight="429.0" minHeight="10.0" prefHeight="280.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="852.0" minHeight="10.0" prefHeight="395.0" vgrow="SOMETIMES" />
-                                  <RowConstraints maxHeight="425.0" minHeight="10.0" prefHeight="308.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="429.0" minHeight="10.0" prefHeight="216.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="852.0" minHeight="10.0" prefHeight="335.0" vgrow="SOMETIMES" />
+                                  <RowConstraints maxHeight="425.0" minHeight="10.0" prefHeight="184.0" vgrow="SOMETIMES" />
                                 </rowConstraints>
                                  <children>
                                     <GridPane prefHeight="370.0" prefWidth="634.0" GridPane.rowIndex="1">
@@ -65,13 +73,13 @@
                                       </columnConstraints>
                                       <rowConstraints>
                                         <RowConstraints maxHeight="404.0" minHeight="10.0" prefHeight="63.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="310.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="173.0" minHeight="0.0" prefHeight="67.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="174.0" minHeight="10.0" prefHeight="43.0" vgrow="SOMETIMES" />
-                                          <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="310.0" minHeight="10.0" prefHeight="57.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="173.0" minHeight="0.0" prefHeight="53.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="174.0" minHeight="10.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="124.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
+                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="276.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -79,7 +87,7 @@
                                           <Label prefHeight="73.0" prefWidth="258.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RUNWAY" />
                                           <Label prefHeight="73.0" prefWidth="510.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RE-DECLARATION" GridPane.rowIndex="1" />
                                           <Label styleClass="head-label" stylesheets="@styles/fileTab.css" text="TOOL" GridPane.rowIndex="2" />
-                                          <Line endX="410.5" startX="-100.0" strokeWidth="3.0" GridPane.rowIndex="3" />
+                                          <Line endX="296.5" startX="-100.0" strokeWidth="3.0" GridPane.rowIndex="3" />
                                        </children>
                                     </GridPane>
                                  </children>
@@ -90,26 +98,34 @@
                   </Tab>
                 <Tab text="Application">
                   <content>
-                        <BorderPane>
+                        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="898.0" prefWidth="1277.0">
                            <right>
-                              <AnchorPane prefHeight="983.0" prefWidth="665.0" BorderPane.alignment="CENTER">
+                              <AnchorPane minWidth="-Infinity" prefHeight="912.0" prefWidth="594.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <TabPane fx:id="miniTabPane" layoutY="-6.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="661.0" prefWidth="661.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                                    <GridPane layoutY="1.0" prefHeight="45.0" prefWidth="597.0" styleClass="myCol" stylesheets="@styles/global.css">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                    </GridPane>
+                                    <TabPane fx:id="miniTabPane" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="653.0" prefWidth="597.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
-                                        <Tab text="Airport">
+                                        <Tab style="-fx-background-color: #1f268d;" text="Airport">
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="659.0">
                                                    <children>
-                                                      <Button fx:id="addAirportBtn" layoutX="551.0" layoutY="14.0" mnemonicParsing="false" text="Add Airport" />
+                                                      <Button fx:id="addAirportBtn" layoutX="504.0" layoutY="38.0" mnemonicParsing="false" text="Add Airport" />
                                                    </children>
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                        <Tab text="Runway">
+                                        <Tab style="-fx-background-color: #1f268d;" text="Runway">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="354.0">
                                                    <children>
-                                                      <GridPane prefHeight="610.0" prefWidth="650.0">
+                                                      <GridPane prefHeight="610.0" prefWidth="584.0">
                                                         <columnConstraints>
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -135,41 +151,41 @@
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                          <Tab text="Obstacles">
+                                          <Tab style="-fx-background-color: #1f268d;" text="Obstacles">
                                              <content>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0">
+                                                <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0">
                                                    <children>
                                                       <Label layoutX="6.0" layoutY="20.0" prefHeight="22.0" prefWidth="333.0" text="Predefined Obstacles " />
-                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" prefHeight="227.0" prefWidth="650.0" />
+                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="227.0" prefWidth="584.0" />
                                                       <Label layoutX="6.0" layoutY="316.0" prefHeight="29.0" prefWidth="258.0" text="User Defined Obstacles" />
-                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="345.0" prefHeight="227.0" prefWidth="650.0" />
-                                                      <Button fx:id="saveObstaclesBtn" layoutX="618.0" layoutY="312.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="deleteObstacleBtn" layoutX="563.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="508.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="453.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="345.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="227.0" prefWidth="584.0" />
+                                                      <Button fx:id="saveObstaclesBtn" layoutX="534.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="deleteObstacleBtn" layoutX="489.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="editObstacleBtn" layoutX="445.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="popAddObstacleBtn" layoutX="399.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
                                           </Tab>
-                                          <Tab text="Calculations">
+                                          <Tab style="-fx-background-color: #1f268d;" text="Calculations">
                                              <content>
                                                 <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css" />
                                              </content>
                                           </Tab>
                                       </tabs>
                                     </TabPane>
-                                    <AnchorPane layoutX="1.0" layoutY="696.0" prefHeight="210.0" prefWidth="684.0" />
-                                    <Button layoutX="348.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="191.0" AnchorPane.rightAnchor="145.0" />
-                                    <Button layoutX="148.0" layoutY="742.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="191.0" AnchorPane.rightAnchor="345.0" />
-                                    <Button layoutX="148.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="133.0" AnchorPane.rightAnchor="345.0" />
-                                    <Button layoutX="348.0" layoutY="800.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="133.0" AnchorPane.rightAnchor="145.0" />
+                                    <AnchorPane layoutX="1.0" layoutY="621.0" prefHeight="297.0" prefWidth="594.0" />
+                                    <Button layoutX="295.0" layoutY="706.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="162.0" AnchorPane.rightAnchor="107.0" />
+                                    <Button layoutX="95.0" layoutY="706.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="162.0" AnchorPane.rightAnchor="307.0" />
+                                    <Button layoutX="95.0" layoutY="764.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="104.0" AnchorPane.rightAnchor="307.0" />
+                                    <Button layoutX="295.0" layoutY="764.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="192.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="104.0" AnchorPane.rightAnchor="107.0" />
                                  </children>
                               </AnchorPane>
                            </right>
                            <center>
-                              <BorderPane fx:id="canvasBorderPane" BorderPane.alignment="CENTER">
+                              <BorderPane fx:id="canvasBorderPane" prefHeight="917.0" prefWidth="712.0" BorderPane.alignment="CENTER">
                                  <top>
-                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="45.0" prefWidth="779.0" BorderPane.alignment="CENTER">
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="47.0" prefWidth="683.0" BorderPane.alignment="CENTER">
                                        <children>
                                           <Label layoutX="9.0" layoutY="14.0" prefHeight="23.0" prefWidth="96.0" text="Airports" />
                                           <ChoiceBox fx:id="airportSelect" layoutX="108.0" layoutY="9.0" prefHeight="35.0" prefWidth="235.0" />
@@ -179,7 +195,17 @@
                                     </AnchorPane>
                                  </top>
                                  <center>
-                                    <Canvas fx:id="canvas" height="938.0" width="779.0" BorderPane.alignment="CENTER" />
+                                    <GridPane prefHeight="872.0" prefWidth="662.0" BorderPane.alignment="CENTER">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Canvas fx:id="canvas" height="873.0" width="687.0" />
+                                       </children>
+                                    </GridPane>
                                  </center>
                               </BorderPane>
                            </center>
@@ -201,6 +227,11 @@
                         </AnchorPane>
                   </content>
                 </Tab>
+                  <Tab text="Help">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                     </content>
+                  </Tab>
               </tabs>
                <opaqueInsets>
                   <Insets />

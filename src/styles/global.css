@@ -13,8 +13,8 @@
 }
 
 .tab-pane .mini-tabs {
-    -fx-tab-min-width: 145px;
-    -fx-tab-min-height: 40px;
+    -fx-tab-min-width: 133px;
+    -fx-tab-min-height: 30px;
 }
 
 .label {
@@ -41,9 +41,9 @@
     -fx-background-color: #1ec0ff;
 }
 
-.tab-pane .tab:focused {
+/*.tab-pane .tab:focused {
     -fx-background-color: #1cade6;
-}
+}*/
 
 .tab .tab-label {
     -fx-alignment: CENTER;
@@ -79,3 +79,6 @@
     -fx-background-color: #2e343c;
 }
 
+.myCol{
+    -fx-background-color: #1f268d;
+}
