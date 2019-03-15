@@ -152,7 +152,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 System.out.println("Add obstacle");
                 if (validateObstaclesForm()){
-                    addObstacle(obstacleNameTxt.getText(), Integer.parseInt(obstacleHeightTxt.getText()));
+                    addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
                     updateObstaclesList();
                 }
             }
@@ -609,9 +609,9 @@ public class GUI extends Application {
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (validateIntForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))){
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))){
                     System.out.println("Add obstacle");
-                    addObstacle(nameTF.getText(), Integer.parseInt(heightTF.getText()));
+                    addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
                     nameTF.clear();
                     heightTF.clear();
                     updateObstaclesList();
@@ -835,8 +835,6 @@ public class GUI extends Application {
     }
 
     private void removeUserObstacle() {
-      //  String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
-     //   Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
         String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
         Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
@@ -852,14 +850,9 @@ public class GUI extends Application {
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
-
         userDefinedObstaclesLV.getItems().addAll(userObstaclesSorted.keySet());
-
         obstacleSelect.getItems().clear();
-
-
         obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
-
     }
 
     private void populatePredefinedList() {
@@ -883,16 +876,35 @@ public class GUI extends Application {
         obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
     }
 
+
     private Boolean validateObstaclesForm(){
+
         if (obstacleNameTxt.getText().length() < 1){
             return false;
         }
 
         try {
-            Integer.parseInt(obstacleHeightTxt.getText());
+            Double.parseDouble(obstacleHeightTxt.getText());
         } catch (NumberFormatException e){
             e.printStackTrace();
             return false;
+        }
+
+
+
+        return true;
+    }
+
+    private Boolean validateDoubleForm(ArrayList<String> doubleVals){
+        for (String s : doubleVals){
+            try {
+                Double.parseDouble(s);
+            } catch (NumberFormatException e){
+                return false;
+            }
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 30) {
+                return false;
+            }
         }
         return true;
     }
@@ -917,7 +929,7 @@ public class GUI extends Application {
         return true;
     }
 
-    public void addObstacle(String name, int height){
+    public void addObstacle(String name, double height){
         Obstacle obstacle = new Obstacle(name, height);
         this.userObstaclesSorted.put(name, obstacle);
         this.allObstaclesSorted.put(name, obstacle);
