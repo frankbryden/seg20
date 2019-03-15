@@ -50,7 +50,7 @@ public class GUI extends Application {
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
-    private Map<String, Obstacle> obstacles;
+    private Map<String, Obstacle> obstacles, predefinedObstacles;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas;
@@ -77,6 +77,7 @@ public class GUI extends Application {
 
         fileIO = new FileIO();
         obstacles = new HashMap<>();
+        predefinedObstacles = new HashMap<>();
 
         airportConfigs = new HashMap<>();
 
@@ -305,15 +306,8 @@ public class GUI extends Application {
                     runwayConfig = currentlySelectedRunway.getR2();
                 }
                 Calculations calculations = new Calculations(runwayConfig);
-                int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
-                int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
-                Calculations.Direction runwayDirection;
-                if (distanceFromThreshold < runwayConfig.getTORA()/2){
-                    runwayDirection = Calculations.Direction.AWAY;
-                } else {
-                    runwayDirection = Calculations.Direction.TOWARDS;
-                }
-                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
+                int obstacleDistance = Integer.valueOf(distanceFromThresholdTF.getText());
+                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, obstacleDistance, Calculations.Direction.AWAY);
                 RunwayConfig recalculatedParams = results.getRecalculatedParams();
                 calculationDetails.setText(results.getCalculationDetails());
                 System.out.println(recalculatedParams.toString());
@@ -837,6 +831,17 @@ public class GUI extends Application {
         userDefinedObstaclesLV.getItems().addAll(obstacles.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(obstacles.keySet());
+    }
+
+    private void populatePredefinedList() {
+
+
+        predefinedObstacles.put("", new Obstacle("", ))
+        predefinedObstaclesLV.getItems().addAll(predefinedObstacles.keySet());
+
+
+
+
     }
 
     private Boolean validateObstaclesForm(){
