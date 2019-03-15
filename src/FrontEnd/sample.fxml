@@ -19,7 +19,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="FrontEnd.MainController">
     <center>
         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
             <children>
@@ -71,7 +71,7 @@
                                                         <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
                                                     </rowConstraints>
                                                     <children>
-                                                        <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
+                                                        <Button id="loadAirportBtn" mnemonicParsing="false" onAction="#loadAirportOnMouseClicked" prefHeight="81.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
                                                             <font>
                                                                 <Font size="24.0" />
                                                             </font>
