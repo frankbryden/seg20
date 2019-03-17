@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -68,7 +69,7 @@ public class GUI extends Application {
         // getClass().getResource("sample.fxml") gives me a null pointer exception - caused by the way the IDE loads the resource files
         // temporary fix for now
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
-        primaryStage.setTitle("Redeclaration Tool");
+        primaryStage.setTitle("Runway Redeclaration Tool");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
@@ -174,7 +175,6 @@ public class GUI extends Application {
             }
         });
 
-
         editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
         ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/edit.png")));
         editObstacleImgView.setFitWidth(15); editObstacleImgView.setFitHeight(15);
@@ -183,6 +183,10 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+
+
+
+
 
             }
         });
@@ -212,6 +216,7 @@ public class GUI extends Application {
             }
         });
 
+        //HERE - slight problem when saving and deleting so may need to clear file contents before saving again?
         saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -223,6 +228,7 @@ public class GUI extends Application {
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
                     System.out.println(name);
                 });*/
+
             }
         });
 
@@ -248,6 +254,7 @@ public class GUI extends Application {
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
+        //HERE - change number of visible rows of the entire obstacle list but setVisibleRowCount is failing -_-
         obstacleSelect = new ChoiceBox();
         obstacleSelect.setId("obstacleChoiceBox");
         thresholdSelect = new ChoiceBox();
@@ -401,6 +408,108 @@ public class GUI extends Application {
 
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
+
+        //HERE - put code in a method!!!
+        predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+                                       @Override
+                                       public void handle(MouseEvent click) {
+
+                                           if (click.getClickCount() == 2) {
+
+                                               String obstacleName = predefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+                                               Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+                                               Popup detailsPopUp = new Popup();
+
+                                               VBox box = new VBox(100);
+                                               box.getStyleClass().add("popup");
+                                               box.getStylesheets().add("styles/layoutStyles.css");
+
+                                               VBox subBox = new VBox(100);
+
+                                               Label detailsLabel = new Label ("Overview of obstacle details");
+                                               Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
+                                               Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
+                                               Button returnButton = new Button("Go back");
+                                               returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                                                   @Override
+                                                   public void handle(MouseEvent event) {
+                                                       detailsPopUp.hide();
+                                                   }
+                                               });
+
+                                               subBox.setAlignment(Pos.CENTER);
+                                               subBox.getChildren().add(returnButton);
+                                               box.getChildren().add(detailsLabel);
+                                               box.getChildren().add(nameLabel);
+                                               box.getChildren().add(heightLabel);
+                                               box.getChildren().add(subBox);
+
+
+                                               detailsPopUp.getContent().add(box);
+
+                                               Node eventSource = (Node) click.getSource();
+                                               Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
+                                               detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
+                                               detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
+
+                                               detailsPopUp.show(primaryStage);
+
+                                           }
+                                       }
+                                   });
+
+        userDefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+            @Override
+            public void handle(MouseEvent click) {
+
+                if (click.getClickCount() == 2) {
+
+                    String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+                    Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+                    Popup detailsPopUp = new Popup();
+
+                    VBox box = new VBox(100);
+                    box.getStyleClass().add("popup");
+                    box.getStylesheets().add("styles/layoutStyles.css");
+
+                    VBox subBox = new VBox(100);
+
+                    Label detailsLabel = new Label ("Overview of obstacle details");
+                    Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
+                    Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
+                    Button returnButton = new Button("Go back");
+                    returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                        @Override
+                        public void handle(MouseEvent event) {
+                            detailsPopUp.hide();
+                        }
+                    });
+
+                    subBox.setAlignment(Pos.CENTER);
+                    subBox.getChildren().add(returnButton);
+                    box.getChildren().add(detailsLabel);
+                    box.getChildren().add(nameLabel);
+                    box.getChildren().add(heightLabel);
+                    box.getChildren().add(subBox);
+
+
+                    detailsPopUp.getContent().add(box);
+
+                    Node eventSource = (Node) click.getSource();
+                    Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
+                    detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
+                    detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
+
+                    detailsPopUp.show(primaryStage);
+
+                }
+            }
+        });
+
 
         populatePredefinedList();
 
@@ -560,6 +669,8 @@ public class GUI extends Application {
         }
     }
 
+
+
     public Popup createAddObstaclePopup(){
         Popup popup = new Popup();
 
@@ -575,10 +686,13 @@ public class GUI extends Application {
         Button addObstacleBtn, cancelBtn;
 
         nameLbl = new Label("Name");
-        heightLbl = new Label("Height");
+        heightLbl = new Label("Height (m)");
+
 
         nameTF = new TextField();
+        nameTF.setPromptText("Enter obstacle name");
         heightTF = new TextField();
+        heightTF.setPromptText("Enter obstacle height");
 
         addObstacleBtn = new Button("Add");
         cancelBtn = new Button("Cancel");
@@ -635,6 +749,7 @@ public class GUI extends Application {
 
         return popup;
     }
+
 
     public Stage createAddAirportPopup(Stage primaryStage){
         Stage stage = new Stage();
@@ -836,6 +951,14 @@ public class GUI extends Application {
 
     private void removeUserObstacle() {
 
+        if (userDefinedObstaclesLV.getItems().isEmpty()) {
+            System.out.println("No obstacles to remove");
+        }
+        else {
+
+        }
+
+
         String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
         Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
@@ -861,18 +984,20 @@ public class GUI extends Application {
         obstacles.add(new Obstacle("Boeing 767", 16.8));
         obstacles.add(new Obstacle("Boeing 777", 18.5));
         obstacles.add(new Obstacle("Boeing 787", 18.5));
-        obstacles.add(new Obstacle("A320", 11.8));
-        obstacles.add(new Obstacle("A330", 17.9));
-        obstacles.add(new Obstacle("A340", 17.1));
-        obstacles.add(new Obstacle("A350", 16.9));
-        obstacles.add(new Obstacle("A380", 24.1));
-        obstacles.add(new Obstacle("Telehandler", 12));
-        obstacles.add(new Obstacle("Large A380", 25));
+        obstacles.add(new Obstacle("Airbus A320", 11.8));
+        obstacles.add(new Obstacle("Airbus A330", 17.9));
+        obstacles.add(new Obstacle("Airbus A340", 17.1));
+        obstacles.add(new Obstacle("Airbus A350", 16.9));
+        obstacles.add(new Obstacle("Airbus A380", 24.1));
+        obstacles.add(new Obstacle("Telescopic handler", 12));
+
         for (Obstacle obstacle : obstacles){
             predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
             allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
+
         predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
+
         obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
     }
 

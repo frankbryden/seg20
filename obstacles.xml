@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><Application>
     <Obstacle>
-        <name>Claudiou</name>
-        <height>213</height>
+        <name>Rock</name>
+        <height>20.0</height>
     </Obstacle>
 </Application>
