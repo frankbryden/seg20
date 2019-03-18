@@ -59,11 +59,9 @@ public class RunwayRenderer {
         Rectangle runwayRect = new Rectangle(60, runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() - 120, 7);
         Rectangle clearAreaLeft = new Rectangle(0, runwayRenderParams.getCenterLineY(), 60, 7);
         Rectangle clearAreaRight = new Rectangle(graphicsContext.getCanvas().getWidth() - 60 , runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() , 7);
-        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
         drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
         drawRect(this.graphicsContext, clearAreaRight, Color.RED );
-
-        this.graphicsContext.setStroke(Color.BLACK);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
 
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
