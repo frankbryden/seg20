@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><Application>
     <Obstacle>
+        <name>Boulder</name>
+        <height>20.0</height>
+    </Obstacle>
+    <Obstacle>
         <name>Rock</name>
+        <height>10.0</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Boulder</name>
         <height>20.0</height>
     </Obstacle>
 </Application>

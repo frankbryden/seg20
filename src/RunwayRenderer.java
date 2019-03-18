@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RunwayRenderer {
@@ -28,6 +29,64 @@ public class RunwayRenderer {
         this.runwayRenderParams = new RunwayRenderParams();
         this.initParams();
         this.runwayRenderParams.init();
+    }
+
+
+    public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext, Boolean isSideView){
+
+        this.runwayPair = runwayPair;
+        this.graphicsContext = graphicsContext;
+        this.runwayRenderParams = new RunwayRenderParams();
+        this.initParams();
+        this.initSideViewParams();
+    }
+
+    private void initSideViewParams() {
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+    }
+
+    public void renderSideview(){
+
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+        graphicsContext.setFill(Color.OLDLACE);
+        graphicsContext.fillRect(0, 0, maxWidth, maxHeight);
+        Rectangle runwayRect = new Rectangle(60, runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() - 120, 7);
+        Rectangle clearAreaLeft = new Rectangle(0, runwayRenderParams.getCenterLineY(), 60, 7);
+        Rectangle clearAreaRight = new Rectangle(graphicsContext.getCanvas().getWidth() - 60 , runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() , 7);
+        drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
+        drawRect(this.graphicsContext, clearAreaRight, Color.RED );
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+
+        //And the labels identifying the runway params
+        for (Pair<Line, String> line : labelLines){
+            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+            renderParamLine(line);
+        }
+
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , runwayRenderParams.getCenterLineY() + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , runwayRenderParams.getCenterLineY() + 20);
+    }
+
+    public void drawObstacle(Integer height, Integer pozx, String tresholdName){
+        
+        double positionOnRunway = 0;
+        String runwayName = runwayPair.getR2().getRunwayDesignator().getDirection();
+
+        System.out.println(runwayName + " "  +tresholdName);
+        if(tresholdName.equals(runwayName))
+            positionOnRunway = pozx;
+        else {
+            positionOnRunway = this.graphicsContext.getCanvas().getWidth() - pozx;
+        }
+
+        Rectangle runwayRect = new Rectangle(positionOnRunway, runwayRenderParams.getCenterLineY() - 10,10 , height);
+        drawRect(this.graphicsContext, runwayRect, Color.RED);
     }
 
     public void initParams(){
@@ -63,6 +122,11 @@ public class RunwayRenderer {
         this.runwayRenderParams.setDashOff(25);
         this.runwayRenderParams.setDashHeight(5);
 
+
+        //Labels and lines to indicate runway params
+        Line toraLine, todaLine, asdaLine, ldaLine;
+        //toraLine = new Line(runwayRenderParams.getR);
+
         //Label params
         this.runwayRenderParams.setLabelFontSize(18);
         this.runwayRenderParams.setLabelTextMargin(10);
@@ -70,6 +134,7 @@ public class RunwayRenderer {
 
         labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
         labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
+
     }
 
     public void render(){
@@ -126,6 +191,7 @@ public class RunwayRenderer {
 
     public void renderParamLine(Pair<Line, String> labelLine){
         Line line = labelLine.getKey();
+
         this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
         this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
         this.graphicsContext.stroke();

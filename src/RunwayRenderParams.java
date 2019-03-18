@@ -33,6 +33,32 @@ public class RunwayRenderParams {
     private int dashCount;
     private int dashShift;
 
+/*
+    //Sideview parameters
+
+    //TODA-L
+    private int startLeftToda;
+    private int endLeftToda;
+    //TODA-R
+    private int startRigtToda;
+    private int endRightToda;
+
+    //ASDA-L
+    private int startLeftAsda;
+    private int endLeftAsda;
+    //ASDA-R
+    private int startRigtAsda;
+    private int endRightAsda;
+
+    //TORA-L
+    private int startLeftTora;
+    private int endLeftTora;
+    //TORA-R
+    private int startRigtTora;
+    private int endRightTora;
+
+    */
+
     //Labels
     private int labelFontSize;
     //labelTextMargin : margin before and after the text, where the lines meet the text
@@ -83,6 +109,7 @@ public class RunwayRenderParams {
         }
 
     }
+
 
     public int getCenterLineY() {
         return centerLineY;
@@ -247,4 +274,6 @@ public class RunwayRenderParams {
     public int getDashShift() {
         return dashShift;
     }
+
+
 }
