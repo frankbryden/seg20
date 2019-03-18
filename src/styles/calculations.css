@@ -4,20 +4,40 @@
     -fx-text-fill: #4a5366;
 }
 
-#thresholdChoiceBox {
-    -fx-pref-width: 75px;
+#thresholdComboBox {
+    -fx-pref-width: 200px;
     -fx-pref-height: 35px;
+    -fx-text-alignment: center;
+    -fx-font-size: 18px;
 }
+
+
+
 
 .choice-box .label{
     -fx-padding: 0 0 0 0;
     -fx-font-size: 14px;
 }
 
-#obstacleChoiceBox{
+#obstacleComboBox{
     -fx-pref-width: 200px;
     -fx-pref-height: 35px;
     -fx-text-alignment: center;
+    -fx-font-size: 18px;
+}
+
+#airportComboBox{
+    -fx-pref-width: 200px;
+    -fx-pref-height: 35px;
+    -fx-text-alignment: center;
+    -fx-font-size: 18px;
+}
+
+#runwayComboBox{
+    -fx-pref-width: 200px;
+    -fx-pref-height: 35px;
+    -fx-text-alignment: center;
+    -fx-font-size: 18px;
 }
 
 .text-field{

@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.ComboBoxListCell;
 import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -42,7 +43,7 @@ public class GUI extends Application {
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ChoiceBox runwaySelect, airportSelect, obstacleSelect, thresholdSelect, addRunwayAirportSelect;
+    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
@@ -62,6 +63,7 @@ public class GUI extends Application {
     private RunwayRenderer runwayRenderer;
     private RunwayRenderer runwayRendererSideView;
     private BorderPane canvasBorderPane;
+    private ComboBox obstacleSelect;
 
 
 
@@ -113,7 +115,9 @@ public class GUI extends Application {
             }
         });
 
-        runwaySelect = (ChoiceBox) primaryStage.getScene().lookup("#runwaySelect");
+        runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
+        runwaySelect.setId("runwayComboBox");
+        formatComboBox(runwaySelect);
         runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -137,7 +141,10 @@ public class GUI extends Application {
             }
         });
 
-        airportSelect = (ChoiceBox) primaryStage.getScene().lookup("#airportSelect");
+
+        airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
+        airportSelect.setId("airportComboBox");
+        formatComboBox(airportSelect);
         airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -258,11 +265,18 @@ public class GUI extends Application {
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
-        //HERE - change number of visible rows of the entire obstacle list but setVisibleRowCount is failing -_-
-        obstacleSelect = new ChoiceBox();
-        obstacleSelect.setId("obstacleChoiceBox");
-        thresholdSelect = new ChoiceBox();
-        thresholdSelect.setId("thresholdChoiceBox");
+        obstacleSelect = new ComboBox();
+
+        formatComboBox(obstacleSelect);
+
+        obstacleSelect.setVisibleRowCount(10);
+        obstacleSelect.setId("obstacleComboBox");
+        thresholdSelect = new ComboBox();
+
+        formatComboBox(thresholdSelect);
+
+        thresholdSelect.setVisibleRowCount(5);
+        thresholdSelect.setId("thresholdComboBox");
         centrelineDistanceLbl = new Label("Distance from runway centreline (m)");
         runwayThresholdLbl = new Label("Distance from runway threshold (m)");
         obstacleSelectLbl = new Label("Select obstacle");
@@ -418,7 +432,6 @@ public class GUI extends Application {
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
 
-        //HERE - put code in a method!!!
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
                                        @Override
@@ -426,45 +439,7 @@ public class GUI extends Application {
 
                                            if (click.getClickCount() == 2) {
 
-                                               String obstacleName = predefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
-                                               Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
-
-                                               Popup detailsPopUp = new Popup();
-
-                                               VBox box = new VBox(100);
-                                               box.getStyleClass().add("popup");
-                                               box.getStylesheets().add("styles/layoutStyles.css");
-
-                                               VBox subBox = new VBox(100);
-
-                                               Label detailsLabel = new Label ("Overview of obstacle details");
-                                               Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
-                                               Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
-                                               Button returnButton = new Button("Go back");
-                                               returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                                                   @Override
-                                                   public void handle(MouseEvent event) {
-                                                       detailsPopUp.hide();
-                                                   }
-                                               });
-
-                                               subBox.setAlignment(Pos.CENTER);
-                                               subBox.getChildren().add(returnButton);
-                                               box.getChildren().add(detailsLabel);
-                                               box.getChildren().add(nameLabel);
-                                               box.getChildren().add(heightLabel);
-                                               box.getChildren().add(subBox);
-
-
-                                               detailsPopUp.getContent().add(box);
-
-                                               Node eventSource = (Node) click.getSource();
-                                               Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-                                               detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
-                                               detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
-
-                                               detailsPopUp.show(primaryStage);
-
+                                               showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
                                            }
                                        }
                                    });
@@ -474,46 +449,9 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent click) {
 
-                if (click.getClickCount() == 2) {
+                if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
 
-                    String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
-                    Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
-
-                    Popup detailsPopUp = new Popup();
-
-                    VBox box = new VBox(100);
-                    box.getStyleClass().add("popup");
-                    box.getStylesheets().add("styles/layoutStyles.css");
-
-                    VBox subBox = new VBox(100);
-
-                    Label detailsLabel = new Label ("Overview of obstacle details");
-                    Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
-                    Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
-                    Button returnButton = new Button("Go back");
-                    returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-                        @Override
-                        public void handle(MouseEvent event) {
-                            detailsPopUp.hide();
-                        }
-                    });
-
-                    subBox.setAlignment(Pos.CENTER);
-                    subBox.getChildren().add(returnButton);
-                    box.getChildren().add(detailsLabel);
-                    box.getChildren().add(nameLabel);
-                    box.getChildren().add(heightLabel);
-                    box.getChildren().add(subBox);
-
-
-                    detailsPopUp.getContent().add(box);
-
-                    Node eventSource = (Node) click.getSource();
-                    Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-                    detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
-                    detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
-
-                    detailsPopUp.show(primaryStage);
+                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage);
 
                 }
             }
@@ -759,6 +697,48 @@ public class GUI extends Application {
         return popup;
     }
 
+    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage) {
+
+        String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
+        Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+        Popup detailsPopUp = new Popup();
+
+        VBox box = new VBox(100);
+        box.getStyleClass().add("popup");
+        box.getStylesheets().add("styles/layoutStyles.css");
+
+        VBox subBox = new VBox(100);
+
+        Label detailsLabel = new Label ("Overview of obstacle details");
+        Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
+        Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
+        Button returnButton = new Button("Go back");
+        returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                detailsPopUp.hide();
+            }
+        });
+
+        subBox.setAlignment(Pos.CENTER);
+        subBox.getChildren().add(returnButton);
+        box.getChildren().add(detailsLabel);
+        box.getChildren().add(nameLabel);
+        box.getChildren().add(heightLabel);
+        box.getChildren().add(subBox);
+
+
+        detailsPopUp.getContent().add(box);
+
+        Node eventSource = (Node) event.getSource();
+        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
+        detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
+        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
+
+        detailsPopUp.show(primaryStage);
+
+    }
 
     public Stage createAddAirportPopup(Stage primaryStage){
         Stage stage = new Stage();
@@ -782,6 +762,8 @@ public class GUI extends Application {
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
+
+
         gridPane.add(airportNameLbl, 0, 0);
         gridPane.add(airportName, 1, 0);
         gridPane.add(airportCodeLbl, 0, 1);
@@ -819,11 +801,13 @@ public class GUI extends Application {
         return stage;
     }
 
+
     public Stage createAddRunwayPopup(Stage primaryStage){
         Stage stage = new Stage();
         stage.setTitle("Add Runway");
 
         //Components for the popups
+        Label selectAirportLbl = new Label("Select airport");
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
         TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2, displacementThresholdTF2;
@@ -834,7 +818,10 @@ public class GUI extends Application {
         asdaLbl = new Label("ASDA");
         ldaLbl = new Label("LDA");
         displacementThresholdLbl = new Label("Displacement Threshold");
-        addRunwayAirportSelect = new ChoiceBox();
+        addRunwayAirportSelect = new ComboBox();
+        formatComboBox(addRunwayAirportSelect);
+        addRunwayAirportSelect.setId("runwayComboBox");
+        addRunwayAirportSelect.setVisibleRowCount(10);
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
@@ -882,8 +869,20 @@ public class GUI extends Application {
 
         gridPane.add(hbox, 3, 6);
 
+
+        HBox airportSelection = new HBox(30);
+        airportSelection.setPadding(new Insets(10, 12, 15, 15));
+        airportSelection.getChildren().add(selectAirportLbl);
+        airportSelection.getChildren().add(addRunwayAirportSelect);
+
+
         VBox addRunwayRoot = new VBox(20);
-        addRunwayRoot.getChildren().add(addRunwayAirportSelect);
+
+
+        addRunwayRoot.getStyleClass().add("addRunwayAirportSelection");
+        addRunwayRoot.getStylesheets().add("styles/layoutStyles.css");
+
+        addRunwayRoot.getChildren().add(airportSelection);
         addRunwayRoot.getChildren().add(gridPane);
         Scene scene = new Scene(addRunwayRoot);
 
@@ -916,6 +915,8 @@ public class GUI extends Application {
         });
 
         stage.setScene(scene);
+        stage.setWidth(900);
+        stage.setHeight(500);
         return stage;
     }
 
@@ -923,6 +924,25 @@ public class GUI extends Application {
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
     }
+
+    private void formatComboBox(ComboBox boxToFormat) {
+        boxToFormat.setCellFactory(param -> new ComboBoxListCell<String>() {{
+            setTextFill(Color.BLACK);
+
+            Background whiteBackground = new Background(new BackgroundFill(Color.WHITE, null, null));
+            Background blueBackground = new Background(new BackgroundFill(Color.web("#1ec0ff"), null, null));
+
+            setBackground(whiteBackground);
+            setOnMouseEntered(event -> {
+                setBackground(blueBackground);
+            });
+            setOnMouseExited(event -> {
+                setBackground(whiteBackground);
+            });
+        }});
+
+    }
+
 
     private void switchCalculationsTabToView(){
         calculationsPane.getChildren().remove(calculationsRootBox);
@@ -964,18 +984,19 @@ public class GUI extends Application {
             System.out.println("No obstacles to remove");
         }
         else {
+            String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+            Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
+            userDefinedObstaclesLV.getItems().remove(selectedObstacle);
+            obstacleSelect.getItems().remove(selectedObstacle);
+
+            userObstaclesSorted.remove(obstacleName);
+            allObstaclesSorted.remove(obstacleName);
 
         }
 
 
-        String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
-        Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
-        userDefinedObstaclesLV.getItems().remove(selectedObstacle);
-        obstacleSelect.getItems().remove(selectedObstacle);
-
-        userObstaclesSorted.remove(obstacleName);
-        allObstaclesSorted.remove(obstacleName);
 
     }
 
@@ -1008,6 +1029,8 @@ public class GUI extends Application {
         predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
 
         obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
+
+
     }
 
 
