@@ -1,5 +1,6 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -30,6 +31,7 @@ public class RunwayRenderer {
 
         //Layout properties
         this.runwayRenderParams.setMargin((int) (0.01*maxWidth));
+        this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
         this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getMargin());
@@ -52,6 +54,10 @@ public class RunwayRenderer {
         this.runwayRenderParams.setDashOn(40);
         this.runwayRenderParams.setDashOff(25);
         this.runwayRenderParams.setDashHeight(5);
+
+        //Labels and lines to indicate runway params
+        Line toraLine, todaLine, asdaLine, ldaLine;
+        toraLine = new Line(runwayRenderParams.getR)
     }
 
     public void render(){
