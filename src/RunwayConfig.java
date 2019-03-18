@@ -55,10 +55,24 @@ public class RunwayConfig {
         asdaY = getLabelYShift(runwayRenderParams, direction, 2);
         ldaY = getLabelYShift(runwayRenderParams, direction, 3);
 
-        toraLine = new Line(runwayRenderParams.getRunwayStartX(), toraY, getNormalisedTORA(this.TORA) * runwayRenderParams.getRunwayLength(), toraY);
-        todaLine = new Line(runwayRenderParams.getRunwayStartX(), todaY, getNormalisedTODA(this.TORA) * runwayRenderParams.getRunwayLength(), todaY);
-        asdaLine = new Line(runwayRenderParams.getRunwayStartX(), asdaY, getNormalisedASDA(this.TORA) * runwayRenderParams.getRunwayLength(), asdaY);
-        ldaLine = new Line(runwayRenderParams.getRunwayStartX() + getNormalisedDisplacementThreshold(this.TORA), ldaY, getNormalisedLDA(this.TORA) * runwayRenderParams.getRunwayLength(), ldaY);
+        int p1 = runwayRenderParams.getRunwayStartX();
+        int lineEndBottom = p1 + runwayRenderParams.getRunwayLength();
+        double p2Tora = getNormalisedTORA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Toda = getNormalisedTODA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Asda = getNormalisedASDA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Lda = getNormalisedLDA(this.TORA)*runwayRenderParams.getRunwayLength();
+
+        if (direction == RunwayRenderer.LabelRunwayDirection.UP){
+            toraLine = new Line(p1, toraY, p2Tora, toraY);
+            todaLine = new Line(p1, todaY, p2Toda, todaY);
+            asdaLine = new Line(p1, asdaY, p2Asda, asdaY);
+            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(this.TORA), ldaY, p2Lda, ldaY);
+        } else {
+            toraLine = new Line(lineEndBottom - p2Tora, toraY, lineEndBottom, toraY);
+            todaLine = new Line(lineEndBottom - p2Toda, todaY, lineEndBottom, todaY);
+            asdaLine = new Line(lineEndBottom - p2Asda, asdaY, lineEndBottom, asdaY);
+            ldaLine = new Line(lineEndBottom - p2Lda, ldaY, lineEndBottom, ldaY);
+        }
 
         ArrayList<Pair<Line, String>> lines = new ArrayList<>();
         lines.add(new Pair<>(toraLine, "TORA"));

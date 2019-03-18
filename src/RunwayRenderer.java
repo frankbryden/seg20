@@ -36,13 +36,15 @@ public class RunwayRenderer {
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
 
         //Layout properties
-        this.runwayRenderParams.setMargin((int) (0.01*maxWidth));
+        this.runwayRenderParams.setMargin((int) (0.1*maxWidth));
         this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
-        this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getMargin());
+        this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
         this.runwayRenderParams.setCenterLineY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
+        System.out.println("Max width : "  + maxWidth);
+        System.out.println("Runway length : " + runwayRenderParams.getRunwayLength());
 
         //Zebra margin : margin on either side of each zebra crossing
         this.runwayRenderParams.setZebraMarginInner(5);
