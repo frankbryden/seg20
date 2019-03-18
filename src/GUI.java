@@ -129,7 +129,6 @@ public class GUI extends Application {
                         runwayRenderer.render();
                         //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
 
-
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
                         break;
@@ -314,7 +313,6 @@ public class GUI extends Application {
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                 Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
-
                 int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
                 RunwayConfig runwayConfig;
@@ -332,7 +330,7 @@ public class GUI extends Application {
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
 
-
+                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName);
 
             }
         });

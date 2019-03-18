@@ -7,6 +7,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RunwayRenderer {
@@ -54,10 +55,31 @@ public class RunwayRenderer {
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
 
         graphicsContext.setFill(Color.OLDLACE);
-        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        graphicsContext.fillRect(0, 0, maxWidth, maxHeight);
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), 5);
         drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
 
+        //And the labels identifying the runway params
+        for (Pair<Line, String> line : labelLines){
+            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+            renderParamLine(line);
+        }
+    }
+
+    public void drawObstacle(Integer height, Integer pozx, String tresholdName){
+        
+        double positionOnRunway = 0;
+        String runwayName = runwayPair.getR2().getRunwayDesignator().getDirection();
+
+        System.out.println(runwayName + " "  +tresholdName);
+        if(tresholdName.equals(runwayName))
+            positionOnRunway = 0;
+        else {
+            positionOnRunway = this.graphicsContext.getCanvas().getWidth();
+        }
+
+        Rectangle runwayRect = new Rectangle(0 + pozx, runwayRenderParams.getCenterLineY(),7 , height);
+        drawRect(this.graphicsContext, runwayRect, Color.RED);
     }
 
     public void initParams(){
@@ -159,6 +181,7 @@ public class RunwayRenderer {
 
     public void renderParamLine(Pair<Line, String> labelLine){
         Line line = labelLine.getKey();
+
         this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
         this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
         this.graphicsContext.stroke();
