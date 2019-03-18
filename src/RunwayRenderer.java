@@ -64,6 +64,9 @@ public class RunwayRenderer {
             graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
             renderParamLine(line);
         }
+
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , runwayRenderParams.getCenterLineY() + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 70 , runwayRenderParams.getCenterLineY() + 20);
     }
 
     public void drawObstacle(Integer height, Integer pozx, String tresholdName){
@@ -73,12 +76,12 @@ public class RunwayRenderer {
 
         System.out.println(runwayName + " "  +tresholdName);
         if(tresholdName.equals(runwayName))
-            positionOnRunway = 0;
+            positionOnRunway = pozx;
         else {
-            positionOnRunway = this.graphicsContext.getCanvas().getWidth();
+            positionOnRunway = this.graphicsContext.getCanvas().getWidth() - pozx;
         }
 
-        Rectangle runwayRect = new Rectangle(0 + pozx, runwayRenderParams.getCenterLineY(),7 , height);
+        Rectangle runwayRect = new Rectangle(positionOnRunway, runwayRenderParams.getCenterLineY() - 10,10 , height);
         drawRect(this.graphicsContext, runwayRect, Color.RED);
     }
 
