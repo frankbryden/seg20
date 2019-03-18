@@ -33,6 +33,13 @@ public class RunwayRenderParams {
     private int dashCount;
     private int dashShift;
 
+
+    //Sideview parameters
+
+    //Runway
+
+
+
     //Labels
     private int labelFontSize;
     //labelTextMargin : margin before and after the text, where the lines meet the text
@@ -82,6 +89,7 @@ public class RunwayRenderParams {
         }
 
     }
+
 
     public int getCenterLineY() {
         return centerLineY;
@@ -222,4 +230,6 @@ public class RunwayRenderParams {
     public int getDashShift() {
         return dashShift;
     }
+
+
 }

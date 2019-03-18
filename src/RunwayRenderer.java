@@ -24,6 +24,36 @@ public class RunwayRenderer {
         this.runwayRenderParams.init();
     }
 
+
+    public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext, Boolean isSideView){
+
+        this.runwayPair = runwayPair;
+        this.graphicsContext = graphicsContext;
+        this.runwayRenderParams = new RunwayRenderParams();
+        this.initParams();
+        this.initSideViewParams();
+    }
+
+    private void initSideViewParams() {
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+    }
+
+    public void renderSideview(){
+
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+        graphicsContext.setFill(Color.OLDLACE);
+        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), 5);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+
+    }
+
     public void initParams(){
         //canvas dimensions
         int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
@@ -57,7 +87,7 @@ public class RunwayRenderer {
 
         //Labels and lines to indicate runway params
         Line toraLine, todaLine, asdaLine, ldaLine;
-        toraLine = new Line(runwayRenderParams.getR)
+        //toraLine = new Line(runwayRenderParams.getR);
     }
 
     public void render(){
