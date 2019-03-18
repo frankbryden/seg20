@@ -30,6 +30,36 @@ public class RunwayRenderer {
         this.runwayRenderParams.init();
     }
 
+
+    public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext, Boolean isSideView){
+
+        this.runwayPair = runwayPair;
+        this.graphicsContext = graphicsContext;
+        this.runwayRenderParams = new RunwayRenderParams();
+        this.initParams();
+        this.initSideViewParams();
+    }
+
+    private void initSideViewParams() {
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+    }
+
+    public void renderSideview(){
+
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+        graphicsContext.setFill(Color.OLDLACE);
+        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), 5);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+
+    }
+
     public void initParams(){
         //canvas dimensions
         int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
@@ -63,6 +93,11 @@ public class RunwayRenderer {
         this.runwayRenderParams.setDashOff(25);
         this.runwayRenderParams.setDashHeight(5);
 
+
+        //Labels and lines to indicate runway params
+        Line toraLine, todaLine, asdaLine, ldaLine;
+        //toraLine = new Line(runwayRenderParams.getR);
+
         //Label params
         this.runwayRenderParams.setLabelFontSize(18);
         this.runwayRenderParams.setLabelTextMargin(10);
@@ -70,6 +105,7 @@ public class RunwayRenderer {
 
         labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
         labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
+
     }
 
     public void render(){
