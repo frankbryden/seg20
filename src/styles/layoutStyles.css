@@ -8,6 +8,9 @@
     -fx-font-size: 1.2em;
 }
 
+.popup .label{
+    -fx-text-fill: white;
+}
 .addRunwayAirportSelection{
     -fx-pref-width: 200px;
     -fx-pref-height: 35px;

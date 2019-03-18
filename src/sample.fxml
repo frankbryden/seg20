@@ -20,7 +20,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -173,9 +173,9 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="45.0" prefWidth="779.0" BorderPane.alignment="CENTER">
                                        <children>
                                           <Label layoutX="9.0" layoutY="10.0" prefHeight="23.0" prefWidth="96.0" text="Airport" />
-                                          <Label layoutX="390.0" layoutY="8.0" text="Runway" />
-                                          <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="5.0" prefHeight="30.0" prefWidth="231.0" stylesheets="@styles/calculations.css" />
-                                          <ComboBox fx:id="runwaySelect" layoutX="492.0" layoutY="5.0" prefHeight="31.0" prefWidth="110.0" stylesheets="@styles/calculations.css" />
+                                          <Label layoutX="436.0" layoutY="8.0" text="Runway" />
+                                          <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="5.0" prefHeight="30.0" prefWidth="274.0" stylesheets="@styles/calculations.css" />
+                                          <ComboBox fx:id="runwaySelect" layoutX="544.0" layoutY="6.0" prefHeight="31.0" prefWidth="110.0" stylesheets="@styles/calculations.css" />
                                        </children>
                                     </AnchorPane>
                                  </top>
