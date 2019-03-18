@@ -1,8 +1,13 @@
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.util.Pair;
+
+import java.util.List;
 
 public class RunwayRenderer {
     private RunwayPair runwayPair;
@@ -15,12 +20,44 @@ public class RunwayRenderer {
     //used to create a gap in the lines to display a textual label
     private double lableWidth = 40;
 
+    private List<Pair<Line, String>> labelLines;
+
     public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext) {
         this.runwayPair = runwayPair;
         this.graphicsContext = graphicsContext;
         this.runwayRenderParams = new RunwayRenderParams();
         this.initParams();
         this.runwayRenderParams.init();
+    }
+
+
+    public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext, Boolean isSideView){
+
+        this.runwayPair = runwayPair;
+        this.graphicsContext = graphicsContext;
+        this.runwayRenderParams = new RunwayRenderParams();
+        this.initParams();
+        this.initSideViewParams();
+    }
+
+    private void initSideViewParams() {
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+    }
+
+    public void renderSideview(){
+
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+        graphicsContext.setFill(Color.OLDLACE);
+        graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), 5);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+
     }
 
     public void initParams(){
@@ -30,6 +67,7 @@ public class RunwayRenderer {
 
         //Layout properties
         this.runwayRenderParams.setMargin((int) (0.01*maxWidth));
+        this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
         this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getMargin());
@@ -52,12 +90,26 @@ public class RunwayRenderer {
         this.runwayRenderParams.setDashOn(40);
         this.runwayRenderParams.setDashOff(25);
         this.runwayRenderParams.setDashHeight(5);
+
+
+        //Labels and lines to indicate runway params
+        Line toraLine, todaLine, asdaLine, ldaLine;
+        //toraLine = new Line(runwayRenderParams.getR);
+
+        //Label params
+        this.runwayRenderParams.setLabelFontSize(18);
+        this.runwayRenderParams.setLabelTextMargin(10);
+        this.runwayRenderParams.setLabelSpacing(20);
+
+        labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
+        labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
+
     }
 
     public void render(){
         graphicsContext.setFill(Color.GOLD);
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
-        Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
 
         Rectangle[] zebraDashes = new Rectangle[2*runwayRenderParams.getZebraDashCount()];
         for (int i = 0; i < runwayRenderParams.getZebraDashCount(); i++){
@@ -97,6 +149,22 @@ public class RunwayRenderer {
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -70, 5);
         this.graphicsContext.restore();
         this.graphicsContext.fillText("SEG BAFFI", 20, 20);
+
+        //And the labels identifying the runway params
+        for (Pair<Line, String> line : labelLines){
+            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+            renderParamLine(line);
+        }
+    }
+
+    public void renderParamLine(Pair<Line, String> labelLine){
+        Line line = labelLine.getKey();
+        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
+        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
+        this.graphicsContext.stroke();
+        int midX = (int) (line.getStartX() + line.getEndX())/2;
+        int midY = (int) (line.getStartY() + line.getEndY())/2;
+        this.graphicsContext.fillText(labelLine.getValue(), midX, midY);
     }
 /*
     public void renderLogicalRunway(RunwayConfig runwayConfig, int baseY, int runwayLength, LabelRunwayDirection direction){

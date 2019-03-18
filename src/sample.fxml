@@ -20,7 +20,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -180,7 +180,19 @@
                                     </AnchorPane>
                                  </top>
                                  <center>
-                                    <Canvas fx:id="canvas" height="938.0" width="779.0" BorderPane.alignment="CENTER" />
+                                    <GridPane BorderPane.alignment="CENTER">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints maxHeight="678.0" minHeight="10.0" prefHeight="468.0" vgrow="SOMETIMES" />
+                                          <RowConstraints maxHeight="479.0" minHeight="10.0" prefHeight="470.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Canvas fx:id="canvas" height="469.0" width="755.0" />
+                                          <Canvas fx:id="canvasSideView" height="469.0" width="755.0" GridPane.rowIndex="1" />
+                                       </children>
+                                    </GridPane>
                                  </center>
                               </BorderPane>
                            </center>

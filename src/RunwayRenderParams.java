@@ -5,6 +5,7 @@ public class RunwayRenderParams {
 
     //Runway
     private int runwayLength;
+    private int runwayStartX;
     private int runwayHeight;
     private int centerLineY;
 
@@ -31,6 +32,19 @@ public class RunwayRenderParams {
     private int remainingRunwayLength;
     private int dashCount;
     private int dashShift;
+
+
+    //Sideview parameters
+
+    //Runway
+
+
+
+    //Labels
+    private int labelFontSize;
+    //labelTextMargin : margin before and after the text, where the lines meet the text
+    private int labelTextMargin;
+    private int labelSpacing;
 
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
         //User configurable values below
@@ -77,6 +91,7 @@ public class RunwayRenderParams {
 
     }
 
+
     public int getCenterLineY() {
         return centerLineY;
     }
@@ -99,6 +114,10 @@ public class RunwayRenderParams {
 
     public void setRunwayHeight(int runwayHeight) {
         this.runwayHeight = runwayHeight;
+    }
+
+    public void setRunwayStartX(int runwayStartX) {
+        this.runwayStartX = runwayStartX;
     }
 
     public void setZebraMarginInner(int zebraMarginInner) {
@@ -153,6 +172,34 @@ public class RunwayRenderParams {
         return runwayHeight;
     }
 
+    public int getRunwayStartX() {
+        return runwayStartX;
+    }
+
+    public int getLabelFontSize() {
+        return labelFontSize;
+    }
+
+    public void setLabelFontSize(int labelFontSize) {
+        this.labelFontSize = labelFontSize;
+    }
+
+    public int getLabelTextMargin() {
+        return labelTextMargin;
+    }
+
+    public void setLabelTextMargin(int labelTextMargin) {
+        this.labelTextMargin = labelTextMargin;
+    }
+
+    public int getLabelSpacing() {
+        return labelSpacing;
+    }
+
+    public void setLabelSpacing(int labelSpacing) {
+        this.labelSpacing = labelSpacing;
+    }
+
     public int getZebraMarginInner() {
         return zebraMarginInner;
     }
@@ -173,10 +220,6 @@ public class RunwayRenderParams {
         return zebraDashOn;
     }
 
-    public int getZebraDashOff() {
-        return zebraDashOff;
-    }
-
     public int getZebraVertLength() {
         return zebraVertLength;
     }
@@ -191,10 +234,6 @@ public class RunwayRenderParams {
 
     public int getDashOn() {
         return dashOn;
-    }
-
-    public int getDashOff() {
-        return dashOff;
     }
 
     public int getDashLength() {
@@ -216,4 +255,6 @@ public class RunwayRenderParams {
     public int getDashShift() {
         return dashShift;
     }
+
+
 }

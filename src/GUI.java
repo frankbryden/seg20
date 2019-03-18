@@ -56,11 +56,12 @@ public class GUI extends Application {
     private Map<String, Obstacle> userObstaclesSorted, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
-    private Canvas canvas;
+    private Canvas canvas, sideviewCanvas;
     private TabPane tabPane;
     private Pane planePane;
     private ImageView planeImg;
     private RunwayRenderer runwayRenderer;
+    private RunwayRenderer runwayRendererSideView;
     private BorderPane canvasBorderPane;
     private ComboBox obstacleSelect;
 
@@ -131,6 +132,10 @@ public class GUI extends Application {
                         runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
                         runwayRenderer.render();
                         //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
+
+
+                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
+                        runwayRendererSideView.renderSideview();
                         break;
                     }
                 }
@@ -340,6 +345,9 @@ public class GUI extends Application {
                 System.out.println(recalculatedParams.toString());
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
+
+
+
             }
         });
 
@@ -372,6 +380,9 @@ public class GUI extends Application {
 
         tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
         canvas = (Canvas) primaryStage.getScene().lookup("#canvas");
+
+        sideviewCanvas = (Canvas) primaryStage.getScene().lookup("#canvasSideView");
+
         canvasBorderPane = (BorderPane) primaryStage.getScene().lookup("#canvasBorderPane");
         /*canvasBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
