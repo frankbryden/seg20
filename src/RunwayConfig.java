@@ -109,11 +109,11 @@ public class RunwayConfig {
     private int getLabelYShift(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, int step){
         int startY = runwayRenderParams.getCenterLineY();
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
-            startY -= runwayRenderParams.getRunwayHeight();
-            startY -= step * runwayRenderParams.getLabelSpacing();
+            //startY -= runwayRenderParams.getRunwayHeight();
+            startY -= (step + 2) * runwayRenderParams.getLabelSpacing();
         } else {
             startY += runwayRenderParams.getRunwayHeight();
-            startY += step * runwayRenderParams.getLabelSpacing();
+            startY += (step + 2) * runwayRenderParams.getLabelSpacing();
         }
 
         return startY;

@@ -40,7 +40,7 @@ public class RunwayRenderer {
         this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
-        this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getRunwayStartX());
+        this.runwayRenderParams.setRunwayLength(maxWidth - 2*runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
         this.runwayRenderParams.setCenterLineY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
         System.out.println("Max width : "  + maxWidth);
@@ -76,6 +76,7 @@ public class RunwayRenderer {
         graphicsContext.setFill(Color.GOLD);
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
+        System.out.println(runwayRenderParams.getRunwayLength());
 
         Rectangle[] zebraDashes = new Rectangle[2*runwayRenderParams.getZebraDashCount()];
         for (int i = 0; i < runwayRenderParams.getZebraDashCount(); i++){
