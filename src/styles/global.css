@@ -6,13 +6,13 @@
     -fx-opacity: 0;
 }
 
-.tab-pane
+.large-tabs
 {
-    -fx-tab-min-width:158px;
+    -fx-tab-min-width: 153px;
     -fx-tab-min-height: 34px;
 }
 
-.tab-pane .mini-tabs {
+.mini-tabs {
     -fx-tab-min-width: 133px;
     -fx-tab-min-height: 30px;
 }
@@ -23,22 +23,40 @@
     -fx-text-fill: #4a5366;
 }
 
-.tab-pane .large-tabs{
+/*.tab-pane .large-tabs{
     -fx-tab-min-width: 156px;
-    -fx-tab-min-height: 64px;
-}
+    -fx-tab-min-height: 200px;
+}*/
 
 
 .tab{
-    -fx-background-insets: 0 1 0 1,0,0;
+    -fx-background-insets: 0 0 1 0,0,0;
     -fx-border-radius: 0 0 0 0;
     -fx-background-radius: 0 0 0 0;
+    -fx-focus-color: transparent;
 }
 
-.tab-pane .tab{
+.large-tabs .tab {
     -fx-end-margin: 3px 10px 3px 10px;
     -fx-border-radius: 0px;
     -fx-background-color: #1ec0ff;
+}
+
+.large-tabs .tab:hover{
+    -fx-border-width:  0 0 3 0;
+    -fx-border-color: white;
+}
+
+.large-tabs .tab:selected{
+    -fx-border-width:  0 0 3 0;
+    -fx-border-color: white;
+}
+
+
+.mini-tabs .tab{
+    -fx-end-margin: 3px 10px 3px 10px;
+    -fx-border-radius: 0px;
+    -fx-background-color: #1b88bb;
 }
 
 /*.tab-pane .tab:focused {
@@ -52,9 +70,10 @@
     -fx-font-weight: bold;
 }
 
-.tab:selected .tab-label {
+.large-tabs .tab:selected .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: #ffffff;
+
 }
 
 .Canvas {
@@ -80,5 +99,5 @@
 }
 
 .myCol{
-    -fx-background-color: #1f268d;
+    -fx-background-color: #1b88bb;
 }

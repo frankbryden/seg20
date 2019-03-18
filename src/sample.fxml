@@ -23,9 +23,9 @@
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" stylesheets="@styles/global.css">
          <children>
-            <BorderPane AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-6.0" AnchorPane.topAnchor="0.0">
+            <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="1280.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <center>
-                  <GridPane prefHeight="42.0" prefWidth="1286.0" style="-fx-background-color: #1ec0ff;">
+                  <GridPane minHeight="-Infinity" prefHeight="52.0" prefWidth="1280.0" style="-fx-background-color: #1ec0ff;">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -102,11 +102,11 @@
                   </Tab>
                 <Tab text="Application">
                   <content>
-                        <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="898.0" prefWidth="1277.0">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="913.0" prefWidth="1280.0">
                            <right>
                               <AnchorPane minWidth="-Infinity" prefHeight="912.0" prefWidth="594.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <GridPane layoutY="1.0" prefHeight="45.0" prefWidth="597.0" styleClass="myCol" stylesheets="@styles/global.css">
+                                    <GridPane layoutY="4.0" prefHeight="45.0" prefWidth="597.0" styleClass="myCol" stylesheets="@styles/global.css">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                       </columnConstraints>
@@ -114,9 +114,9 @@
                                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                     </GridPane>
-                                    <TabPane fx:id="miniTabPane" layoutY="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="653.0" prefWidth="597.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                                    <TabPane fx:id="miniTabPane" layoutY="4.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="653.0" prefWidth="597.0" styleClass="mini-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
-                                        <Tab style="-fx-background-color: #1f268d;" text="Airport">
+                                        <Tab text="Airport">
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="659.0">
                                                    <children>
@@ -125,7 +125,7 @@
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                        <Tab style="-fx-background-color: #1f268d;" text="Runway">
+                                        <Tab text="Runway">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="354.0" prefWidth="354.0">
                                                    <children>
@@ -155,7 +155,7 @@
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
-                                          <Tab style="-fx-background-color: #1f268d;" text="Obstacles">
+                                          <Tab text="Obstacles">
                                              <content>
                                                 <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0">
                                                    <children>
@@ -171,7 +171,7 @@
                                                 </AnchorPane>
                                              </content>
                                           </Tab>
-                                          <Tab style="-fx-background-color: #1f268d;" text="Calculations">
+                                          <Tab text="Calculations">
                                              <content>
                                                 <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css" />
                                              </content>
