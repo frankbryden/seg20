@@ -44,6 +44,7 @@ public class RunwayRenderParams {
     private int labelFontSize;
     //labelTextMargin : margin before and after the text, where the lines meet the text
     private int labelTextMargin;
+    private int labelSpacing;
 
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
         //User configurable values below
@@ -173,6 +174,30 @@ public class RunwayRenderParams {
 
     public int getRunwayStartX() {
         return runwayStartX;
+    }
+
+    public int getLabelFontSize() {
+        return labelFontSize;
+    }
+
+    public void setLabelFontSize(int labelFontSize) {
+        this.labelFontSize = labelFontSize;
+    }
+
+    public int getLabelTextMargin() {
+        return labelTextMargin;
+    }
+
+    public void setLabelTextMargin(int labelTextMargin) {
+        this.labelTextMargin = labelTextMargin;
+    }
+
+    public int getLabelSpacing() {
+        return labelSpacing;
+    }
+
+    public void setLabelSpacing(int labelSpacing) {
+        this.labelSpacing = labelSpacing;
     }
 
     public int getZebraMarginInner() {
