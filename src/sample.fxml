@@ -25,7 +25,7 @@
          <children>
             <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="42.0" prefWidth="1280.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                <center>
-                  <GridPane minHeight="-Infinity" prefHeight="52.0" prefWidth="1280.0" style="-fx-background-color: #1ec0ff;">
+                  <GridPane minHeight="-Infinity" prefHeight="52.0" prefWidth="1280.0" styleClass="mainTab" stylesheets="@styles/global.css">
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     </columnConstraints>
@@ -106,7 +106,7 @@
                            <right>
                               <AnchorPane minWidth="-Infinity" prefHeight="912.0" prefWidth="594.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <GridPane layoutY="4.0" prefHeight="45.0" prefWidth="597.0" styleClass="myCol" stylesheets="@styles/global.css">
+                                    <GridPane layoutY="4.0" prefHeight="45.0" prefWidth="597.0" styleClass="functionsTab" stylesheets="@styles/global.css">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                       </columnConstraints>
