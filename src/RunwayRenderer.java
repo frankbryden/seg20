@@ -56,8 +56,14 @@ public class RunwayRenderer {
 
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, 0, maxWidth, maxHeight);
-        Rectangle runwayRect = new Rectangle(runwayRenderParams.getMargin(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), 5);
-        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+        Rectangle runwayRect = new Rectangle(60, runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() - 120, 7);
+        Rectangle clearAreaLeft = new Rectangle(0, runwayRenderParams.getCenterLineY(), 60, 7);
+        Rectangle clearAreaRight = new Rectangle(graphicsContext.getCanvas().getWidth() - 60 , runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() , 7);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+        drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
+        drawRect(this.graphicsContext, clearAreaRight, Color.RED );
+
+        this.graphicsContext.setStroke(Color.BLACK);
 
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
@@ -66,7 +72,7 @@ public class RunwayRenderer {
         }
 
         this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , runwayRenderParams.getCenterLineY() + 20);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 70 , runwayRenderParams.getCenterLineY() + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , runwayRenderParams.getCenterLineY() + 20);
     }
 
     public void drawObstacle(Integer height, Integer pozx, String tresholdName){
