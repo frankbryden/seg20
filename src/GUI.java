@@ -684,6 +684,7 @@ public class GUI extends Application {
                     updateObstaclesList();
                     addObstaclePopup.hide();
                 }
+
             }
         });
 
