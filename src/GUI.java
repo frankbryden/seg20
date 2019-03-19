@@ -439,16 +439,13 @@ public class GUI extends Application {
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                                       @Override
-                                       public void handle(MouseEvent click) {
-
-                                           if (click.getClickCount() == 2) {
-
-                                               showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
-                                           }
-                                       }
-                                   });
+            @Override
+            public void handle(MouseEvent click) {
+                if (click.getClickCount() == 2) {
+                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
+                }
+           }
+        });
 
         userDefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
 

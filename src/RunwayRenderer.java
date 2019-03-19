@@ -19,7 +19,7 @@ public class RunwayRenderer {
     private RunwayRenderParams runwayRenderParams;
 
     //used to create a gap in the lines to display a textual label
-    private double lableWidth = 40;
+    private double lableWidth = 30;
 
     private List<Pair<Line, String>> labelLines;
 
@@ -124,13 +124,9 @@ public class RunwayRenderer {
 
 
         //Labels and lines to indicate runway params
-        Line toraLine, todaLine, asdaLine, ldaLine;
-        //toraLine = new Line(runwayRenderParams.getR);
-
-        //Label params
         this.runwayRenderParams.setLabelFontSize(18);
         this.runwayRenderParams.setLabelTextMargin(10);
-        this.runwayRenderParams.setLabelSpacing(20);
+        this.runwayRenderParams.setLabelSpacing(30);
 
         labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
         labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
@@ -191,13 +187,22 @@ public class RunwayRenderer {
 
     public void renderParamLine(Pair<Line, String> labelLine){
         Line line = labelLine.getKey();
-
-        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
-        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
-        this.graphicsContext.stroke();
         int midX = (int) (line.getStartX() + line.getEndX())/2;
         int midY = (int) (line.getStartY() + line.getEndY())/2;
-        this.graphicsContext.fillText(labelLine.getValue(), midX, midY);
+
+        // First section
+        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
+        this.graphicsContext.lineTo(midX - lableWidth, line.getEndY());
+        this.graphicsContext.stroke();
+
+        // Text between sections
+        this.graphicsContext.fillText(labelLine.getValue(), midX - lableWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
+
+        // Second section
+        this.graphicsContext.moveTo(midX + lableWidth, line.getStartY());
+        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
+        this.graphicsContext.stroke();
+
     }
 /*
     public void renderLogicalRunway(RunwayConfig runwayConfig, int baseY, int runwayLength, LabelRunwayDirection direction){
