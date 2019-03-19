@@ -372,7 +372,15 @@ public class GUI extends Application {
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
 
-                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName);
+                String unselectedThreshold = "";
+                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                    unselectedThreshold = currentlySelectedRunway.getR2().toString();
+                } else {
+                    unselectedThreshold = currentlySelectedRunway.getR1().toString();
+                }
+
+                runwayRendererSideView.renderSideview();
+                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
 
             }
         });

@@ -56,10 +56,13 @@ public class RunwayRenderer {
 
     public void renderSideview(){
 
+
         //canvas dimensions
         int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
 
+
+        graphicsContext.clearRect(0,0,maxWidth,maxHeight);
         //set environment color
         graphicsContext.setFill(Color.SKYBLUE);
         graphicsContext.fillRect(0, 0, maxWidth, maxHeight/2);
@@ -74,8 +77,8 @@ public class RunwayRenderer {
         this.graphicsContext.setStroke(Color.BLACK);
         this.graphicsContext.setFill(Color.BLACK);
         renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.fillText("DIRECTION",maxWidth/10 ,(int) directionRight.getEndY() + maxHeight/10);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
 
         Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/7, maxHeight - maxHeight/50);
         this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
@@ -83,14 +86,14 @@ public class RunwayRenderer {
         this.graphicsContext.stroke();
         this.graphicsContext.setFill(Color.BLACK);
         renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.fillText("DIRECTION",maxWidth - maxWidth/5 ,maxHeight-maxHeight/10);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
 
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),maxHeight/2 , runwayRenderParams.getRunwayLength(), 7);
-        Rectangle clearAreaLeft = new Rectangle(0, maxHeight /2, maxWidth - (0.1*maxHeight), 7);
-        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, graphicsContext.getCanvas().getWidth() , 7);
-        drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
-        drawRect(this.graphicsContext, clearAreaRight, Color.RED );
+        Rectangle clearAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
+        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, maxWidth , 7);
+        drawRect(this.graphicsContext, clearAreaLeft, Color.GREEN );
+        drawRect(this.graphicsContext, clearAreaRight, Color.GREEN );
         drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
 
         //And the labels identifying the runway params
@@ -104,20 +107,18 @@ public class RunwayRenderer {
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
     }
 
-    public void drawObstacle(Integer height, Integer pozx, String tresholdName){
-        
-        double positionOnRunway = 0;
-        String runwayName = runwayPair.getR2().getRunwayDesignator().getDirection();
+    public void drawObstacle(Integer height, Integer distanceFromRunway, String selectedTresholdName, String unselectedTresholdName){
 
-        System.out.println(runwayName + " "  +tresholdName);
-        if(tresholdName.equals(runwayName))
-            positionOnRunway = pozx;
-        else {
-            positionOnRunway = this.graphicsContext.getCanvas().getWidth() - pozx;
+        Integer selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
+        Integer unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
+        System.out.println("Draw obstacle, runways are : " + selected + unSelected);
+        int objectStartPosition = runwayRenderParams.getRunwayStartX() + distanceFromRunway;
+        if(selected > unSelected) {
+            System.out.println("changed the position");
+            objectStartPosition = (int) (runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - distanceFromRunway - this.graphicsContext.getCanvas().getWidth() / 30);
         }
-
-        Rectangle runwayRect = new Rectangle(positionOnRunway, this.graphicsContext.getCanvas().getHeight()/2 - 10,10 , height);
-        drawRect(this.graphicsContext, runwayRect, Color.RED);
+        Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
+        drawRect(this.graphicsContext, obstacle, Color.RED);
     }
 
     public void initParams(){
