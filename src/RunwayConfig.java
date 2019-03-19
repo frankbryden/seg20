@@ -45,7 +45,7 @@ public class RunwayConfig {
         return sb.toString();
     }
 
-    public ArrayList<Pair<Line, String>> getLabelLines(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction){
+    public ArrayList<Pair<Line, String>> getLabelLines(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, RunwayRenderer.RunwayParams highlightedLine){
         //Labels and lines to indicate runway params
         Line toraLine, todaLine, asdaLine, ldaLine;
         int toraY, todaY, asdaY, ldaY;
@@ -73,6 +73,23 @@ public class RunwayConfig {
             todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);
             asdaLine = new Line(lineEndBelowRunway - p2Asda, asdaY, lineEndBelowRunway, asdaY);
             ldaLine = new Line(lineEndBelowRunway - p2Lda, ldaY, lineEndBelowRunway, ldaY);
+        }
+
+        switch (highlightedLine){
+            case LDA:
+                ldaLine.setUserData("highlighted");
+                break;
+            case ASDA:
+                asdaLine.setUserData("highlighted");
+                break;
+            case TODA:
+                todaLine.setUserData("highlighted");
+                break;
+            case TORA:
+                toraLine.setUserData("highlighted");
+                break;
+            case NONE:
+                break;
         }
 
         ArrayList<Pair<Line, String>> lines = new ArrayList<>();

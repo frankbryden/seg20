@@ -64,6 +64,7 @@ public class RunwayRenderParams {
     //labelTextMargin : margin before and after the text, where the lines meet the text
     private int labelTextMargin;
     private int labelSpacing;
+    private int highLightWidth = 3;
 
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
         //User configurable values below
@@ -275,5 +276,11 @@ public class RunwayRenderParams {
         return dashShift;
     }
 
+    public int getHighLightWidth() {
+        return highLightWidth;
+    }
 
+    public void setHighLightWidth(int highLightWidth) {
+        this.highLightWidth = highLightWidth;
+    }
 }
