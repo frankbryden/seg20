@@ -55,10 +55,25 @@ public class RunwayConfig {
         asdaY = getLabelYShift(runwayRenderParams, direction, 2);
         ldaY = getLabelYShift(runwayRenderParams, direction, 3);
 
-        toraLine = new Line(runwayRenderParams.getRunwayStartX(), toraY, getNormalisedTORA(this.TORA) * runwayRenderParams.getRunwayLength(), toraY);
-        todaLine = new Line(runwayRenderParams.getRunwayStartX(), todaY, getNormalisedTODA(this.TORA) * runwayRenderParams.getRunwayLength(), todaY);
-        asdaLine = new Line(runwayRenderParams.getRunwayStartX(), asdaY, getNormalisedASDA(this.TORA) * runwayRenderParams.getRunwayLength(), asdaY);
-        ldaLine = new Line(runwayRenderParams.getRunwayStartX() + getNormalisedDisplacementThreshold(this.TORA), ldaY, getNormalisedLDA(this.TORA) * runwayRenderParams.getRunwayLength(), ldaY);
+        int p1 = runwayRenderParams.getRunwayStartX();
+        int lineEndBelowRunway = p1 + runwayRenderParams.getRunwayLength();
+        double p2Tora = getNormalisedTORA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Toda = getNormalisedTODA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Asda = getNormalisedASDA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Lda = getNormalisedLDA(this.TORA)*runwayRenderParams.getRunwayLength();
+
+        // In both cases, we need to add the start point to the end point, as we have calculated the line LENGTH and not END X value
+        if (direction == RunwayRenderer.LabelRunwayDirection.UP){
+            toraLine = new Line(p1, toraY, p1 + p2Tora, toraY);
+            todaLine = new Line(p1, todaY, p1 + p2Toda, todaY);
+            asdaLine = new Line(p1, asdaY, p1 + p2Asda, asdaY);
+            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(this.TORA), ldaY, p1 + p2Lda, ldaY);
+        } else {
+            toraLine = new Line(lineEndBelowRunway - p2Tora, toraY, lineEndBelowRunway, toraY);
+            todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);
+            asdaLine = new Line(lineEndBelowRunway - p2Asda, asdaY, lineEndBelowRunway, asdaY);
+            ldaLine = new Line(lineEndBelowRunway - p2Lda, ldaY, lineEndBelowRunway, ldaY);
+        }
 
         ArrayList<Pair<Line, String>> lines = new ArrayList<>();
         lines.add(new Pair<>(toraLine, "TORA"));
@@ -95,11 +110,11 @@ public class RunwayConfig {
     private int getLabelYShift(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, int step){
         int startY = runwayRenderParams.getCenterLineY();
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
-            startY -= runwayRenderParams.getRunwayHeight();
-            startY -= step * runwayRenderParams.getLabelSpacing();
+            //startY -= runwayRenderParams.getRunwayHeight();
+            startY -= (step + 1) * runwayRenderParams.getLabelSpacing();
         } else {
             startY += runwayRenderParams.getRunwayHeight();
-            startY += step * runwayRenderParams.getLabelSpacing();
+            startY += (step + 1) * runwayRenderParams.getLabelSpacing();
         }
 
         return startY;

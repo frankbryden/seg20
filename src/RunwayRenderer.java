@@ -16,12 +16,14 @@ public class RunwayRenderer {
     private RunwayPair runwayPair;
     private GraphicsContext graphicsContext;
     // Draw labels above or below the runway. UP implies landing left to right, and down implies landing right to left
-    public enum LabelRunwayDirection {UP, DOWN};
+    public enum LabelRunwayDirection {UP, DOWN}
+    // Each param line needs an arrow cap on each end. Used to tell which end (therefore which way to draw the cap)
+    private enum ArrowDirection {LEFT, RIGHT}
     private static final Color RUNWAY_COLOR = Color.web("rgb(60, 67, 79)");
     private RunwayRenderParams runwayRenderParams;
 
     //used to create a gap in the lines to display a textual label
-    private double lableWidth = 40;
+    private double lableWidth = 25;
 
     private List<Pair<Line, String>> labelLines;
 
@@ -115,13 +117,15 @@ public class RunwayRenderer {
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
 
         //Layout properties
-        this.runwayRenderParams.setMargin((int) (0.01*maxWidth));
+        this.runwayRenderParams.setMargin((int) (0.1*maxWidth));
         this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
-        this.runwayRenderParams.setRunwayLength(maxWidth - runwayRenderParams.getMargin());
+        this.runwayRenderParams.setRunwayLength(maxWidth - 2*runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
         this.runwayRenderParams.setCenterLineY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
+        System.out.println("Max width : "  + maxWidth);
+        System.out.println("Runway length : " + runwayRenderParams.getRunwayLength());
 
         //Zebra margin : margin on either side of each zebra crossing
         this.runwayRenderParams.setZebraMarginInner(5);
@@ -142,13 +146,9 @@ public class RunwayRenderer {
 
 
         //Labels and lines to indicate runway params
-        Line toraLine, todaLine, asdaLine, ldaLine;
-        //toraLine = new Line(runwayRenderParams.getR);
-
-        //Label params
         this.runwayRenderParams.setLabelFontSize(18);
         this.runwayRenderParams.setLabelTextMargin(10);
-        this.runwayRenderParams.setLabelSpacing(20);
+        this.runwayRenderParams.setLabelSpacing(30);
 
         labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
         labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
@@ -159,6 +159,7 @@ public class RunwayRenderer {
         graphicsContext.setFill(Color.GOLD);
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
+        System.out.println(runwayRenderParams.getRunwayLength());
 
         Rectangle[] zebraDashes = new Rectangle[2*runwayRenderParams.getZebraDashCount()];
         for (int i = 0; i < runwayRenderParams.getZebraDashCount(); i++){
@@ -208,13 +209,45 @@ public class RunwayRenderer {
 
     public void renderParamLine(Pair<Line, String> labelLine){
         Line line = labelLine.getKey();
-
-        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
-        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
-        this.graphicsContext.stroke();
         int midX = (int) (line.getStartX() + line.getEndX())/2;
         int midY = (int) (line.getStartY() + line.getEndY())/2;
-        this.graphicsContext.fillText(labelLine.getValue(), midX, midY);
+
+        // First section
+        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
+        this.graphicsContext.lineTo(midX - lableWidth, line.getEndY());
+        this.graphicsContext.stroke();
+        renderArrowCap((int) line.getStartX(), (int) line.getStartY(), ArrowDirection.LEFT);
+
+        // Text between sections
+        this.graphicsContext.fillText(labelLine.getValue(), midX - lableWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
+
+        // Second section
+        this.graphicsContext.moveTo(midX + lableWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY());
+        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
+        this.graphicsContext.stroke();
+        renderArrowCap((int) line.getEndX(), (int) line.getEndY(), ArrowDirection.RIGHT);
+
+    }
+
+    private void renderArrowCap(int x, int y, ArrowDirection direction){
+        double angle;
+        double arrowWideness = Math.PI/4;
+        int arrowLength = 15;
+        if (direction == ArrowDirection.LEFT){
+            angle = 0;
+        } else {
+            angle = Math.PI;
+        }
+
+        //top line of the arrow
+        this.graphicsContext.moveTo(x, y);
+        this.graphicsContext.lineTo(x + Math.cos(angle - arrowWideness/2) * arrowLength, y + Math.sin(angle - arrowWideness/2) * arrowLength);
+        this.graphicsContext.stroke();
+
+        //bottom line of the arrow
+        this.graphicsContext.moveTo(x, y);
+        this.graphicsContext.lineTo(x + Math.cos(angle + arrowWideness/2) * arrowLength, y + Math.sin(angle + arrowWideness/2) * arrowLength);
+        this.graphicsContext.stroke();
     }
 /*
     public void renderLogicalRunway(RunwayConfig runwayConfig, int baseY, int runwayLength, LabelRunwayDirection direction){
