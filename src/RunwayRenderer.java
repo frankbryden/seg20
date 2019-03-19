@@ -64,35 +64,42 @@ public class RunwayRenderer {
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
 
-        Line directionRight = new Line(0,maxHeight/50, maxWidth/10, maxHeight/50);
+        Line directionRight = new Line(0,maxHeight/50, maxWidth/7, maxHeight/50);
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
         this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
         this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
         this.graphicsContext.stroke();
         this.graphicsContext.setStroke(Color.BLACK);
         this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.fillText("DIRECTION",maxWidth/10 ,(int) directionRight.getEndY() + maxHeight/10);
 
-        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/10, maxHeight - maxHeight/50);
+        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/7, maxHeight - maxHeight/50);
         this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
         this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
         this.graphicsContext.stroke();
         this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.fillText("DIRECTION",maxWidth - maxWidth/5 ,maxHeight-maxHeight/10);
 
-//        Rectangle runwayRect = new Rectangle(60, runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() - 120, 7);
-//        Rectangle clearAreaLeft = new Rectangle(0, runwayRenderParams.getCenterLineY(), 60, 7);
-//        Rectangle clearAreaRight = new Rectangle(graphicsContext.getCanvas().getWidth() - 60 , runwayRenderParams.getCenterLineY(), graphicsContext.getCanvas().getWidth() , 7);
-//        drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
-//        drawRect(this.graphicsContext, clearAreaRight, Color.RED );
-//        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
-//
-//        //And the labels identifying the runway params
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),maxHeight/2 , runwayRenderParams.getRunwayLength(), 7);
+        Rectangle clearAreaLeft = new Rectangle(0, maxHeight /2, maxWidth - (0.1*maxHeight), 7);
+        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, graphicsContext.getCanvas().getWidth() , 7);
+        drawRect(this.graphicsContext, clearAreaLeft, Color.RED );
+        drawRect(this.graphicsContext, clearAreaRight, Color.RED );
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+
+        //And the labels identifying the runway params
 //        for (Pair<Line, String> line : labelLines){
 //            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
 //            renderParamLine(line);
 //        }
-//
-//        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , runwayRenderParams.getCenterLineY() + 20);
-//        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , runwayRenderParams.getCenterLineY() + 20);
+
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
     }
 
     public void drawObstacle(Integer height, Integer pozx, String tresholdName){
@@ -107,7 +114,7 @@ public class RunwayRenderer {
             positionOnRunway = this.graphicsContext.getCanvas().getWidth() - pozx;
         }
 
-        Rectangle runwayRect = new Rectangle(positionOnRunway, runwayRenderParams.getCenterLineY() - 10,10 , height);
+        Rectangle runwayRect = new Rectangle(positionOnRunway, this.graphicsContext.getCanvas().getHeight()/2 - 10,10 , height);
         drawRect(this.graphicsContext, runwayRect, Color.RED);
     }
 
