@@ -39,7 +39,7 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -195,10 +195,6 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-
-
-
-
             }
         });
 
@@ -242,6 +238,38 @@ public class GUI extends Application {
 
             }
         });
+        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
+        highlightTodaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
+            }
+        });
+
+        highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
+        highlightToraBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
+            }
+        });
+
+        highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
+        highlightAsdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
+            }
+        });
+
+        highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
+        highlightLdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
+            }
+        });
+
 
         addAirportBtn = (Button) primaryStage.getScene().lookup("#addAirportBtn");
         addAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -344,7 +372,15 @@ public class GUI extends Application {
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 switchCalculationsTabToView();
 
-                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName);
+                String unselectedThreshold = "";
+                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                    unselectedThreshold = currentlySelectedRunway.getR2().toString();
+                } else {
+                    unselectedThreshold = currentlySelectedRunway.getR1().toString();
+                }
+
+                runwayRendererSideView.renderSideview();
+                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
 
             }
         });
@@ -439,16 +475,13 @@ public class GUI extends Application {
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
-
-                                       @Override
-                                       public void handle(MouseEvent click) {
-
-                                           if (click.getClickCount() == 2) {
-
-                                               showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
-                                           }
-                                       }
-                                   });
+            @Override
+            public void handle(MouseEvent click) {
+                if (click.getClickCount() == 2) {
+                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
+                }
+           }
+        });
 
         userDefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
