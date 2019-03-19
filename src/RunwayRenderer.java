@@ -90,11 +90,16 @@ public class RunwayRenderer {
         this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
 
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),maxHeight/2 , runwayRenderParams.getRunwayLength(), 7);
-        Rectangle clearAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
-        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, maxWidth , 7);
-        drawRect(this.graphicsContext, clearAreaLeft, Color.GREEN );
-        drawRect(this.graphicsContext, clearAreaRight, Color.GREEN );
+        Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
+        Rectangle stopAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, maxWidth , 7);
+
+        Rectangle clearAreaLeft = new Rectangle(runwayRenderParams.getRunwayStartX(), maxHeight /2, runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getRunwayStartX() , 7);
+        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - runwayRenderParams.getZebraMarginOuter(), maxHeight /2, runwayRenderParams.getZebraMarginOuter() , 7);
+        drawRect(this.graphicsContext, stopAreaLeft, Color.GREEN );
+        drawRect(this.graphicsContext, stopAreaRight, Color.GREEN );
         drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+        drawRect(this.graphicsContext, clearAreaLeft, Color.PINK );
+        drawRect(this.graphicsContext, clearAreaRight, Color.PINK );
 
         //And the labels identifying the runway params
 //        for (Pair<Line, String> line : labelLines){
