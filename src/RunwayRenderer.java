@@ -14,12 +14,14 @@ public class RunwayRenderer {
     private RunwayPair runwayPair;
     private GraphicsContext graphicsContext;
     // Draw labels above or below the runway. UP implies landing left to right, and down implies landing right to left
-    public enum LabelRunwayDirection {UP, DOWN};
+    public enum LabelRunwayDirection {UP, DOWN}
+    // Each param line needs an arrow cap on each end. Used to tell which end (therefore which way to draw the cap)
+    private enum ArrowDirection {LEFT, RIGHT}
     private static final Color RUNWAY_COLOR = Color.web("rgb(60, 67, 79)");
     private RunwayRenderParams runwayRenderParams;
 
     //used to create a gap in the lines to display a textual label
-    private double lableWidth = 30;
+    private double lableWidth = 25;
 
     private List<Pair<Line, String>> labelLines;
 
@@ -194,15 +196,38 @@ public class RunwayRenderer {
         this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
         this.graphicsContext.lineTo(midX - lableWidth, line.getEndY());
         this.graphicsContext.stroke();
+        renderArrowCap((int) line.getStartX(), (int) line.getStartY(), ArrowDirection.LEFT);
 
         // Text between sections
         this.graphicsContext.fillText(labelLine.getValue(), midX - lableWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
 
         // Second section
-        this.graphicsContext.moveTo(midX + lableWidth, line.getStartY());
+        this.graphicsContext.moveTo(midX + lableWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY());
         this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
         this.graphicsContext.stroke();
+        renderArrowCap((int) line.getEndX(), (int) line.getEndY(), ArrowDirection.RIGHT);
 
+    }
+
+    private void renderArrowCap(int x, int y, ArrowDirection direction){
+        double angle;
+        double arrowWideness = Math.PI/4;
+        int arrowLength = 15;
+        if (direction == ArrowDirection.LEFT){
+            angle = 0;
+        } else {
+            angle = Math.PI;
+        }
+
+        //top line of the arrow
+        this.graphicsContext.moveTo(x, y);
+        this.graphicsContext.lineTo(x + Math.cos(angle - arrowWideness/2) * arrowLength, y + Math.sin(angle - arrowWideness/2) * arrowLength);
+        this.graphicsContext.stroke();
+
+        //bottom line of the arrow
+        this.graphicsContext.moveTo(x, y);
+        this.graphicsContext.lineTo(x + Math.cos(angle + arrowWideness/2) * arrowLength, y + Math.sin(angle + arrowWideness/2) * arrowLength);
+        this.graphicsContext.stroke();
     }
 /*
     public void renderLogicalRunway(RunwayConfig runwayConfig, int baseY, int runwayLength, LabelRunwayDirection direction){
