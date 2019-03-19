@@ -392,8 +392,8 @@ public class GUI extends Application {
         calculationDetails.setId("calcBreakdown");
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
-        originalValuesGridLbl = new Label("Original Values");
-        recalculatedlValuesGridLbl = new Label("Recalculated Values");
+        originalValuesGridLbl = new Label("Original\nValues");
+        recalculatedlValuesGridLbl = new Label("Recalculated\nValues");
         todaRowLbl = new Label("TODA");
         toraRowLbl = new Label("TORA");
         asdaRowLbl = new Label("ASDA");
@@ -427,6 +427,7 @@ public class GUI extends Application {
         });
         canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
 
+        calculationResultsGrid.setHgap(20);
         //Add all the labels, col by col,  to create a table
 
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
