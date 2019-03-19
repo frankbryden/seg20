@@ -79,3 +79,19 @@
     -fx-background-color: #2e343c;
 }
 
+/*#predefinedList .label:hover{
+    -fx-background-color: #1ec0ff;
+}*/
+
+.list-cell:filled:hover{
+    -fx-background-color: #1ec0ff;
+}
+
+#userList .list-cell:selected, #predefinedList .list-cell:selected{
+    -fx-background-color: #1ec0ff;
+    -fx-text-fill: #000000;
+}
+
+#userList .list-cell, #predefinedList .list-cell{
+    -fx-text-fill: #000000;
+}

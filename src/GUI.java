@@ -432,10 +432,10 @@ public class GUI extends Application {
 
         //HERE - make airport selection box wider so you can see full airport name
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
-        formatListBox(predefinedObstaclesLV);
+        predefinedObstaclesLV.setId("predefinedList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
-        formatListBox(userDefinedObstaclesLV);
+        userDefinedObstaclesLV.setId("userList");
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -932,24 +932,6 @@ public class GUI extends Application {
     }
 
     private void formatComboBox(ComboBox boxToFormat) {
-        boxToFormat.setCellFactory(param -> new ComboBoxListCell<String>() {{
-            setTextFill(Color.BLACK);
-
-            Background whiteBackground = new Background(new BackgroundFill(Color.WHITE, null, null));
-            Background blueBackground = new Background(new BackgroundFill(Color.web("#1ec0ff"), null, null));
-
-            setBackground(whiteBackground);
-            setOnMouseEntered(event -> {
-                setBackground(blueBackground);
-            });
-            setOnMouseExited(event -> {
-                setBackground(whiteBackground);
-            });
-        }});
-
-    }
-
-    private void formatListBox(ListView boxToFormat) {
         boxToFormat.setCellFactory(param -> new ComboBoxListCell<String>() {{
             setTextFill(Color.BLACK);
 
