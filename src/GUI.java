@@ -223,7 +223,6 @@ public class GUI extends Application {
             }
         });
 
-        //HERE - slight problem when saving and deleting so may need to clear file contents before saving again?
         saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -465,8 +464,6 @@ public class GUI extends Application {
 
         resetCalculationsTab();
 
-
-        //HERE - make airport selection box wider so you can see full airport name
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         predefinedObstaclesLV.setId("predefinedList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
