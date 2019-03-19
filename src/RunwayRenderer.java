@@ -198,11 +198,8 @@ public class RunwayRenderer {
         int midY = (int) (line.getStartY() + line.getEndY())/2;
 
         if (line.getUserData() != null){
-            System.out.println(labelLine.getValue() + ": Highlighted");
-            System.out.println("hl width : " + runwayRenderParams.getHighLightWidth());
             this.graphicsContext.setLineWidth(runwayRenderParams.getHighLightWidth());
         } else {
-            System.out.println(labelLine.getValue() + ": Not highlighted");
             this.graphicsContext.setLineWidth(0.8);
         }
 
