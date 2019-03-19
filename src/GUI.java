@@ -39,7 +39,7 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn;
+    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -195,10 +195,6 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-
-
-
-
             }
         });
 
@@ -242,6 +238,38 @@ public class GUI extends Application {
 
             }
         });
+        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
+        highlightTodaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
+            }
+        });
+
+        highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
+        highlightToraBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
+            }
+        });
+
+        highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
+        highlightAsdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
+            }
+        });
+
+        highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
+        highlightLdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
+            }
+        });
+
 
         addAirportBtn = (Button) primaryStage.getScene().lookup("#addAirportBtn");
         addAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {

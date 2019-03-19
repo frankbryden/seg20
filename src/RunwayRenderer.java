@@ -17,6 +17,7 @@ public class RunwayRenderer {
     public enum LabelRunwayDirection {UP, DOWN}
     // Each param line needs an arrow cap on each end. Used to tell which end (therefore which way to draw the cap)
     private enum ArrowDirection {LEFT, RIGHT}
+    public enum RunwayParams {TORA, TODA, ASDA, LDA, NONE}
     private static final Color RUNWAY_COLOR = Color.web("rgb(60, 67, 79)");
     private RunwayRenderParams runwayRenderParams;
 
@@ -24,6 +25,7 @@ public class RunwayRenderer {
     private double lableWidth = 25;
 
     private List<Pair<Line, String>> labelLines;
+    private RunwayParams currentlyHighlightedParam = RunwayParams.NONE;
 
     public RunwayRenderer(RunwayPair runwayPair, GraphicsContext graphicsContext) {
         this.runwayPair = runwayPair;
@@ -130,9 +132,12 @@ public class RunwayRenderer {
         this.runwayRenderParams.setLabelTextMargin(10);
         this.runwayRenderParams.setLabelSpacing(30);
 
-        labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP);
-        labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN));
+        refreshLines();
+    }
 
+    public void refreshLines(){
+        labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP, currentlyHighlightedParam);
+        labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN, currentlyHighlightedParam));
     }
 
     public void render(){
@@ -192,21 +197,25 @@ public class RunwayRenderer {
         int midX = (int) (line.getStartX() + line.getEndX())/2;
         int midY = (int) (line.getStartY() + line.getEndY())/2;
 
+        if (line.getUserData() != null){
+            System.out.println(labelLine.getValue() + ": Highlighted");
+            System.out.println("hl width : " + runwayRenderParams.getHighLightWidth());
+            this.graphicsContext.setLineWidth(runwayRenderParams.getHighLightWidth());
+        } else {
+            System.out.println(labelLine.getValue() + ": Not highlighted");
+            this.graphicsContext.setLineWidth(0.8);
+        }
+
         // First section
-        this.graphicsContext.moveTo(line.getStartX(), line.getStartY());
-        this.graphicsContext.lineTo(midX - lableWidth, line.getEndY());
-        this.graphicsContext.stroke();
+        this.graphicsContext.strokeLine(line.getStartX(), line.getStartY(), midX - lableWidth, line.getEndY());
         renderArrowCap((int) line.getStartX(), (int) line.getStartY(), ArrowDirection.LEFT);
 
         // Text between sections
         this.graphicsContext.fillText(labelLine.getValue(), midX - lableWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
 
         // Second section
-        this.graphicsContext.moveTo(midX + lableWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY());
-        this.graphicsContext.lineTo(line.getEndX(), line.getEndY());
-        this.graphicsContext.stroke();
+        this.graphicsContext.strokeLine(midX + lableWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY(), line.getEndX(), line.getEndY());
         renderArrowCap((int) line.getEndX(), (int) line.getEndY(), ArrowDirection.RIGHT);
-
     }
 
     private void renderArrowCap(int x, int y, ArrowDirection direction){
@@ -220,14 +229,10 @@ public class RunwayRenderer {
         }
 
         //top line of the arrow
-        this.graphicsContext.moveTo(x, y);
-        this.graphicsContext.lineTo(x + Math.cos(angle - arrowWideness/2) * arrowLength, y + Math.sin(angle - arrowWideness/2) * arrowLength);
-        this.graphicsContext.stroke();
+        this.graphicsContext.strokeLine(x, y, x + Math.cos(angle - arrowWideness/2) * arrowLength, y + Math.sin(angle - arrowWideness/2) * arrowLength);
 
         //bottom line of the arrow
-        this.graphicsContext.moveTo(x, y);
-        this.graphicsContext.lineTo(x + Math.cos(angle + arrowWideness/2) * arrowLength, y + Math.sin(angle + arrowWideness/2) * arrowLength);
-        this.graphicsContext.stroke();
+        this.graphicsContext.strokeLine(x, y, x + Math.cos(angle + arrowWideness/2) * arrowLength, y + Math.sin(angle + arrowWideness/2) * arrowLength);
     }
 /*
     public void renderLogicalRunway(RunwayConfig runwayConfig, int baseY, int runwayLength, LabelRunwayDirection direction){
@@ -285,11 +290,12 @@ public class RunwayRenderer {
 
     public void drawRect(GraphicsContext gc, Rectangle rect, Color color){
         gc.setFill(color);
-        System.out.println(rect.getX());
-        System.out.println(rect.getY());
-        System.out.println(rect.getWidth());
-        System.out.println(rect.getHeight());
         gc.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }
 
+    public void setCurrentlyHighlightedParam(RunwayParams currentlyHighlightedParam) {
+        this.currentlyHighlightedParam = currentlyHighlightedParam;
+        this.refreshLines();
+        this.render();
+    }
 }
