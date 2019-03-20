@@ -40,6 +40,7 @@ import javafx.util.Duration;
 
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
+    //TODO add airport database
     private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
@@ -941,11 +942,20 @@ public class GUI extends Application {
 
                 if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), todaTF.getText(), asdaTF.getText(), ldaTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), todaTF2.getText(), asdaTF2.getText(), ldaTF2.getText(), displacementThresholdTF2.getText())))){
                     System.out.println("valid form");
+                    AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
+                    System.out.println(selectedAirport.toString());
+                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF.getText()), Integer.parseInt(toraTF.getText()), Integer.parseInt(todaTF.getText()), Integer.parseInt(asdaTF.getText()), Integer.parseInt(ldaTF.getText()), Integer.parseInt(displacementThresholdTF.getText()));
+                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF2.getText()), Integer.parseInt(toraTF2.getText()), Integer.parseInt(todaTF2.getText()), Integer.parseInt(asdaTF2.getText()), Integer.parseInt(ldaTF2.getText()), Integer.parseInt(displacementThresholdTF2.getText()));
+                    RunwayPair runwayPair = new RunwayPair(r1, r2);
+                    selectedAirport.addRunwayPair(runwayPair);
+                    airportConfigs.put(selectedAirport.getName(), selectedAirport);
+                    System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
+                    addRunwayPopup.hide();
+                    updateAirportSelects();
                 } else {
                     System.err.println("Invalid form");
                 }
-                System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
-                addRunwayPopup.hide();
+
             }
         });
 
