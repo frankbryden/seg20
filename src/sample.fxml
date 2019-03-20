@@ -73,7 +73,7 @@
                                           <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="81.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
+                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="96.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
                                              <font>
                                                 <Font size="24.0" />
                                              </font>
@@ -182,7 +182,7 @@
                                     </AnchorPane>
                                  </top>
                                  <center>
-                                    <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="869.0" prefWidth="686.0" BorderPane.alignment="CENTER">
+                                    <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="850.0" prefWidth="686.0" BorderPane.alignment="CENTER">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                        </columnConstraints>
