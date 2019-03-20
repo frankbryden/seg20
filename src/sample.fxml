@@ -24,7 +24,7 @@
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="960.0" prefWidth="1280.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
-            <BorderPane prefHeight="50.0" prefWidth="1280.0" style="-fx-background-color: #075170;" />
+            <BorderPane prefHeight="50.0" prefWidth="1280.0" style="-fx-background-color: #075170;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0" />
             <TabPane fx:id="tabPane" layoutX="2.0" layoutY="1.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="958.0" prefWidth="1280.0" styleClass="large-tabs" stylesheets="@styles/global.css" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="300.0" tabMaxWidth="300.0" tabMinHeight="34.0" tabMinWidth="158.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="-1.0" AnchorPane.topAnchor="0.0">
               <tabs>
                   <Tab text="File">
