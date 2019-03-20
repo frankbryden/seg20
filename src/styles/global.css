@@ -127,6 +127,9 @@
 
 .combo-box {
     -fx-background-color: #1b88bb;
+    -fx-padding: 0 0 0 0;
+    -fx-border-color: #1b88bb;
+    -fx-border-width: 1 1 0 1;
 }
 
 .combo-box .list-cell
@@ -154,6 +157,14 @@
 .scroll-bar:vertical .thumb{
     -fx-background-color: white;
     -fx-background-radius: 5em;
+}
+
+.scroll-bar > .increment-button, .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
+
+.scroll-bar > .increment-arrow{
+    -fx-shape: "M14.4,18.611l3.633-3.637L14.4,11.338l0.352-0.352l3.992,3.988 l-3.992,3.988L14.4,18.611z";
 }
 
 
