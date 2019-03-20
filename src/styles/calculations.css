@@ -36,7 +36,7 @@
 
 .text-field{
     -fx-pref-height: 35px;
-    -fx-pref-width: 75px;
+    -fx-pref-width: 200px;
     -fx-font-size: 14px;
 }
 
