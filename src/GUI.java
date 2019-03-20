@@ -91,29 +91,7 @@ public class GUI extends Application {
         addRunwayPopup = createAddRunwayPopup(primaryStage);
         addObstaclePopup = createAddObstaclePopup();
 
-        printerBtn = (Button) primaryStage.getScene().lookup("#printerBtn");
-        ImageView printerImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/printer.png")));
-        printerImgView.setFitHeight(15); printerImgView.setFitWidth(20);
-        printerBtn.setGraphic(printerImgView);
-
-        printerBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-            }
-        });
-
-        outArrowBtn = (Button) primaryStage.getScene().lookup("#outArrowBtn");
-        ImageView outArrowImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/outArrow.png")));
-        outArrowImgView.setFitHeight(15); outArrowImgView.setFitWidth(20);
-        outArrowBtn.setGraphic(outArrowImgView);
-
-        outArrowBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-
-            }
-        });
+        //TODO add event listeners for the two new images (print and share)
 
         runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
         runwaySelect.setId("runwayComboBox");
@@ -325,9 +303,9 @@ public class GUI extends Application {
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
         centerlineHBox = new HBox(HBOX_SPACING);
-     //   Region centerlineHBoxRegion = getHGrowingRegion();
+        Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
-    //    centerlineHBox.getChildren().add(centerlineHBoxRegion);
+        centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
         Region thresholdHBoxRegion = getHGrowingRegion();
