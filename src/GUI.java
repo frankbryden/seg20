@@ -39,6 +39,7 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class GUI extends Application {
+    //TODO set currently selected obstacle in the ComboBox in the calculations tab
     private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
@@ -95,7 +96,6 @@ public class GUI extends Application {
 
         runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
         runwaySelect.setId("runwayComboBox");
-        formatComboBox(runwaySelect);
         runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -122,7 +122,6 @@ public class GUI extends Application {
 
         airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.setId("airportComboBox");
-        formatComboBox(airportSelect);
         airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -269,16 +268,15 @@ public class GUI extends Application {
 
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
+        Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         obstacleSelect = new ComboBox();
 
-        formatComboBox(obstacleSelect);
 
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
         thresholdSelect = new ComboBox();
 
-        formatComboBox(thresholdSelect);
 
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
@@ -293,26 +291,31 @@ public class GUI extends Application {
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(obstacleSelectHBox, calculationsInsets);
         Region obstacleSelectRegion = getHGrowingRegion();
         obstacleSelectHBox.getChildren().add(obstacleSelectLbl);
         obstacleSelectHBox.getChildren().add(obstacleSelectRegion);
         obstacleSelectHBox.getChildren().add(obstacleSelect);
         thresholdSelectHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(thresholdSelectHBox, calculationsInsets);
         Region thresholdSelectRegion = getHGrowingRegion();
         thresholdSelectHBox.getChildren().add(thresholdSelectLbl);
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
+        VBox.setMargin(obstacleSelectHBox, new Insets(5, 20, 0, 0));
         centerlineHBox = new HBox(HBOX_SPACING);
         Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
         centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(thresholdHBox, calculationsInsets);
         Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
         thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
         HBox calculateBtnVBox = new HBox();
+        VBox.setMargin(calculateBtnVBox, calculationsInsets);
         Region calculateBtnRegion = getHGrowingRegion();
         calculateBtnVBox.getChildren().add(calculateBtnRegion);
         calculateBtnVBox.getChildren().add(calculateBtn);
@@ -859,7 +862,6 @@ public class GUI extends Application {
         ldaLbl = new Label("LDA");
         displacementThresholdLbl = new Label("Displacement Threshold");
         addRunwayAirportSelect = new ComboBox();
-        formatComboBox(addRunwayAirportSelect);
         addRunwayAirportSelect.setId("runwayComboBox");
         addRunwayAirportSelect.setVisibleRowCount(10);
 
@@ -963,24 +965,6 @@ public class GUI extends Application {
     private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
-    }
-
-    private void formatComboBox(ComboBox boxToFormat) {
-        boxToFormat.setCellFactory(param -> new ComboBoxListCell<String>() {{
-            setTextFill(Color.BLACK);
-
-            Background whiteBackground = new Background(new BackgroundFill(Color.WHITE, null, null));
-            Background blueBackground = new Background(new BackgroundFill(Color.web("#1ec0ff"), null, null));
-
-            setBackground(whiteBackground);
-            setOnMouseEntered(event -> {
-                setBackground(blueBackground);
-            });
-            setOnMouseExited(event -> {
-                setBackground(whiteBackground);
-            });
-        }});
-
     }
 
 

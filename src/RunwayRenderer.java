@@ -248,7 +248,7 @@ public class RunwayRenderer {
         this.graphicsContext.rotate(-90);
         this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -70, 5);
         this.graphicsContext.restore();
-        this.graphicsContext.fillText("SEG BAFFI", 20, 20);
+        //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
