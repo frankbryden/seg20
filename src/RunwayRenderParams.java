@@ -9,6 +9,13 @@ public class RunwayRenderParams {
     private int runwayHeight;
     private int centerLineY;
 
+    //Stopway
+    private int stopwayLength;
+
+    //Clearway
+    private int clearwayLength;
+    private int clearwayHeight;
+
     //Zebra margin : margin on either side of each zebra crossing
     private int zebraMarginInner;
     private int zebraMarginOuter;
@@ -282,5 +289,13 @@ public class RunwayRenderParams {
 
     public void setHighLightWidth(int highLightWidth) {
         this.highLightWidth = highLightWidth;
+    }
+
+    public int getClearwayHeight() {
+        return clearwayHeight;
+    }
+
+    public void setClearwayHeight(int clearwayHeight) {
+        this.clearwayHeight = clearwayHeight;
     }
 }

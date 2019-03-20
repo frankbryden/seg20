@@ -108,8 +108,8 @@ public class RunwayRenderer {
 //        }
 
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
     }
 
     public void drawObstacle(Integer height, Integer distanceFromRunway, String selectedTresholdName, String unselectedTresholdName){
@@ -139,8 +139,9 @@ public class RunwayRenderer {
         this.runwayRenderParams.setRunwayLength(maxWidth - 2*runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
         this.runwayRenderParams.setCenterLineY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
-        System.out.println("Max width : "  + maxWidth);
-        System.out.println("Runway length : " + runwayRenderParams.getRunwayLength());
+
+        //Clearway
+        this.runwayRenderParams.setClearwayHeight(10);
 
         //Zebra margin : margin on either side of each zebra crossing
         this.runwayRenderParams.setZebraMarginInner(5);
@@ -170,7 +171,7 @@ public class RunwayRenderer {
 
     public void refreshLines(){
         labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP, currentlyHighlightedParam);
-        labelLines.addAll(runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN, currentlyHighlightedParam));
+        labelLines.addAll(runwayPair.getR2().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN, currentlyHighlightedParam));
     }
 
     public void render(){
@@ -194,13 +195,44 @@ public class RunwayRenderer {
             dashes[i] = new Rectangle(runwayRenderParams.getDashShift() + runwayRenderParams.getIdentifierMargin() + runwayRenderParams.getZebraMarginInner() + runwayRenderParams.getZebraMarginOuter()+ runwayRenderParams.getZebraDashLength() + runwayRect.getX() + i * runwayRenderParams.getDashLength(), runwayRect.getY() + runwayRect.getHeight()/2, runwayRenderParams.getDashOn(), runwayRenderParams.getDashHeight());
         }
 
+        //Stopway creation
+        Rectangle[] stopways = new Rectangle[2];
+        int leftStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
+        int rightStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
+        stopways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftStopwayLength, runwayRenderParams.getCenterLineY(), leftStopwayLength, runwayRenderParams.getRunwayHeight());
+        stopways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), runwayRenderParams.getCenterLineY(), rightStopwayLength, runwayRenderParams.getRunwayHeight());
+
+        //Clearway creation
+        Rectangle[] clearways = new Rectangle[2];
+        int leftClearwayLength = (int) (runwayPair.getR2().getClearwayLength() * runwayRenderParams.getRunwayLength());
+        int rightClearwayLength = (int) (runwayPair.getR1().getClearwayLength() * runwayRenderParams.getRunwayLength());
+        clearways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftClearwayLength, runwayRenderParams.getCenterLineY() - runwayRenderParams.getClearwayHeight(), leftClearwayLength, runwayRenderParams.getRunwayHeight() + 2*runwayRenderParams.getClearwayHeight());
+        clearways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), runwayRenderParams.getCenterLineY() - runwayRenderParams.getClearwayHeight(), rightClearwayLength, runwayRenderParams.getRunwayHeight() + 2*runwayRenderParams.getClearwayHeight());
+
+        System.out.println("left clearway length : " + leftClearwayLength);
         //Finally we get to the drawing part !
+
+        //Draw runway
         drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+
+        //Draw dashes
         for (Rectangle dash : dashes) {
             drawRect(this.graphicsContext, dash, Color.WHITE);
         }
+
+        //Draw dashes
         for (Rectangle zebra : zebraDashes){
             drawRect(this.graphicsContext, zebra, Color.WHITE);
+        }
+
+        //Draw clearway
+        for (Rectangle clearway : clearways){
+            drawRect(this.graphicsContext, clearway, Color.GREEN);
+        }
+
+        //Draw stopway
+        for (Rectangle stopway : stopways){
+            drawRect(this.graphicsContext, stopway, Color.PINK);
         }
 
         //And the runway identifiers
@@ -209,18 +241,22 @@ public class RunwayRenderer {
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() + runwayRenderParams.getZebraMarginInner() + runwayRenderParams.getZebraDashLength(), runwayRect.getY() + runwayRect.getHeight()/2);
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -20, 30);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -20, 30);
         this.graphicsContext.restore();
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRect.getWidth() - runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getZebraMarginInner() - runwayRenderParams.getZebraDashLength() - runwayRenderParams.getIdentifierMargin(), runwayRect.getY());
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -70, 5);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -70, 5);
         this.graphicsContext.restore();
         this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
             graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+            if (line.getValue().equals("TODA")){
+                System.out.println("TODA line : " + line.getKey().toString());
+                System.out.println("both todas : " + runwayPair.getR1().getTODA() + "/" + runwayPair.getR2().getTODA());
+            }
             renderParamLine(line);
         }
     }

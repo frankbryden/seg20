@@ -24,7 +24,7 @@ public class RunwayConfig {
         this.ASDA = ASDA;
         this.LDA  = LDA;
         this.displacementThreshold = displacementThreshold;
-        this.STOPWAY = 0;
+        this.STOPWAY = ASDA - TORA;
         this.CLEARWAY = TODA - TORA;
     }
 
@@ -61,13 +61,18 @@ public class RunwayConfig {
         double p2Toda = getNormalisedTODA(this.TORA)*runwayRenderParams.getRunwayLength();
         double p2Asda = getNormalisedASDA(this.TORA)*runwayRenderParams.getRunwayLength();
         double p2Lda = getNormalisedLDA(this.TORA)*runwayRenderParams.getRunwayLength();
+        System.out.println("ref : " + System.identityHashCode(this));
+        System.out.println("all obj : " + this.toString());
+        System.out.println("TODA : " + this.TODA);
+        System.out.println(getNormalisedTODA(this.TORA) + " * " + runwayRenderParams.getRunwayLength());
+        System.out.println("TODA LENGTH : " + p2Toda);
 
         // In both cases, we need to add the start point to the end point, as we have calculated the line LENGTH and not END X value
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
             toraLine = new Line(p1, toraY, p1 + p2Tora, toraY);
             todaLine = new Line(p1, todaY, p1 + p2Toda, todaY);
             asdaLine = new Line(p1, asdaY, p1 + p2Asda, asdaY);
-            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(this.TORA), ldaY, p1 + p2Lda, ldaY);
+            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(this.TORA), ldaY,p1 + p2Lda, ldaY);
         } else {
             toraLine = new Line(lineEndBelowRunway - p2Tora, toraY, lineEndBelowRunway, toraY);
             todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);
@@ -100,6 +105,16 @@ public class RunwayConfig {
         return lines;
     }
 
+    public double getStopwayLength(){
+        return this.getNormalisedStopway(this.TORA);
+    }
+
+    public double getClearwayLength(){
+        System.out.println("Clearway is : " + this.CLEARWAY);
+        System.out.println("Normalised clearway is : " + this.getNormalisedClearway(this.TORA));
+        return this.getNormalisedClearway(this.TORA);
+    }
+
 
 
     //Normalised values - used for graphics
@@ -117,6 +132,14 @@ public class RunwayConfig {
 
     public double getNormalisedLDA(int maxVal){
         return this.LDA / (maxVal*1.0);
+    }
+
+    public double getNormalisedClearway(int maxVal){
+        return this.CLEARWAY / (maxVal * 1.0);
+    }
+
+    public double getNormalisedStopway(int maxVal){
+        return this.STOPWAY / (maxVal * 1.0);
     }
 
     public double getNormalisedDisplacementThreshold(int maxVal){
