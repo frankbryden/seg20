@@ -6,55 +6,78 @@
     -fx-opacity: 0;
 }
 
-.tab-pane
+.large-tabs
 {
-    -fx-tab-min-width:158px;
+    -fx-tab-min-width:153px;
     -fx-tab-min-height: 34px;
 }
 
-.tab-pane .mini-tabs {
-    -fx-tab-min-width: 145px;
-    -fx-tab-min-height: 40px;
+.mini-tabs {
+    -fx-tab-min-width: 133px;
+    -fx-tab-min-height: 30px;
 }
 
 .label {
     -fx-font-family: "Verdana";
     -fx-font-size: 18px;
-    -fx-text-fill: #4a5366;
+    -fx-text-fill: #103b52;
 }
 
-.tab-pane .large-tabs{
+/*.tab-pane .large-tabs{
     -fx-tab-min-width: 156px;
     -fx-tab-min-height: 64px;
-}
+}*/
 
 
 .tab{
     -fx-background-insets: 0 1 0 1,0,0;
     -fx-border-radius: 0 0 0 0;
     -fx-background-radius: 0 0 0 0;
+    -fx-focus-color: transparent;
 }
 
-.tab-pane .tab{
+.large-tabs .tab{
     -fx-end-margin: 3px 10px 3px 10px;
     -fx-border-radius: 0px;
-    -fx-background-color: #1ec0ff;
+    -fx-background-color: #075170;
 }
 
-.tab-pane .tab:focused {
+.large-tabs .tab:hover{
+    -fx-border-width:  0 0 3 0;
+    -fx-border-color: white;
+}
+
+.large-tabs .tab:selected{
+    -fx-border-width:  0 0 3 0;
+    -fx-border-color: white;
+}
+
+.mini-tabs .tab{
+    -fx-end-margin: 3px 10px 3px 10px;
+    -fx-border-radius: 0px;
+    -fx-background-color: #1b88bb;
+}
+/*.tab-pane .tab:focused {
     -fx-background-color: #1cade6;
-}
+}*/
 
-.tab .tab-label {
+.large-tabs .tab-label {
     -fx-alignment: CENTER;
-    -fx-text-fill: #575757;
+    -fx-text-fill: #ffffff;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
 
-.tab:selected .tab-label {
+.large-tabs .tab:selected .tab-label {
     -fx-alignment: CENTER;
     -fx-text-fill: #ffffff;
+}
+
+.mini-tabs .tab-label{
+    -fx-alignment: CENTER;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
 }
 
 .Canvas {
@@ -63,7 +86,7 @@
 }
 
 .designator-tabs{
-    -fx-background-color: #576372;
+    -fx-background-color: #0f5875;
     /*-fx-background-color: #1ec0ff;*/
     -fx-text-fill: #ffffff;
     -fx-font-family: "Verdana";
@@ -72,11 +95,11 @@
 
 .designator-tabs:hover{
     /*-fx-background-color: #1cade6;*/
-    -fx-background-color: #2e343c;
+    -fx-background-color: #0f475f;
 }
 
 .designator-tabs:focused{
-    -fx-background-color: #2e343c;
+    -fx-background-color: #103b52;
 }
 
 /*#predefinedList .label:hover{
@@ -95,3 +118,5 @@
 #userList .list-cell, #predefinedList .list-cell{
     -fx-text-fill: #000000;
 }
+
+

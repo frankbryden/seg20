@@ -325,9 +325,9 @@ public class GUI extends Application {
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
         centerlineHBox = new HBox(HBOX_SPACING);
-        Region centerlineHBoxRegion = getHGrowingRegion();
+     //   Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
-        centerlineHBox.getChildren().add(centerlineHBoxRegion);
+    //    centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
         Region thresholdHBoxRegion = getHGrowingRegion();
@@ -351,35 +351,54 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 //Get currently selected obstacle
-                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
-                Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
-
-                int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
-                String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
-                RunwayConfig runwayConfig;
-                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
-                    runwayConfig = currentlySelectedRunway.getR1();
-                } else {
-                    runwayConfig = currentlySelectedRunway.getR2();
+//HERE  can't change the textfield's width or the airport box width
+                if (centrelineTF.getText().isEmpty() && distanceFromThresholdTF.getText().isEmpty()) {
+                    centrelineTF.setPromptText("Invalid centreline distance!");
+                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
+                } else if (distanceFromThresholdTF.getText().isEmpty()) {
+                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
+                } else if (centrelineTF.getText().isEmpty()) {
+                    centrelineTF.setPromptText("Invalid centreline distance!");
+                } else if (thresholdSelect.getSelectionModel().isEmpty()) {
+                    System.out.println("No threshold selected");
+                } else if (obstacleSelect.getSelectionModel().isEmpty()){
+                    System.out.println("No obstacle selected");
                 }
-                Calculations calculations = new Calculations(runwayConfig);
-                int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
-                CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
-                RunwayConfig recalculatedParams = results.getRecalculatedParams();
-                calculationDetails.setText(results.getCalculationDetails());
-                System.out.println(recalculatedParams.toString());
-                updateCalculationResultsView(runwayConfig, recalculatedParams);
-                switchCalculationsTabToView();
+                else {
+                    String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
+                    Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
-                String unselectedThreshold = "";
-                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
-                    unselectedThreshold = currentlySelectedRunway.getR2().toString();
-                } else {
-                    unselectedThreshold = currentlySelectedRunway.getR1().toString();
+
+                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
+                    String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
+                    RunwayConfig runwayConfig;
+                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                        runwayConfig = currentlySelectedRunway.getR1();
+                    } else {
+                        runwayConfig = currentlySelectedRunway.getR2();
+                    }
+                    Calculations calculations = new Calculations(runwayConfig);
+                    int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                    CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
+                    RunwayConfig recalculatedParams = results.getRecalculatedParams();
+                    calculationDetails.setText(results.getCalculationDetails());
+                    System.out.println(recalculatedParams.toString());
+                    updateCalculationResultsView(runwayConfig, recalculatedParams);
+                    switchCalculationsTabToView();
+
+                    String unselectedThreshold = "";
+                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                        unselectedThreshold = currentlySelectedRunway.getR2().toString();
+                    } else {
+                        unselectedThreshold = currentlySelectedRunway.getR1().toString();
+                    }
+
+                    runwayRendererSideView.renderSideview();
+                    runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
+
                 }
 
-                runwayRendererSideView.renderSideview();
-                runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
+
 
             }
         });
@@ -672,10 +691,10 @@ public class GUI extends Application {
         nameLbl = new Label("Name");
         heightLbl = new Label("Height (m)");
 
-
         nameTF = new TextField();
         nameTF.setPromptText("Enter obstacle name");
         heightTF = new TextField();
+
         heightTF.setPromptText("Enter obstacle height");
 
         addObstacleBtn = new Button("Add");
@@ -704,6 +723,7 @@ public class GUI extends Application {
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
 
+        //HERE - can't change from red to grey easily
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -712,8 +732,12 @@ public class GUI extends Application {
                     addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
                     nameTF.clear();
                     heightTF.clear();
+                    heightTF.setPromptText("Enter obstacle height");
                     updateObstaclesList();
                     addObstaclePopup.hide();
+                } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
+                    heightTF.clear();
+                    heightTF.setPromptText("Invalid obstacle height!");
                 }
 
             }
@@ -724,10 +748,10 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 nameTF.clear();
                 heightTF.clear();
+                heightTF.setPromptText("Enter obstacle height");
                 addObstaclePopup.hide();
             }
         });
-
 
         popup.getContent().add(rootBox);
 
@@ -1097,7 +1121,7 @@ public class GUI extends Application {
             } catch (NumberFormatException e){
                 return false;
             }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 30) {
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 100) {
                 return false;
             }
         }
