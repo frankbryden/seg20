@@ -1,5 +1,5 @@
 #loadAirportBtn{
-    -fx-background-color: #96a0a9;
+    -fx-background-color: #0f475f;
     -fx-border-radius: 5px;
     -fx-min-width: 200px;
     -fx-min-height: 80px;
@@ -9,7 +9,7 @@
 }
 
 #loadAirportBtn:hover, #loadAirportBtn:focused{
-    -fx-background-color: #707a83;
+    -fx-background-color: #103b52;
 }
 
 
@@ -31,8 +31,4 @@
 .head-label{
     -fx-font-size: 56px;
     -fx-font-family: "Verdana";
-}
-
-.myCol {
-    -fx-background-color: #ff1290;
 }

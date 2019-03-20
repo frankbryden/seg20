@@ -307,9 +307,9 @@ public class GUI extends Application {
         thresholdSelectHBox.getChildren().add(thresholdSelect);
         VBox.setMargin(obstacleSelectHBox, new Insets(5, 20, 0, 0));
         centerlineHBox = new HBox(HBOX_SPACING);
-     //   Region centerlineHBoxRegion = getHGrowingRegion();
+        Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
-    //    centerlineHBox.getChildren().add(centerlineHBoxRegion);
+        centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
         VBox.setMargin(thresholdHBox, calculationsInsets);
