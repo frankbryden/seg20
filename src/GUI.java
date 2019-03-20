@@ -325,9 +325,9 @@ public class GUI extends Application {
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
         centerlineHBox = new HBox(HBOX_SPACING);
-     //   Region centerlineHBoxRegion = getHGrowingRegion();
+        Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
-    //    centerlineHBox.getChildren().add(centerlineHBoxRegion);
+        centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
         Region thresholdHBoxRegion = getHGrowingRegion();
