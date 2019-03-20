@@ -6,6 +6,11 @@ public class RunwayDesignator {
     public int angle;
     public Direction direction;
 
+    public String getDirection(){
+
+        return this.direction.toString();
+    }
+
     public RunwayDesignator(int angle, Direction direction){
         this.angle = angle;
         this.direction = direction;

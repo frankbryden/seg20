@@ -7,3 +7,16 @@
     -fx-font-family: "Verdana";
     -fx-font-size: 1.2em;
 }
+
+.popup .label{
+    -fx-text-fill: white;
+}
+.addRunwayAirportSelection{
+    -fx-pref-width: 200px;
+    -fx-pref-height: 35px;
+    -fx-text-alignment: center;
+    -fx-font-size: 18px;
+}
+
+
+

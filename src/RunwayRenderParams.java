@@ -33,18 +33,38 @@ public class RunwayRenderParams {
     private int dashCount;
     private int dashShift;
 
-
+/*
     //Sideview parameters
 
-    //Runway
+    //TODA-L
+    private int startLeftToda;
+    private int endLeftToda;
+    //TODA-R
+    private int startRigtToda;
+    private int endRightToda;
 
+    //ASDA-L
+    private int startLeftAsda;
+    private int endLeftAsda;
+    //ASDA-R
+    private int startRigtAsda;
+    private int endRightAsda;
 
+    //TORA-L
+    private int startLeftTora;
+    private int endLeftTora;
+    //TORA-R
+    private int startRigtTora;
+    private int endRightTora;
+
+    */
 
     //Labels
     private int labelFontSize;
     //labelTextMargin : margin before and after the text, where the lines meet the text
     private int labelTextMargin;
     private int labelSpacing;
+    private int highLightWidth = 3;
 
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
         //User configurable values below
@@ -256,5 +276,11 @@ public class RunwayRenderParams {
         return dashShift;
     }
 
+    public int getHighLightWidth() {
+        return highLightWidth;
+    }
 
+    public void setHighLightWidth(int highLightWidth) {
+        this.highLightWidth = highLightWidth;
+    }
 }
