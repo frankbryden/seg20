@@ -97,7 +97,7 @@
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="914.0" prefWidth="600.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="606.0" style="-fx-background-color: #1b88bb;" />
-                                    <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="612.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                                    <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="640.0" prefWidth="592.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
                                         <Tab text="Airport">
                                           <content>
@@ -182,7 +182,7 @@
                                     </AnchorPane>
                                  </top>
                                  <center>
-                                    <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="850.0" prefWidth="686.0" BorderPane.alignment="CENTER">
+                                    <GridPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="848.0" prefWidth="686.0" BorderPane.alignment="CENTER">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                        </columnConstraints>
@@ -191,8 +191,8 @@
                                           <RowConstraints maxHeight="479.0" minHeight="10.0" prefHeight="470.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
-                                          <Canvas fx:id="canvas" height="436.0" width="594.0" />
-                                          <Canvas fx:id="canvasSideView" height="439.0" width="595.0" GridPane.rowIndex="1" />
+                                          <Canvas fx:id="canvas" height="417.0" width="687.0" />
+                                          <Canvas fx:id="canvasSideView" height="420.0" width="689.0" GridPane.rowIndex="1" />
                                        </children>
                                     </GridPane>
                                  </center>
@@ -221,12 +221,12 @@
                   <Insets />
                </opaqueInsets>
             </TabPane>
-             <ImageView fx:id="printerBtn" layoutX="1316.0" fitWidth="32" fitHeight="32" layoutY="3.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8">
+             <ImageView fx:id="printerBtn" fitHeight="32" fitWidth="32" layoutX="1316.0" layoutY="3.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8">
                  <image>
                      <Image url="@rec/printerWhite.png" />
                  </image>
              </ImageView>
-             <ImageView fx:id="outArrowBtn" layoutX="1385.0" layoutY="3.0" fitWidth="32" fitHeight="32" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8">
+             <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32" layoutX="1385.0" layoutY="3.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8">
                  <image>
                      <Image url="@rec/outArrowWhite.png" />
                  </image>
