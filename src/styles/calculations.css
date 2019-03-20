@@ -26,20 +26,20 @@
     -fx-font-size: 18px;
 }
 
-#airportComboBox{
+/*#airportComboBox{
     -fx-pref-width: 200px;
     -fx-pref-height: 35px;
     -fx-text-alignment: center;
     -fx-font-size: 18px;
-}
+}*/
 
 
-#runwayComboBox{
+/*#runwayComboBox{
     -fx-pref-width: 200px;
     -fx-pref-height: 35px;
     -fx-text-alignment: center;
     -fx-font-size: 18px;
-}
+}*/
 
 .text-field{
     -fx-pref-height: 35px;
