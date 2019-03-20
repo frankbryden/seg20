@@ -95,7 +95,6 @@ public class GUI extends Application {
 
         runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
         runwaySelect.setId("runwayComboBox");
-        formatComboBox(runwaySelect);
         runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -122,7 +121,6 @@ public class GUI extends Application {
 
         airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.setId("airportComboBox");
-        formatComboBox(airportSelect);
         airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
@@ -272,13 +270,11 @@ public class GUI extends Application {
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         obstacleSelect = new ComboBox();
 
-        formatComboBox(obstacleSelect);
 
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
         thresholdSelect = new ComboBox();
 
-        formatComboBox(thresholdSelect);
 
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
@@ -859,7 +855,6 @@ public class GUI extends Application {
         ldaLbl = new Label("LDA");
         displacementThresholdLbl = new Label("Displacement Threshold");
         addRunwayAirportSelect = new ComboBox();
-        formatComboBox(addRunwayAirportSelect);
         addRunwayAirportSelect.setId("runwayComboBox");
         addRunwayAirportSelect.setVisibleRowCount(10);
 
@@ -963,24 +958,6 @@ public class GUI extends Application {
     private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
-    }
-
-    private void formatComboBox(ComboBox boxToFormat) {
-        boxToFormat.setCellFactory(param -> new ComboBoxListCell<String>() {{
-            setTextFill(Color.BLACK);
-
-            Background whiteBackground = new Background(new BackgroundFill(Color.WHITE, null, null));
-            Background blueBackground = new Background(new BackgroundFill(Color.web("#1ec0ff"), null, null));
-
-            setBackground(whiteBackground);
-            setOnMouseEntered(event -> {
-                setBackground(blueBackground);
-            });
-            setOnMouseExited(event -> {
-                setBackground(whiteBackground);
-            });
-        }});
-
     }
 
 
