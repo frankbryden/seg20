@@ -221,8 +221,16 @@
                   <Insets />
                </opaqueInsets>
             </TabPane>
-            <Button fx:id="printerBtn" layoutX="1316.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="47.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="3.0" />
-            <Button fx:id="outArrowBtn" layoutX="1385.0" layoutY="3.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="47.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="3.0" />
+             <ImageView fx:id="printerBtn" layoutX="1316.0" fitWidth="32" fitHeight="32" layoutY="3.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8">
+                 <image>
+                     <Image url="@rec/printerWhite.png" />
+                 </image>
+             </ImageView>
+             <ImageView fx:id="outArrowBtn" layoutX="1385.0" layoutY="3.0" fitWidth="32" fitHeight="32" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8">
+                 <image>
+                     <Image url="@rec/outArrowWhite.png" />
+                 </image>
+             </ImageView>
          </children>
       </AnchorPane>
    </center>
