@@ -165,7 +165,7 @@ public class FileIO {
             e.printStackTrace();
             return null;
         }
-        InputStreamReader isr = new InputStreamReader(fis);
+        InputStreamReader isr = new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
         BufferedReader bufferedReader = new BufferedReader(isr);
         Map<String, AirportConfig> airportConfigs = new HashMap<>();
         String line;
