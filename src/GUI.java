@@ -39,6 +39,7 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class GUI extends Application {
+    //TODO set currently selected obstacle in the ComboBox in the calculations tab
     private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
@@ -267,6 +268,7 @@ public class GUI extends Application {
 
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
+        Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         obstacleSelect = new ComboBox();
 
@@ -289,26 +291,31 @@ public class GUI extends Application {
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(obstacleSelectHBox, calculationsInsets);
         Region obstacleSelectRegion = getHGrowingRegion();
         obstacleSelectHBox.getChildren().add(obstacleSelectLbl);
         obstacleSelectHBox.getChildren().add(obstacleSelectRegion);
         obstacleSelectHBox.getChildren().add(obstacleSelect);
         thresholdSelectHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(thresholdSelectHBox, calculationsInsets);
         Region thresholdSelectRegion = getHGrowingRegion();
         thresholdSelectHBox.getChildren().add(thresholdSelectLbl);
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
+        VBox.setMargin(obstacleSelectHBox, new Insets(5, 20, 0, 0));
         centerlineHBox = new HBox(HBOX_SPACING);
         Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
         centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(thresholdHBox, calculationsInsets);
         Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
         thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
         HBox calculateBtnVBox = new HBox();
+        VBox.setMargin(calculateBtnVBox, calculationsInsets);
         Region calculateBtnRegion = getHGrowingRegion();
         calculateBtnVBox.getChildren().add(calculateBtnRegion);
         calculateBtnVBox.getChildren().add(calculateBtn);
