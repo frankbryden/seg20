@@ -45,3 +45,9 @@
     -fx-pref-width: 100px;
     -fx-font-size: 18px;
 }
+
+#calcBreakdown{
+    -fx-font-family: "Courier New";
+    -fx-pref-width: 575;
+    -fx-pref-height: 275;
+}
