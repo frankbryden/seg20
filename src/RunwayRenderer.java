@@ -170,12 +170,12 @@ public class RunwayRenderer {
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() + runwayRenderParams.getZebraMarginInner() + runwayRenderParams.getZebraDashLength(), runwayRect.getY() + runwayRect.getHeight()/2);
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -35, 30);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -25, 30);
         this.graphicsContext.restore();
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRect.getWidth() - runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getZebraMarginInner() - runwayRenderParams.getZebraDashLength() - runwayRenderParams.getIdentifierMargin(), runwayRect.getY());
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -85, 10);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -70, 10);
         this.graphicsContext.restore();
         //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
