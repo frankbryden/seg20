@@ -1,15 +1,11 @@
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.TriangleMesh;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.util.Pair;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class RunwayRenderer {
@@ -48,69 +44,11 @@ public class RunwayRenderer {
     }
 
     private void initSideViewParams() {
-        //canvas dimensions
-        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
-        double maxHeight = this.graphicsContext.getCanvas().getHeight();
-
+        this.runwayRenderParams.setSideOnRunwayHeight(7);
+        this.runwayRenderParams.setSideOnRunwayStartY((int) (graphicsContext.getCanvas().getHeight()/2));
     }
 
-    public void renderSideview(){
 
-
-        //canvas dimensions
-        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
-        double maxHeight = this.graphicsContext.getCanvas().getHeight();
-
-
-        graphicsContext.clearRect(0,0,maxWidth,maxHeight);
-        //set environment color
-        graphicsContext.setFill(Color.SKYBLUE);
-        graphicsContext.fillRect(0, 0, maxWidth, maxHeight/2);
-        graphicsContext.setFill(Color.OLDLACE);
-        graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
-
-        Line directionRight = new Line(0,maxHeight/50, maxWidth/7, maxHeight/50);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
-        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setStroke(Color.BLACK);
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
-
-        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/7, maxHeight - maxHeight/50);
-        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
-        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
-
-        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),maxHeight/2 , runwayRenderParams.getRunwayLength(), 7);
-        Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
-        Rectangle stopAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, maxWidth , 7);
-
-        Rectangle clearAreaLeft = new Rectangle(runwayRenderParams.getRunwayStartX(), maxHeight /2, runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getRunwayStartX() , 7);
-        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - runwayRenderParams.getZebraMarginOuter(), maxHeight /2, runwayRenderParams.getZebraMarginOuter() , 7);
-        drawRect(this.graphicsContext, stopAreaLeft, Color.GREEN );
-        drawRect(this.graphicsContext, stopAreaRight, Color.GREEN );
-        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
-        drawRect(this.graphicsContext, clearAreaLeft, Color.PINK );
-        drawRect(this.graphicsContext, clearAreaRight, Color.PINK );
-
-        //And the labels identifying the runway params
-//        for (Pair<Line, String> line : labelLines){
-//            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
-//            renderParamLine(line);
-//        }
-
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
-    }
 
     public void drawObstacle(Integer height, Integer distanceFromRunway, String selectedTresholdName, String unselectedTresholdName){
 
@@ -132,13 +70,13 @@ public class RunwayRenderer {
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
 
         //Layout properties
-        this.runwayRenderParams.setMargin((int) (0.1*maxWidth));
+        this.runwayRenderParams.setMargin((int) (0.15*maxWidth));
         this.runwayRenderParams.setRunwayStartX(runwayRenderParams.getMargin());
 
         //Runway
         this.runwayRenderParams.setRunwayLength(maxWidth - 2*runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
-        this.runwayRenderParams.setCenterLineY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
+        this.runwayRenderParams.setRunwayStartY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
 
         //Clearway
         this.runwayRenderParams.setClearwayHeight(10);
@@ -177,7 +115,7 @@ public class RunwayRenderer {
     public void render(){
         graphicsContext.setFill(Color.GOLD);
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
-        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getCenterLineY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getRunwayStartY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
         System.out.println(runwayRenderParams.getRunwayLength());
 
         Rectangle[] zebraDashes = new Rectangle[2*runwayRenderParams.getZebraDashCount()];
@@ -196,20 +134,11 @@ public class RunwayRenderer {
         }
 
         //Stopway creation
-        Rectangle[] stopways = new Rectangle[2];
-        int leftStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
-        int rightStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
-        stopways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftStopwayLength, runwayRenderParams.getCenterLineY(), leftStopwayLength, runwayRenderParams.getRunwayHeight());
-        stopways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), runwayRenderParams.getCenterLineY(), rightStopwayLength, runwayRenderParams.getRunwayHeight());
+        Rectangle[] stopways = getStopways(runwayRenderParams.getRunwayStartY(), runwayRenderParams.getRunwayHeight());
 
         //Clearway creation
-        Rectangle[] clearways = new Rectangle[2];
-        int leftClearwayLength = (int) (runwayPair.getR2().getClearwayLength() * runwayRenderParams.getRunwayLength());
-        int rightClearwayLength = (int) (runwayPair.getR1().getClearwayLength() * runwayRenderParams.getRunwayLength());
-        clearways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftClearwayLength, runwayRenderParams.getCenterLineY() - runwayRenderParams.getClearwayHeight(), leftClearwayLength, runwayRenderParams.getRunwayHeight() + 2*runwayRenderParams.getClearwayHeight());
-        clearways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), runwayRenderParams.getCenterLineY() - runwayRenderParams.getClearwayHeight(), rightClearwayLength, runwayRenderParams.getRunwayHeight() + 2*runwayRenderParams.getClearwayHeight());
+        Rectangle[] clearways = getClearways(runwayRenderParams.getRunwayStartY() - runwayRenderParams.getClearwayHeight(), runwayRenderParams.getRunwayHeight() + 2*runwayRenderParams.getClearwayHeight());
 
-        System.out.println("left clearway length : " + leftClearwayLength);
         //Finally we get to the drawing part !
 
         //Draw runway
@@ -241,12 +170,12 @@ public class RunwayRenderer {
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() + runwayRenderParams.getZebraMarginInner() + runwayRenderParams.getZebraDashLength(), runwayRect.getY() + runwayRect.getHeight()/2);
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -20, 30);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -35, 30);
         this.graphicsContext.restore();
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRect.getWidth() - runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getZebraMarginInner() - runwayRenderParams.getZebraDashLength() - runwayRenderParams.getIdentifierMargin(), runwayRect.getY());
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -70, 5);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -85, 10);
         this.graphicsContext.restore();
         //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
@@ -259,6 +188,78 @@ public class RunwayRenderer {
             }
             renderParamLine(line);
         }
+    }
+
+    public void renderSideview(){
+
+
+        //canvas dimensions
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+
+
+        graphicsContext.clearRect(0,0,maxWidth,maxHeight);
+        //set environment color
+        graphicsContext.setFill(Color.SKYBLUE);
+        graphicsContext.fillRect(0, 0, maxWidth, maxHeight/2);
+        graphicsContext.setFill(Color.OLDLACE);
+        graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
+
+        Line directionRight = new Line(0,maxHeight/50, maxWidth/7, maxHeight/50);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
+        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setStroke(Color.BLACK);
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
+
+        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/7, maxHeight - maxHeight/50);
+        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
+        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+
+        Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),runwayRenderParams.getSideOnRunwayStartY() , runwayRenderParams.getRunwayLength(), runwayRenderParams.getSideOnRunwayHeight());
+        Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
+        Rectangle stopAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() +  runwayRenderParams.getRunwayLength() , maxHeight /2, maxWidth , 7);
+
+        //Stopway creation
+        Rectangle[] stopways = getStopways(runwayRenderParams.getSideOnRunwayStartY(), runwayRenderParams.getSideOnRunwayHeight());
+
+        //Clearway creation
+        Rectangle[] clearways = getClearways(runwayRenderParams.getSideOnRunwayStartY(), runwayRenderParams.getSideOnRunwayHeight());
+
+
+        Rectangle clearAreaLeft = new Rectangle(runwayRenderParams.getRunwayStartX(), maxHeight /2, runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getRunwayStartX() , 7);
+        Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - runwayRenderParams.getZebraMarginOuter(), maxHeight /2, runwayRenderParams.getZebraMarginOuter() , 7);
+        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+
+        //Clearway
+        for (Rectangle rect : clearways){
+            drawRect(this.graphicsContext, rect, Color.GREEN);
+        }
+
+        //Stopway
+        for (Rectangle rect : stopways){
+            drawRect(this.graphicsContext, rect, Color.PINK);
+        }
+
+        //And the labels identifying the runway params
+//        for (Pair<Line, String> line : labelLines){
+//            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+//            renderParamLine(line);
+//        }
+
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.setFill(Color.BLACK);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
     }
 
     public void renderParamLine(Pair<Line, String> labelLine){
@@ -355,6 +356,26 @@ public class RunwayRenderer {
         gc.lineTo(lineEndX, lineY);
         gc.stroke();
         gc.fillText(label, lableStart + 5, lineY + 5);
+    }
+
+    private Rectangle[] getStopways(int startY, int height){
+        //Stopway creation
+        Rectangle[] stopways = new Rectangle[2];
+        int leftStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
+        int rightStopwayLength = (int) (runwayPair.getR1().getStopwayLength() * runwayRenderParams.getRunwayLength());
+        stopways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftStopwayLength, startY, leftStopwayLength, height);
+        stopways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), startY, rightStopwayLength, height);
+        return stopways;
+    }
+
+    private Rectangle[] getClearways(int startY, int height){
+        //Clearway creation
+        Rectangle[] clearways = new Rectangle[2];
+        int leftClearwayLength = (int) (runwayPair.getR2().getClearwayLength() * runwayRenderParams.getRunwayLength());
+        int rightClearwayLength = (int) (runwayPair.getR1().getClearwayLength() * runwayRenderParams.getRunwayLength());
+        clearways[0] = new Rectangle(runwayRenderParams.getRunwayStartX() - leftClearwayLength, startY, leftClearwayLength, height);
+        clearways[1] = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength(), startY, rightClearwayLength, height);
+        return clearways;
     }
 
     public void drawRect(GraphicsContext gc, Rectangle rect, Color color){

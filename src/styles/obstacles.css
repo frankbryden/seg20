@@ -1,0 +1,8 @@
+.imageButton {
+    -fx-background-color: #1b88bb;
+}
+
+.imageButton:hover {
+    -fx-background-color: #103b52;
+    -fx-cursor: "pointer";
+}

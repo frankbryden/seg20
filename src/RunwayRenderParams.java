@@ -7,7 +7,9 @@ public class RunwayRenderParams {
     private int runwayLength;
     private int runwayStartX;
     private int runwayHeight;
-    private int centerLineY;
+    private int runwayStartY;
+    private int sideOnRunwayHeight;
+    private int sideOnRunwayStartY;
 
     //Stopway
     private int stopwayLength;
@@ -119,12 +121,16 @@ public class RunwayRenderParams {
     }
 
 
-    public int getCenterLineY() {
-        return centerLineY;
+    public int getRunwayStartY() {
+        return runwayStartY;
     }
 
-    public void setCenterLineY(int centerLineY) {
-        this.centerLineY = centerLineY;
+    public void setRunwayStartY(int runwayStartY) {
+        this.runwayStartY = runwayStartY;
+    }
+
+    public int getRunwayCenterlineY(){
+        return runwayStartY + runwayHeight/2;
     }
 
     public void setMargin(int margin) {
@@ -297,5 +303,21 @@ public class RunwayRenderParams {
 
     public void setClearwayHeight(int clearwayHeight) {
         this.clearwayHeight = clearwayHeight;
+    }
+
+    public int getSideOnRunwayHeight() {
+        return sideOnRunwayHeight;
+    }
+
+    public void setSideOnRunwayHeight(int sideOnRunwayHeight) {
+        this.sideOnRunwayHeight = sideOnRunwayHeight;
+    }
+
+    public int getSideOnRunwayStartY() {
+        return sideOnRunwayStartY;
+    }
+
+    public void setSideOnRunwayStartY(int sideOnRunwayStartY) {
+        this.sideOnRunwayStartY = sideOnRunwayStartY;
     }
 }

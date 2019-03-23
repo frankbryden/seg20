@@ -1,10 +1,6 @@
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
 import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 public class RunwayConfig {
@@ -148,7 +144,7 @@ public class RunwayConfig {
 
     //Label Y shift
     private int getLabelYShift(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, int step){
-        int startY = runwayRenderParams.getCenterLineY();
+        int startY = runwayRenderParams.getRunwayStartY();
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
             //startY -= runwayRenderParams.getRunwayHeight();
             startY -= (step + 1) * runwayRenderParams.getLabelSpacing();

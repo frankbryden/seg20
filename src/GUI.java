@@ -41,7 +41,7 @@ import javafx.util.Duration;
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
     //TODO add airport database
-    private Button loadAirportButton, addObstacleBtn, saveObstaclesBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
+    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -61,7 +61,7 @@ public class GUI extends Application {
     private Canvas canvas, sideviewCanvas;
     private TabPane tabPane;
     private Pane planePane;
-    private ImageView planeImg;
+    private ImageView planeImg, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn;
     private RunwayRenderer runwayRenderer;
     private RunwayRenderer runwayRendererSideView;
     private BorderPane canvasBorderPane;
@@ -148,12 +148,7 @@ public class GUI extends Application {
             }
         });
 
-        popAddObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
-        ImageView popAddObstacle = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
-        popAddObstacle.setFitHeight(15);
-        popAddObstacle.setFitWidth(20);
-        popAddObstacleBtn.setGraphic(popAddObstacle);
-
+        popAddObstacleBtn = (ImageView) primaryStage.getScene().lookup("#popAddObstacleBtn");
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -164,11 +159,7 @@ public class GUI extends Application {
             }
         });
 
-        editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
-        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/edit.png")));
-        editObstacleImgView.setFitWidth(15); editObstacleImgView.setFitHeight(15);
-        editObstacleBtn.setGraphic(editObstacleImgView);
-
+        editObstacleBtn = (ImageView) primaryStage.getScene().lookup("#editObstacleBtn");
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -176,11 +167,7 @@ public class GUI extends Application {
             }
         });
 
-        deleteObstacleBtn = (Button) primaryStage.getScene().lookup("#deleteObstacleBtn");
-        ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
-        deleteObstacleImgView.setFitWidth(15); deleteObstacleImgView.setFitHeight(15);
-        deleteObstacleBtn.setGraphic(deleteObstacleImgView);
-
+        deleteObstacleBtn = (ImageView) primaryStage.getScene().lookup("#deleteObstacleBtn");
         deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -189,11 +176,7 @@ public class GUI extends Application {
             }
         });
 
-        saveObstacleBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
-        ImageView saveObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/save.png")));
-        saveObstacleImgView.setFitHeight(15); saveObstacleImgView.setFitWidth(15);
-        saveObstacleBtn.setGraphic(saveObstacleImgView);
-
+        saveObstacleBtn = (ImageView) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -201,7 +184,7 @@ public class GUI extends Application {
             }
         });
 
-        saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
+        saveObstaclesBtn = (ImageView) primaryStage.getScene().lookup("#saveObstaclesBtn");
         saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {

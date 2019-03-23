@@ -140,7 +140,7 @@
                                         </Tab>
                                           <Tab text="Obstacles">
                                              <content>
-                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0">
+                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0" stylesheets="@styles/obstacles.css">
                                                    <children>
                                                       <Label layoutX="6.0" layoutY="20.0" prefHeight="22.0" prefWidth="333.0" text="Predefined obstacles " />
                                                       <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="227.0" prefWidth="580.0" />
