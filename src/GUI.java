@@ -390,6 +390,7 @@ public class GUI extends Application {
         originalValuesLbl = new Label("Breakdown of the calculations");
         originalValuesLbl.setId("breakdownTitle");
         calculationDetails = new TextArea();
+        //calculationDetails.setEditable(false);
         calculationDetails.setId("calcBreakdown");
         calculationResultsGrid = new GridPane();
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;

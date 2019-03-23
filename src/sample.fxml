@@ -175,9 +175,9 @@
                                 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="61.0" prefWidth="686.0" BorderPane.alignment="CENTER">
                                        <children>
                                           <Label layoutX="9.0" layoutY="26.0" prefHeight="23.0" prefWidth="96.0" text="Airport" />
-                                          <Label layoutX="436.0" layoutY="26.0" text="Runway" />
-                                          <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="22.0" prefHeight="30.0" prefWidth="274.0" stylesheets="@styles/calculations.css" />
-                                          <ComboBox fx:id="runwaySelect" layoutX="545.0" layoutY="22.0" prefHeight="31.0" prefWidth="110.0" stylesheets="@styles/calculations.css" />
+                                          <Label layoutX="381.0" layoutY="26.0" text="Runway" />
+                                          <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="22.0" prefHeight="30.0" prefWidth="230.0" stylesheets="@styles/calculations.css" />
+                                          <ComboBox fx:id="runwaySelect" layoutX="477.0" layoutY="22.0" prefHeight="31.0" prefWidth="142.0" stylesheets="@styles/calculations.css" />
                                        </children>
                                     </AnchorPane>
                                  </top>
