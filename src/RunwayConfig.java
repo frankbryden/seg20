@@ -106,8 +106,6 @@ public class RunwayConfig {
     }
 
     public double getClearwayLength(){
-        System.out.println("Clearway is : " + this.CLEARWAY);
-        System.out.println("Normalised clearway is : " + this.getNormalisedClearway(this.TORA));
         return this.getNormalisedClearway(this.TORA);
     }
 

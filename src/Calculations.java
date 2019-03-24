@@ -119,8 +119,6 @@ public class Calculations {
             addCalcStep(spacing + "= " + recalculatedLDA);
         }
 
-        System.out.println(getCalculationResults());
-
         return new CalculationResults(new RunwayConfig(originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold()), getCalculationResults());
     }
 
