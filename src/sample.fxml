@@ -146,10 +146,10 @@
                                                       <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="227.0" prefWidth="580.0" />
                                                       <Label layoutX="6.0" layoutY="316.0" prefHeight="29.0" prefWidth="258.0" text="User-defined obstacles" />
                                                       <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="345.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="227.0" prefWidth="580.0" />
-                                                      <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="saveObstaclesBtn" styleClass="imageButton" layoutX="549.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="deleteObstacleBtn" styleClass="imageButton" layoutX="500.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="editObstacleBtn" styleClass="imageButton" layoutX="451.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
+                                                      <Button fx:id="popAddObstacleBtn" styleClass="imageButton" layoutX="402.0" layoutY="313.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
