@@ -148,8 +148,6 @@
     -fx-text-fill: white;
 }
 
-
-
 .scroll-bar:vertical{
     -fx-background-color: #1b88bb;
 }
@@ -186,6 +184,5 @@
     -fx-background-color: #1b88bb;
     -fx-text-fill: white;
 }
-
 
 

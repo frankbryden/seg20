@@ -12,8 +12,8 @@
     -fx-text-fill: white;
 }
 .addRunwayAirportSelection{
-    -fx-pref-width: 200px;
-    -fx-pref-height: 35px;
+    /*-fx-pref-width: 200px;
+    -fx-pref-height: 35px;*/
     -fx-text-alignment: center;
     -fx-font-size: 18px;
 }

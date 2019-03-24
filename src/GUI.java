@@ -392,6 +392,7 @@ public class GUI extends Application {
 
         //Calculations Pane - calculation results view
         originalValuesLbl = new Label("Breakdown of the calculations");
+        originalValuesLbl.setId("calcBreakdownLabel");
         originalValuesLbl.setId("breakdownTitle");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
