@@ -1,12 +1,10 @@
 import javafx.animation.Animation;
-import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -20,19 +18,17 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.ComboBoxListCell;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.scene.media.MediaPlayer;
-import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.*;
 
 import javafx.scene.image.Image;
@@ -424,6 +420,31 @@ public class GUI extends Application {
 
         tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
         canvas = (Canvas) primaryStage.getScene().lookup("#canvas");
+        canvas.setOnScroll(new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+                System.out.println(event.getDeltaY());
+                runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
+                runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
+            }
+        });
+
+        canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
+            }
+        });
+
+
+        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
+                Point delta = MouseDragTracker.getInstance().getDelta();
+                runwayRenderer.translate(delta.x, delta.y);
+            }
+        });
 
         sideviewCanvas = (Canvas) primaryStage.getScene().lookup("#canvasSideView");
 

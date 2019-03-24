@@ -4,8 +4,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.transform.*;
 import javafx.util.Pair;
 
+import java.awt.*;
 import java.util.List;
 
 public class RunwayRenderer {
@@ -19,6 +21,17 @@ public class RunwayRenderer {
     private static final Color RUNWAY_COLOR = Color.web("rgb(60, 67, 79)");
     private RunwayRenderParams runwayRenderParams;
 
+    //Tranform properties
+    private int rotation;
+    private int zoom;
+
+    //Tranforms
+    private Affine scaleAffine;
+    private Affine translateAffine;
+    private int translateX;
+    private int translateY;
+    private Point mouseLoc;
+
     //used to create a gap in the lines to display a textual label
     private double lableWidth = 25;
 
@@ -29,6 +42,12 @@ public class RunwayRenderer {
         this.runwayPair = runwayPair;
         this.graphicsContext = graphicsContext;
         this.runwayRenderParams = new RunwayRenderParams();
+        this.scaleAffine = new Affine(new Scale(1, 1, getCenterX(), getCenterY()));
+        this.translateAffine = new Affine(new Translate(0, 0));
+        this.mouseLoc = new Point(0, 0);
+        this.zoom = 1;
+        this.translateX = 0;
+        this.translateY = 0;
         this.initParams();
         this.runwayRenderParams.init();
     }
@@ -113,10 +132,43 @@ public class RunwayRenderer {
     }
 
     public void render(){
+        double rotationAngle;
+        if (runwayPair.getR1().getRunwayDesignator().angle <= 9){
+            rotationAngle = runwayPair.getR1().getRunwayDesignator().angle;
+        } else {
+            rotationAngle = runwayPair.getR2().getRunwayDesignator().angle;
+        }
+        rotationAngle -= 9;
+        Affine rotate = new Affine(new Rotate(rotationAngle*10, getCenterX(), getCenterY()));
+        Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
+        if (zoom > 0){
+            scaleAffine.append(myScale);
+        } else if (zoom < 0){
+            try {
+                scaleAffine.append(myScale.createInverse());
+            } catch (NonInvertibleTransformException e) {
+                e.printStackTrace();
+            }
+        }
+        zoom = 0;
+
+        Translate myTranslate = new Translate(translateX, translateY);
+        translateX = 0;
+        translateY = 0;
+        translateAffine.append(myTranslate);
+
+        //Draw background
         graphicsContext.setFill(Color.GOLD);
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
+
+        //Rotate runway as per orientation of it
+        graphicsContext.save();
+        graphicsContext.transform(translateAffine);
+        graphicsContext.transform(rotate);
+        graphicsContext.transform(scaleAffine);
+
+
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(), runwayRenderParams.getRunwayStartY(), runwayRenderParams.getRunwayLength(), runwayRenderParams.getRunwayHeight());
-        System.out.println(runwayRenderParams.getRunwayLength());
 
         Rectangle[] zebraDashes = new Rectangle[2*runwayRenderParams.getZebraDashCount()];
         for (int i = 0; i < runwayRenderParams.getZebraDashCount(); i++){
@@ -182,12 +234,9 @@ public class RunwayRenderer {
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
             graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
-            if (line.getValue().equals("TODA")){
-                System.out.println("TODA line : " + line.getKey().toString());
-                System.out.println("both todas : " + runwayPair.getR1().getTODA() + "/" + runwayPair.getR2().getTODA());
-            }
             renderParamLine(line);
         }
+        graphicsContext.restore();
     }
 
     public void renderSideview(){
@@ -268,11 +317,8 @@ public class RunwayRenderer {
         int midY = (int) (line.getStartY() + line.getEndY())/2;
 
         if (line.getUserData() != null){
-            System.out.println(labelLine.getValue() + ": Highlighted");
-            System.out.println("hl width : " + runwayRenderParams.getHighLightWidth());
             this.graphicsContext.setLineWidth(runwayRenderParams.getHighLightWidth());
         } else {
-            System.out.println(labelLine.getValue() + ": Not highlighted");
             this.graphicsContext.setLineWidth(0.8);
         }
 
@@ -386,6 +432,34 @@ public class RunwayRenderer {
     public void setCurrentlyHighlightedParam(RunwayParams currentlyHighlightedParam) {
         this.currentlyHighlightedParam = currentlyHighlightedParam;
         this.refreshLines();
+        this.render();
+    }
+
+    public void setRotation(int rotation) {
+        this.rotation = rotation;
+    }
+
+    private int getCenterX(){
+        return (int) this.graphicsContext.getCanvas().getWidth()/2;
+    }
+
+    private int getCenterY(){
+        return (int) this.graphicsContext.getCanvas().getHeight()/2;
+    }
+
+    public void updateZoom(int zoom) {
+        this.zoom = zoom;
+        this.render();
+    }
+
+    public void setMouseLocation(int x, int y) {
+        this.mouseLoc.x = x;
+        this.mouseLoc.y = y;
+    }
+
+    public void translate(int x, int y){
+        this.translateX = -x;
+        this.translateY = -y;
         this.render();
     }
 }
