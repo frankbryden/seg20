@@ -254,7 +254,7 @@ public class RunwayRenderer {
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
 
-        Line directionRight = new Line(0,maxHeight/50, maxWidth/7, maxHeight/50);
+        Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
         this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
         this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
@@ -265,7 +265,7 @@ public class RunwayRenderer {
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
         this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
 
-        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/50 , maxWidth - maxWidth/7, maxHeight - maxHeight/50);
+        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
         this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
         this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
         this.graphicsContext.stroke();

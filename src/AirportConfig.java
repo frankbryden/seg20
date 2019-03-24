@@ -3,11 +3,19 @@ import java.util.Map;
 
 public class AirportConfig {
     private String name;
+    private double latitude;
+    private double longitude;
     private Map<String, RunwayPair> runways;
 
     public AirportConfig(String name){
         this.name = name;
         this.runways = new HashMap<>();
+    }
+
+    public AirportConfig(String name, double latitude, double longitude){
+        this(name);
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public void addRunwayPair(RunwayPair runway){
@@ -20,6 +28,14 @@ public class AirportConfig {
 
     public String getName() {
         return name;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     @Override

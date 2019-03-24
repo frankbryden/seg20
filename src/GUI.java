@@ -2,6 +2,7 @@ import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
@@ -29,10 +30,19 @@ import javafx.stage.Stage;
 
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javafx.scene.image.Image;
 import javafx.util.Duration;
+import netscape.javascript.JSObject;
+import sun.net.www.http.HttpClient;
 
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
@@ -110,6 +120,37 @@ public class GUI extends Application {
 
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
+
+                        //TODO update wind direction and speed acoordingly
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                System.out.println("we're just gonna get some data here");
+                                String apiKey = "473ade203bfbbf2d4346749e61a37a95";
+                                String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + ac.getLatitude() + "&lon=" + ac.getLongitude() + "&appid=" + apiKey;
+                                try {
+                                    URL url = new URL(urlString);
+                                    URLConnection urlConnection = url.openConnection();
+                                    InputStreamReader is = new InputStreamReader(urlConnection.getInputStream());
+                                    StringBuilder data = new StringBuilder();
+                                    while (is.ready()){
+                                        data.append((char) is.read());
+                                    }
+                                    System.out.println("data is back !");
+                                    System.out.println(data.toString());
+                                    //Pattern p = Pattern.compile("\"wind\":(\\{.*\\})");
+                                    Pattern p = Pattern.compile("wind(.*)");
+                                    System.out.println(p.toString());
+                                    Matcher m = p.matcher(data.toString());
+                                    System.out.println(m.matches());
+                                    System.out.println(m.group(0));
+
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        Platform.runLater(runnable);
                         break;
                     }
                 }
