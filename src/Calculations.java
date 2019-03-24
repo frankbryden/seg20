@@ -59,8 +59,8 @@ public class Calculations {
 
             //LDA
             recalculatedLDA = distanceFromThreshold  - STRIP_END - RESA;
-            spacing = charsBeforeEquals("LDA = Distance from Threshold - STRIP END - RESA");
-            addCalcStep("LDA = Distance from Threshold - STRIP END - RESA");
+            spacing = charsBeforeEquals("LDA  = Distance from Threshold - STRIP END - RESA");
+            addCalcStep("LDA  = Distance from Threshold - STRIP END - RESA");
             addCalcStep(spacing + "= " + distanceFromThreshold + " - " + STRIP_END + " - " + RESA);
             addCalcStep(spacing + "= " + recalculatedLDA);
 
@@ -106,14 +106,14 @@ public class Calculations {
             //LDA
             int slopeCalculationLDA = (int) (obstacle.getHeight() * 50);
             slopeCalculationLDA = Math.max(slopeCalculationLDA, RESA);
-            spacing = charsBeforeEquals("LDA = ");
+            spacing = charsBeforeEquals("LDA  = ");
             if ((slopeCalculationLDA + STRIP_END) <= BLAST_PROTECTION){
                 recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - BLAST_PROTECTION;
-                addCalcStep("LDA = Original LDA - Distance from Threshold - Blast Protection");
+                addCalcStep("LDA  = Original LDA - Distance from Threshold - Blast Protection");
                 addCalcStep(spacing + "= " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + BLAST_PROTECTION);
             } else {
                 recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - STRIP_END - slopeCalculationLDA;
-                addCalcStep("LDA = Original LDA - Distance from Threshold - Strip End - Slope Calculation");
+                addCalcStep("LDA  = Original LDA - Distance from Threshold - Strip End - Slope Calculation");
                 addCalcStep(spacing + "= " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + STRIP_END + " - " + slopeCalculation + " (Obstacle Height * 50)");
             }
             addCalcStep(spacing + "= " + recalculatedLDA);
