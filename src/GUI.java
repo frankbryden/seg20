@@ -20,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -32,7 +31,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -41,8 +39,6 @@ import java.util.regex.Pattern;
 
 import javafx.scene.image.Image;
 import javafx.util.Duration;
-import netscape.javascript.JSObject;
-import sun.net.www.http.HttpClient;
 
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
@@ -54,7 +50,7 @@ public class GUI extends Application {
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
     private GridPane calculationResultsGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
@@ -138,12 +134,23 @@ public class GUI extends Application {
                                     }
                                     System.out.println("data is back !");
                                     System.out.println(data.toString());
-                                    //Pattern p = Pattern.compile("\"wind\":(\\{.*\\})");
-                                    Pattern p = Pattern.compile("wind(.*)");
+                                    Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
                                     System.out.println(p.toString());
                                     Matcher m = p.matcher(data.toString());
-                                    System.out.println(m.matches());
+                                    System.out.println(m.find());
                                     System.out.println(m.group(0));
+                                    System.out.println("Speed extracted from response : " + m.group(1));
+                                    System.out.println("Angle extracted from response : " + m.group(2));
+
+                                    double speed = Double.valueOf(m.group(1));
+                                    int angleDeg = Integer.valueOf(m.group(2));
+                                    //Convert angle to radians
+                                    double angleRad = angleDeg * Math.PI/180;
+                                    //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
+                                    angleRad += Math.PI/2;
+                                    windlLbl.setText(String.valueOf(speed) + "km/h, ang : " + angleDeg + "/" + angleRad);
+                                    runwayRenderer.setWindAngle(angleRad);
+
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -475,6 +482,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
+                double currentAngle = runwayRenderer.getWindAngle();
+                System.out.println("Current angle = " + currentAngle);
+                currentAngle += Math.PI/4;
+                System.out.println("After addition = " + currentAngle);
+                runwayRenderer.setWindAngle(currentAngle);
             }
         });
 
@@ -579,6 +591,8 @@ public class GUI extends Application {
         todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
         asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
+
+        windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
 
         //Home screen plane rotation
         planePane = (Pane) primaryStage.getScene().lookup("#planePane");
@@ -1058,9 +1072,6 @@ public class GUI extends Application {
 
     private void updateRunwayInfoLabels(RunwayPair runwayPair){
         runwayDesignatorLbl.setText(runwayPair.getName());
-        System.out.println("R1 and R2");
-        System.out.println(runwayPair.getR1());
-        System.out.println(runwayPair.getR2());
         toraLbl.setText("TORA : " + runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
         todaLbl.setText("TODA : " + runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
         asdaLbl.setText("ASDA : " + runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());

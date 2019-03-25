@@ -177,7 +177,7 @@
                                           <Label layoutX="381.0" layoutY="26.0" text="Runway" />
                                           <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="22.0" prefHeight="30.0" prefWidth="230.0" stylesheets="@styles/calculations.css" />
                                           <ComboBox fx:id="runwaySelect" layoutX="477.0" layoutY="22.0" prefHeight="31.0" prefWidth="142.0" stylesheets="@styles/calculations.css" />
-                                          <Label layoutX="656.0" layoutY="20.0" prefHeight="34.0" prefWidth="84.0" text="Wind " textAlignment="CENTER" />
+                                          <Label fx:id="windLbl" layoutX="634.0" layoutY="20.0" prefHeight="34.0" prefWidth="134.0" text="Wind " textAlignment="CENTER" />
                                        </children>
                                     </AnchorPane>
                                  </top>

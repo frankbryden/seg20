@@ -32,6 +32,12 @@ public class RunwayRenderer {
     private int translateY;
     private Point mouseLoc;
 
+    //temp
+    private int red = 50;
+
+    //Wind
+    private double windAngle;
+
     //used to create a gap in the lines to display a textual label
     private double lableWidth = 25;
 
@@ -48,6 +54,8 @@ public class RunwayRenderer {
         this.zoom = 1;
         this.translateX = 0;
         this.translateY = 0;
+        this.windAngle = -1;
+        this.red = 50;
         this.initParams();
         this.runwayRenderParams.init();
     }
@@ -80,7 +88,7 @@ public class RunwayRenderer {
             objectStartPosition = (int) (runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - distanceFromRunway - this.graphicsContext.getCanvas().getWidth() / 30);
         }
         Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
-        drawRect(this.graphicsContext, obstacle, Color.RED);
+        drawRect(obstacle, Color.RED);
     }
 
     public void initParams(){
@@ -123,6 +131,11 @@ public class RunwayRenderer {
         this.runwayRenderParams.setLabelTextMargin(10);
         this.runwayRenderParams.setLabelSpacing(30);
 
+        //Wind direction indicator
+        this.runwayRenderParams.setWindArrowLength(50);
+        this.runwayRenderParams.setWindArrowX(50);
+        this.runwayRenderParams.setWindArrowY(50);
+
         refreshLines();
     }
 
@@ -159,6 +172,11 @@ public class RunwayRenderer {
 
         //Draw background
         graphicsContext.setFill(Color.GOLD);
+        //graphicsContext.setFill(Color.rgb(red, 0, 0));
+        red += 5;
+        if (red > 255){
+            red = 255;
+        }
         graphicsContext.fillRect(0, 0, graphicsContext.getCanvas().getWidth(), graphicsContext.getCanvas().getHeight());
 
         //Rotate runway as per orientation of it
@@ -194,26 +212,26 @@ public class RunwayRenderer {
         //Finally we get to the drawing part !
 
         //Draw runway
-        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR);
+        drawRect(runwayRect, RUNWAY_COLOR);
 
         //Draw dashes
         for (Rectangle dash : dashes) {
-            drawRect(this.graphicsContext, dash, Color.WHITE);
+            drawRect(dash, Color.WHITE);
         }
 
         //Draw dashes
         for (Rectangle zebra : zebraDashes){
-            drawRect(this.graphicsContext, zebra, Color.WHITE);
+            drawRect(zebra, Color.WHITE);
         }
 
         //Draw clearway
         for (Rectangle clearway : clearways){
-            drawRect(this.graphicsContext, clearway, Color.GREEN);
+            drawRect(clearway, Color.GREEN);
         }
 
         //Draw stopway
         for (Rectangle stopway : stopways){
-            drawRect(this.graphicsContext, stopway, Color.PINK);
+            drawRect(stopway, Color.PINK);
         }
 
         //And the runway identifiers
@@ -237,9 +255,17 @@ public class RunwayRenderer {
             renderParamLine(line);
         }
         graphicsContext.restore();
-    }
 
-    public void renderSideview(){
+        if (this.windAngle != -1){
+            graphicsContext.setFill(Color.BLACK);
+            graphicsContext.fillOval(runwayRenderParams.getWindArrowX() - 8, runwayRenderParams.getWindArrowY() - 8, 16, 16);
+            Pair<Line, Line> lines = getWindLinePair();
+            drawLine(lines.getKey(), Color.BLACK);
+            drawLine(lines.getValue(), Color.BLACK);
+            renderArrowCap((int) lines.getValue().getEndX(), (int) lines.getValue().getEndY(), windAngle - Math.PI);
+        }
+    }
+public void renderSideview(){
 
 
         //canvas dimensions
@@ -287,16 +313,16 @@ public class RunwayRenderer {
 
         Rectangle clearAreaLeft = new Rectangle(runwayRenderParams.getRunwayStartX(), maxHeight /2, runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getRunwayStartX() , 7);
         Rectangle clearAreaRight = new Rectangle(runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - runwayRenderParams.getZebraMarginOuter(), maxHeight /2, runwayRenderParams.getZebraMarginOuter() , 7);
-        drawRect(this.graphicsContext, runwayRect, RUNWAY_COLOR );
+        drawRect(runwayRect, RUNWAY_COLOR );
 
         //Clearway
         for (Rectangle rect : clearways){
-            drawRect(this.graphicsContext, rect, Color.GREEN);
+            drawRect(rect, Color.GREEN);
         }
 
         //Stopway
         for (Rectangle rect : stopways){
-            drawRect(this.graphicsContext, rect, Color.PINK);
+            drawRect(rect, Color.PINK);
         }
 
         //And the labels identifying the runway params
@@ -336,13 +362,16 @@ public class RunwayRenderer {
 
     private void renderArrowCap(int x, int y, ArrowDirection direction){
         double angle;
+        if (direction == ArrowDirection.LEFT){
+            renderArrowCap(x, y, 0);
+        } else {
+            renderArrowCap(x, y, Math.PI);
+        }
+    }
+
+    private void renderArrowCap(int x, int y, double angle){
         double arrowWideness = Math.PI/4;
         int arrowLength = 15;
-        if (direction == ArrowDirection.LEFT){
-            angle = 0;
-        } else {
-            angle = Math.PI;
-        }
 
         //top line of the arrow
         this.graphicsContext.strokeLine(x, y, x + Math.cos(angle - arrowWideness/2) * arrowLength, y + Math.sin(angle - arrowWideness/2) * arrowLength);
@@ -424,15 +453,55 @@ public class RunwayRenderer {
         return clearways;
     }
 
-    public void drawRect(GraphicsContext gc, Rectangle rect, Color color){
-        gc.setFill(color);
-        gc.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    public void drawRect(Rectangle rect, Color color){
+        this.graphicsContext.setFill(color);
+        this.graphicsContext.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+
+    private void drawLine(Line line, Color color){
+        this.graphicsContext.setStroke(color);
+        this.graphicsContext.strokeLine(line.getStartX(), line.getStartY(), line.getEndX(), line.getEndY());
     }
 
     public void setCurrentlyHighlightedParam(RunwayParams currentlyHighlightedParam) {
         this.currentlyHighlightedParam = currentlyHighlightedParam;
         this.refreshLines();
         this.render();
+    }
+
+    private Line getWindLine(){
+        double xVel = Math.cos(windAngle);
+        double yVel = Math.sin(windAngle);
+        double xVel2 = Math.cos(windAngle - Math.PI);
+        double yVel2 = Math.sin(windAngle - Math.PI);
+
+        int x1 = (int) (xVel*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowX());
+        int y1 = (int) (yVel*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowY());
+        int x2 = (int) (xVel2*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowX());
+        int y2 = (int) (yVel2*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowY());
+
+        return new Line(x2, y2, x1, y1);
+
+    }
+
+    private Pair<Line, Line> getWindLinePair(){
+        System.out.println("drawing at angle " + windAngle);
+        double xVelForw = Math.cos(windAngle);
+        double yVelForw = Math.sin(windAngle);
+        double xVelPrev = Math.cos(windAngle - Math.PI);
+        double yVelPrev = Math.sin(windAngle - Math.PI);
+
+        int xPrev = (int) (xVelPrev*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowX());
+        int yPrev = (int) (yVelPrev*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowY());
+
+        int xForw = (int) (xVelForw*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowX());
+        int yForw = (int) (yVelForw*runwayRenderParams.getWindArrowLength()/2+runwayRenderParams.getWindArrowY());
+
+        Line prevLine = new Line(xPrev, yPrev, runwayRenderParams.getWindArrowX(), runwayRenderParams.getWindArrowY());
+        Line forwLine = new Line(runwayRenderParams.getWindArrowX(), runwayRenderParams.getWindArrowY(), xForw, yForw);
+
+        return new Pair<>(prevLine, forwLine);
+
     }
 
     public void setRotation(int rotation) {
@@ -461,5 +530,14 @@ public class RunwayRenderer {
         this.translateX = -x;
         this.translateY = -y;
         this.render();
+    }
+
+    public void setWindAngle(double windAngle) {
+        this.windAngle = windAngle;
+        this.render();
+    }
+
+    public double getWindAngle() {
+        return windAngle;
     }
 }

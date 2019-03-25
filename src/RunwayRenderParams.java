@@ -42,6 +42,11 @@ public class RunwayRenderParams {
     private int dashCount;
     private int dashShift;
 
+    //Wind direction
+    private int windArrowLength;
+    private int windArrowX;
+    private int windArrowY;
+
 /*
     //Sideview parameters
 
@@ -319,5 +324,29 @@ public class RunwayRenderParams {
 
     public void setSideOnRunwayStartY(int sideOnRunwayStartY) {
         this.sideOnRunwayStartY = sideOnRunwayStartY;
+    }
+
+    public int getWindArrowLength() {
+        return windArrowLength;
+    }
+
+    public void setWindArrowLength(int windArrowLength) {
+        this.windArrowLength = windArrowLength;
+    }
+
+    public int getWindArrowX() {
+        return windArrowX;
+    }
+
+    public void setWindArrowX(int windArrowX) {
+        this.windArrowX = windArrowX;
+    }
+
+    public int getWindArrowY() {
+        return windArrowY;
+    }
+
+    public void setWindArrowY(int windArrowY) {
+        this.windArrowY = windArrowY;
     }
 }
