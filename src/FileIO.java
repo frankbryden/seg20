@@ -165,7 +165,7 @@ public class FileIO {
             e.printStackTrace();
             return null;
         }
-        InputStreamReader isr = new InputStreamReader(fis);
+        InputStreamReader isr = new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
         BufferedReader bufferedReader = new BufferedReader(isr);
         Map<String, AirportConfig> airportConfigs = new HashMap<>();
         String line;
@@ -180,6 +180,8 @@ public class FileIO {
                 int toda = Integer.valueOf(parts[3]);
                 int asda = Integer.valueOf(parts[4]);
                 int lda = Integer.valueOf(parts[5]);
+                double latitude = Double.valueOf(parts[6]);
+                double longitude = Double.valueOf(parts[7]);
                 RunwayConfig runwayConfig = new RunwayConfig(new RunwayDesignator(designator), tora, toda, asda, lda, 0);
 
                 if (runwayPair.getR1() == null){
@@ -191,7 +193,7 @@ public class FileIO {
                     if (airportConfigs.containsKey(name)){
                         airportConfigs.get(name).addRunwayPair(runwayPair);
                     } else {
-                        AirportConfig airportConfig = new AirportConfig(name);
+                        AirportConfig airportConfig = new AirportConfig(name, latitude, longitude);
                         airportConfig.addRunwayPair(runwayPair);
                         airportConfigs.put(name, airportConfig);
                     }
