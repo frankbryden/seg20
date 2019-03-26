@@ -217,7 +217,11 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Collection<Obstacle> importedObstacles = fileIO.readObstacles("obstacles.xml");
+                File file = fileChooser.showOpenDialog(primaryStage);
+                if (file == null){
+                    return;
+                }
+                Collection<Obstacle> importedObstacles = fileIO.readObstacles(file.getPath());
                 importedObstacles.forEach(obstacle -> {
                     addObstacle(obstacle);
                 });
@@ -259,7 +263,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                fileIO.write(userDefinedObstacles.values(), "obstacles.xml");
+                File file = fileChooser.showSaveDialog(primaryStage);
+                if (file != null){
+                    fileIO.write(userDefinedObstacles.values(), file.getPath());
+                }
+
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
                     System.out.println(name);
                 });*/
@@ -865,12 +873,15 @@ public class GUI extends Application {
         box.getStyleClass().add("popup");
         box.getStylesheets().add("styles/layoutStyles.css");
 
-        VBox subBox = new VBox(100);
+        HBox subBox = new HBox(100);
 
         Label detailsLabel = new Label ("Overview of obstacle details");
-        Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
-        Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
+        Label nameLabel = new Label ("Name:");
+        Label nameContentLabel = new Label(selectedObstacle.getName());
+        Label heightLabel = new Label ("Height:");
+        Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
         Button returnButton = new Button("Go back");
+        Button editButton = new Button("Edit");
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -878,11 +889,24 @@ public class GUI extends Application {
             }
         });
 
+        detailsLabel.setStyle("-fx-font-size: 18px");
+        nameLabel.setStyle("-fx-font-weight: BOLD");
+        heightLabel.setStyle("-fx-font-weight: BOLD");
+
+        HBox nameHBox = new HBox(20);
+        nameHBox.getChildren().add(nameLabel);
+        nameHBox.getChildren().add(nameContentLabel);
+
+        HBox heightHBox = new HBox(15);
+        heightHBox.getChildren().add(heightLabel);
+        heightHBox.getChildren().add(heightContentLabel);
+
         subBox.setAlignment(Pos.CENTER);
+        subBox.getChildren().add(editButton);
         subBox.getChildren().add(returnButton);
         box.getChildren().add(detailsLabel);
-        box.getChildren().add(nameLabel);
-        box.getChildren().add(heightLabel);
+        box.getChildren().add(nameHBox);
+        box.getChildren().add(heightHBox);
         box.getChildren().add(subBox);
 
 
