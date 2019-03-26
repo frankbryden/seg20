@@ -1,6 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><Application>
+<?xml version="1.0" encoding="UTF-8"?><Obstacles>
+    <Obstacle>
+        <name>Ariane</name>
+        <height>5.0</height>
+    </Obstacle>
     <Obstacle>
         <name>Jash</name>
-        <height>1.5</height>
+        <height>1.2</height>
     </Obstacle>
-</Application>
+    <Obstacle>
+        <name>Jasmine</name>
+        <height>1.8</height>
+    </Obstacle>
+</Obstacles>

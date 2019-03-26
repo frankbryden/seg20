@@ -57,7 +57,7 @@ public class GUI extends Application {
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
-    private Map<String, Obstacle> userObstaclesSorted, predefinedObstaclesSorted, allObstaclesSorted;
+    private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
@@ -85,7 +85,7 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
-        userObstaclesSorted = new TreeMap<>();
+        userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
         allObstaclesSorted = new TreeMap<>();
 
@@ -220,7 +220,11 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
+                Collection<Obstacle> importedObstacles = fileIO.readObstacles("obstacles.xml");
+                importedObstacles.forEach(obstacle -> {
+                    addObstacle(obstacle);
+                });
+                updateObstaclesList();
             }
         });
 
@@ -258,9 +262,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                for (String name : userObstaclesSorted.keySet()){
-                    fileIO.write(userObstaclesSorted.get(name), "obstacles.xml");
-                }
+                fileIO.write(userDefinedObstacles.values(), "obstacles.xml");
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
                     System.out.println(name);
                 });*/
@@ -472,7 +474,6 @@ public class GUI extends Application {
         canvas.setOnScroll(new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
-                System.out.println(event.getDeltaY());
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
                 runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
             }
@@ -1108,7 +1109,7 @@ public class GUI extends Application {
             userDefinedObstaclesLV.getItems().remove(selectedObstacle);
             obstacleSelect.getItems().remove(selectedObstacle);
 
-            userObstaclesSorted.remove(obstacleName);
+            userDefinedObstacles.remove(obstacleName);
             allObstaclesSorted.remove(obstacleName);
 
         }
@@ -1121,7 +1122,7 @@ public class GUI extends Application {
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(userObstaclesSorted.keySet());
+        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
     }
@@ -1206,8 +1207,12 @@ public class GUI extends Application {
 
     public void addObstacle(String name, double height){
         Obstacle obstacle = new Obstacle(name, height);
-        this.userObstaclesSorted.put(name, obstacle);
-        this.allObstaclesSorted.put(name, obstacle);
+        addObstacle(obstacle);
+    }
+
+    private void addObstacle(Obstacle obstacle){
+        this.userDefinedObstacles.put(obstacle.getName(), obstacle);
+        this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
 

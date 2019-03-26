@@ -257,11 +257,9 @@ public class RunwayRenderer {
         graphicsContext.restore();
 
         if (this.windAngle != -1){
-            graphicsContext.setFill(Color.BLACK);
-            graphicsContext.fillOval(runwayRenderParams.getWindArrowX() - 8, runwayRenderParams.getWindArrowY() - 8, 16, 16);
             Pair<Line, Line> lines = getWindLinePair();
-            drawLine(lines.getKey(), Color.BLACK);
-            drawLine(lines.getValue(), Color.BLACK);
+            drawLine(lines.getKey(), Color.BLUE);
+            drawLine(lines.getValue(), Color.RED);
             renderArrowCap((int) lines.getValue().getEndX(), (int) lines.getValue().getEndY(), windAngle - Math.PI);
         }
     }
