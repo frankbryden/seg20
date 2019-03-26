@@ -68,7 +68,7 @@ public class GUI extends Application {
     private RunwayRenderer runwayRendererSideView;
     private BorderPane canvasBorderPane;
     private ComboBox obstacleSelect;
-
+    private Boolean editingObstacle;
 
 
     @Override
@@ -607,7 +607,6 @@ public class GUI extends Application {
             public void handle(MouseEvent click) {
 
                 if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-
                     showObstacleDetails(userDefinedObstaclesLV, click, primaryStage);
 
                 }
@@ -864,6 +863,9 @@ public class GUI extends Application {
 
     private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage) {
 
+        //TODO the edit button should toggle editing of the current obstacle
+        editingObstacle = false;
+
         String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
         Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
@@ -882,12 +884,28 @@ public class GUI extends Application {
         Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
         Button returnButton = new Button("Go back");
         Button editButton = new Button("Edit");
+
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 detailsPopUp.hide();
             }
         });
+
+        editButton.setPadding(new Insets(2, 10, 2, 10));
+        editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                editingObstacle = !editingObstacle;
+                if (editingObstacle){
+                    editButton.setText("Save");
+                } else {
+                    editButton.setText("Edit");
+                }
+            }
+        });
+
+
 
         detailsLabel.setStyle("-fx-font-size: 18px");
         nameLabel.setStyle("-fx-font-weight: BOLD");
