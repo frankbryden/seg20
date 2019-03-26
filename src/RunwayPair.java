@@ -1,6 +1,7 @@
 public class RunwayPair {
     private RunwayConfig r1, r2;
     private String name;
+    public enum Side {R1, R2, Unknown}
 
     public RunwayPair (RunwayConfig r1, RunwayConfig r2){
         this.r1 = r1;
@@ -14,6 +15,8 @@ public class RunwayPair {
     }
 
     public void init(){
+        this.r1.setParent(this);
+        this.r2.setParent(this);
         this.name = generatePairName();
     }
 

@@ -77,18 +77,31 @@ public class RunwayRenderer {
 
 
 
-    public void drawObstacle(Integer height, Integer distanceFromRunway, String selectedTresholdName, String unselectedTresholdName){
+    public void drawObstacle(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String selectedTresholdName, String unselectedTresholdName){
 
-        Integer selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
-        Integer unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
+        int selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
+        int unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
         System.out.println("Draw obstacle, runways are : " + selected + unSelected);
-        int objectStartPosition = runwayRenderParams.getRunwayStartX() + distanceFromRunway;
-        if(selected > unSelected) {
-            System.out.println("changed the position");
-            objectStartPosition = (int) (runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength() - distanceFromRunway - this.graphicsContext.getCanvas().getWidth() / 30);
+        int objectStartX;
+        if (selectedTresholdName.equals(runwayPair.getR2().getRunwayDesignator().toString())){
+            System.out.println("using runway " + runwayPair.getR2().getRunwayDesignator().toString());
+            objectStartX = runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength();
+            int obstacleShift = (int) (distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR2()*1.0 * runwayRenderParams.getRunwayLength());
+            objectStartX -= obstacleShift;
+            System.out.print("Percentage : ");
+            System.out.println(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR2()*1.0);
+            System.out.println("Shifting the obstacle by " + obstacleShift + "m");
+
+        } else {
+            System.out.println("using runway instead " + runwayPair.getR1().getRunwayDesignator().toString());
+            objectStartX = runwayRenderParams.getRunwayStartX() + (distanceFromThreshold/runwayRenderParams.getRealLifeMaxLenR1() * runwayRenderParams.getRunwayLength());
         }
-        Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
-        drawRect(obstacle, Color.RED);
+        // Not too happy with this following line ._.
+        //Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
+
+        Rectangle obstacleRect = new Rectangle(objectStartX,runwayRenderParams.getRunwayCenterlineY(),10 ,20);
+
+        drawRect(obstacleRect, Color.RED);
     }
 
     public void initParams(){
@@ -104,6 +117,8 @@ public class RunwayRenderer {
         this.runwayRenderParams.setRunwayLength(maxWidth - 2*runwayRenderParams.getRunwayStartX());
         this.runwayRenderParams.setRunwayHeight(100);
         this.runwayRenderParams.setRunwayStartY((int) (maxHeight/2 - runwayRenderParams.getRunwayHeight()/2));
+        this.runwayRenderParams.setRealLifeMaxLenR1(runwayPair.getR1().getTORA());
+        this.runwayRenderParams.setRealLifeMaxLenR2(runwayPair.getR2().getTORA());
 
         //Clearway
         this.runwayRenderParams.setClearwayHeight(10);
@@ -240,18 +255,19 @@ public class RunwayRenderer {
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRenderParams.getZebraMarginOuter() + runwayRenderParams.getZebraMarginInner() + runwayRenderParams.getZebraDashLength(), runwayRect.getY() + runwayRect.getHeight()/2);
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -25, 30);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -25, 30);
         this.graphicsContext.restore();
         this.graphicsContext.save();
         this.graphicsContext.translate(runwayRect.getX() + runwayRect.getWidth() - runwayRenderParams.getZebraMarginOuter() - runwayRenderParams.getZebraMarginInner() - runwayRenderParams.getZebraDashLength() - runwayRenderParams.getIdentifierMargin(), runwayRect.getY());
         this.graphicsContext.rotate(-90);
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), -70, 10);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), -70, 10);
         this.graphicsContext.restore();
         //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
         //And the labels identifying the runway params
         for (Pair<Line, String> line : labelLines){
             graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+            graphicsContext.setStroke(Color.BLACK);
             renderParamLine(line);
         }
         graphicsContext.restore();
@@ -331,8 +347,8 @@ public void renderSideview(){
 
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
         this.graphicsContext.setFill(Color.BLACK);
-        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
-        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
+        this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
     }
 
     public void renderParamLine(Pair<Line, String> labelLine){
@@ -483,7 +499,6 @@ public void renderSideview(){
     }
 
     private Pair<Line, Line> getWindLinePair(){
-        System.out.println("drawing at angle " + windAngle);
         double xVelForw = Math.cos(windAngle);
         double yVelForw = Math.sin(windAngle);
         double xVelPrev = Math.cos(windAngle - Math.PI);
@@ -537,5 +552,9 @@ public void renderSideview(){
 
     public double getWindAngle() {
         return windAngle;
+    }
+
+    public RunwayRenderParams getRunwayRenderParams() {
+        return runwayRenderParams;
     }
 }

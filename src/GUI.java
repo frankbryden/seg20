@@ -117,7 +117,6 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        //TODO update wind direction and speed acoordingly
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
@@ -132,13 +131,11 @@ public class GUI extends Application {
                                     while (is.ready()){
                                         data.append((char) is.read());
                                     }
-                                    System.out.println("data is back !");
                                     System.out.println(data.toString());
                                     Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
                                     System.out.println(p.toString());
                                     Matcher m = p.matcher(data.toString());
-                                    System.out.println(m.find());
-                                    System.out.println(m.group(0));
+                                    m.find();
                                     System.out.println("Speed extracted from response : " + m.group(1));
                                     System.out.println("Angle extracted from response : " + m.group(2));
 
@@ -406,24 +403,52 @@ public class GUI extends Application {
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
 
-                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
+
                     String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
-                    RunwayConfig runwayConfig;
+                    RunwayConfig runwayConfig, otherConfig;
+                    RunwayPair.Side selectedSide;
                     if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
                         runwayConfig = currentlySelectedRunway.getR1();
+                        otherConfig = currentlySelectedRunway.getR2();
+                        selectedSide = RunwayPair.Side.R1;
                     } else {
                         runwayConfig = currentlySelectedRunway.getR2();
+                        otherConfig = currentlySelectedRunway.getR1();
+                        selectedSide = RunwayPair.Side.R2;
                     }
+
+                    //Perform recalculations
                     Calculations calculations = new Calculations(runwayConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                     CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
                     RunwayConfig recalculatedParams = results.getRecalculatedParams();
+
+                    //Fix ? perform recalculation on the other runway config
+                    Calculations calculations2 = new Calculations(otherConfig);
+                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
+                    RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
+
+
                     calculationDetails.setText(results.getCalculationDetails());
                     System.out.println(recalculatedParams.toString());
                     updateCalculationResultsView(runwayConfig, recalculatedParams);
                     switchCalculationsTabToView();
 
-                    String unselectedThreshold = "";
+                    if (selectedSide == RunwayPair.Side.R1){
+                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams, recalculatedParams2), canvas.getGraphicsContext2D());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(runwayConfig.getTORA());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(otherConfig.getTORA());
+                    } else {
+                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams2, recalculatedParams), canvas.getGraphicsContext2D());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(runwayConfig.getTORA());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
+                    }
+
+
+                    runwayRenderer.render();
+
+                    String unselectedThreshold;
                     if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
                         unselectedThreshold = currentlySelectedRunway.getR2().toString();
                     } else {
@@ -431,7 +456,7 @@ public class GUI extends Application {
                     }
 
                     runwayRendererSideView.renderSideview();
-                    runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
+                    runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold );
 
                 }
 

@@ -118,8 +118,8 @@ public class Calculations {
             }
             addCalcStep(spacing + "= " + recalculatedLDA);
         }
-
-        return new CalculationResults(new RunwayConfig(originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold()), getCalculationResults());
+        //TODO now we might migrate this function to take in runway pairs instead of a single runway config - this needs to be discussed
+        return new CalculationResults(new RunwayConfig(null, originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold()), getCalculationResults());
     }
 
     private String charsBeforeEquals(String input){
