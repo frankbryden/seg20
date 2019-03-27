@@ -908,10 +908,24 @@ public class GUI extends Application {
         Label detailsLabel = new Label ("Overview of obstacle details");
         Label nameLabel = new Label ("Name:");
         Label nameContentLabel = new Label(selectedObstacle.getName());
+        TextField nameEditTF = new TextField();
         Label heightLabel = new Label ("Height:");
         Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
+        TextField heightEditTF = new TextField();
         Button returnButton = new Button("Go back");
         Button editButton = new Button("Edit");
+
+        detailsLabel.setStyle("-fx-font-size: 18px");
+        nameLabel.setStyle("-fx-font-weight: BOLD");
+        heightLabel.setStyle("-fx-font-weight: BOLD");
+
+        HBox nameHBox = new HBox(20);
+        nameHBox.getChildren().add(nameLabel);
+        nameHBox.getChildren().add(nameContentLabel);
+
+        HBox heightHBox = new HBox(15);
+        heightHBox.getChildren().add(heightLabel);
+        heightHBox.getChildren().add(heightContentLabel);
 
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -926,8 +940,36 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 editingObstacle = !editingObstacle;
                 if (editingObstacle){
+                    //Edit mode
+                    nameHBox.getChildren().remove(nameContentLabel);
+                    nameHBox.getChildren().add(nameEditTF);
+
+                    heightHBox.getChildren().remove(heightContentLabel);
+                    heightHBox.getChildren().add(heightEditTF);
+
+                    nameEditTF.setText(selectedObstacle.getName());
+                    heightEditTF.setText(Double.toString(selectedObstacle.getHeight()));
+
+
                     editButton.setText("Save");
                 } else {
+                    //Save mode
+                    nameHBox.getChildren().add(nameContentLabel);
+                    nameHBox.getChildren().remove(nameEditTF);
+
+                    heightHBox.getChildren().add(heightContentLabel);
+                    heightHBox.getChildren().remove(heightEditTF);
+
+                    userDefinedObstacles.remove(selectedObstacle.getName());
+                    selectedObstacle.setName(nameEditTF.getText());
+                    selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                    userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
+
+                    nameContentLabel.setText(selectedObstacle.getName());
+                    heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                    updateObstaclesList();
+
                     editButton.setText("Edit");
                 }
             }
@@ -935,17 +977,7 @@ public class GUI extends Application {
 
 
 
-        detailsLabel.setStyle("-fx-font-size: 18px");
-        nameLabel.setStyle("-fx-font-weight: BOLD");
-        heightLabel.setStyle("-fx-font-weight: BOLD");
 
-        HBox nameHBox = new HBox(20);
-        nameHBox.getChildren().add(nameLabel);
-        nameHBox.getChildren().add(nameContentLabel);
-
-        HBox heightHBox = new HBox(15);
-        heightHBox.getChildren().add(heightLabel);
-        heightHBox.getChildren().add(heightContentLabel);
 
         subBox.setAlignment(Pos.CENTER);
         subBox.getChildren().add(editButton);
