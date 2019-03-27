@@ -20,7 +20,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -32,7 +31,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
@@ -41,8 +39,6 @@ import java.util.regex.Pattern;
 
 import javafx.scene.image.Image;
 import javafx.util.Duration;
-import netscape.javascript.JSObject;
-import sun.net.www.http.HttpClient;
 
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
@@ -54,14 +50,14 @@ public class GUI extends Application {
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
     private GridPane calculationResultsGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
-    private Map<String, Obstacle> userObstaclesSorted, predefinedObstaclesSorted, allObstaclesSorted;
+    private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
@@ -72,7 +68,7 @@ public class GUI extends Application {
     private RunwayRenderer runwayRendererSideView;
     private BorderPane canvasBorderPane;
     private ComboBox obstacleSelect;
-
+    private Boolean editingObstacle;
 
 
     @Override
@@ -89,7 +85,7 @@ public class GUI extends Application {
         fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
-        userObstaclesSorted = new TreeMap<>();
+        userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
         allObstaclesSorted = new TreeMap<>();
 
@@ -121,7 +117,6 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        //TODO update wind direction and speed acoordingly
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
@@ -136,14 +131,23 @@ public class GUI extends Application {
                                     while (is.ready()){
                                         data.append((char) is.read());
                                     }
-                                    System.out.println("data is back !");
                                     System.out.println(data.toString());
-                                    //Pattern p = Pattern.compile("\"wind\":(\\{.*\\})");
-                                    Pattern p = Pattern.compile("wind(.*)");
+                                    Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
                                     System.out.println(p.toString());
                                     Matcher m = p.matcher(data.toString());
-                                    System.out.println(m.matches());
-                                    System.out.println(m.group(0));
+                                    m.find();
+                                    System.out.println("Speed extracted from response : " + m.group(1));
+                                    System.out.println("Angle extracted from response : " + m.group(2));
+
+                                    double speed = Double.valueOf(m.group(1));
+                                    int angleDeg = Integer.valueOf(m.group(2));
+                                    //Convert angle to radians
+                                    double angleRad = angleDeg * Math.PI/180;
+                                    //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
+                                    angleRad += Math.PI/2;
+                                    windlLbl.setText(String.valueOf(speed) + "km/h, ang : " + angleDeg + "/" + angleRad);
+                                    runwayRenderer.setWindAngle(angleRad);
+
 
                                 } catch (IOException e) {
                                     e.printStackTrace();
@@ -213,7 +217,15 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
+                File file = fileChooser.showOpenDialog(primaryStage);
+                if (file == null){
+                    return;
+                }
+                Collection<Obstacle> importedObstacles = fileIO.readObstacles(file.getPath());
+                importedObstacles.forEach(obstacle -> {
+                    addObstacle(obstacle);
+                });
+                updateObstaclesList();
             }
         });
 
@@ -251,9 +263,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                for (String name : userObstaclesSorted.keySet()){
-                    fileIO.write(userObstaclesSorted.get(name), "obstacles.xml");
+                File file = fileChooser.showSaveDialog(primaryStage);
+                if (file != null){
+                    fileIO.write(userDefinedObstacles.values(), file.getPath());
                 }
+
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
                     System.out.println(name);
                 });*/
@@ -397,24 +411,52 @@ public class GUI extends Application {
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
 
-                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
+
                     String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
-                    RunwayConfig runwayConfig;
+                    RunwayConfig runwayConfig, otherConfig;
+                    RunwayPair.Side selectedSide;
                     if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
                         runwayConfig = currentlySelectedRunway.getR1();
+                        otherConfig = currentlySelectedRunway.getR2();
+                        selectedSide = RunwayPair.Side.R1;
                     } else {
                         runwayConfig = currentlySelectedRunway.getR2();
+                        otherConfig = currentlySelectedRunway.getR1();
+                        selectedSide = RunwayPair.Side.R2;
                     }
+
+                    //Perform recalculations
                     Calculations calculations = new Calculations(runwayConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                     CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
                     RunwayConfig recalculatedParams = results.getRecalculatedParams();
+
+                    //Fix ? perform recalculation on the other runway config
+                    Calculations calculations2 = new Calculations(otherConfig);
+                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
+                    RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
+
+
                     calculationDetails.setText(results.getCalculationDetails());
                     System.out.println(recalculatedParams.toString());
                     updateCalculationResultsView(runwayConfig, recalculatedParams);
                     switchCalculationsTabToView();
 
-                    String unselectedThreshold = "";
+                    if (selectedSide == RunwayPair.Side.R1){
+                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams, recalculatedParams2), canvas.getGraphicsContext2D());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(runwayConfig.getTORA());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(otherConfig.getTORA());
+                    } else {
+                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams2, recalculatedParams), canvas.getGraphicsContext2D());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(runwayConfig.getTORA());
+                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
+                    }
+
+
+                    runwayRenderer.render();
+
+                    String unselectedThreshold;
                     if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
                         unselectedThreshold = currentlySelectedRunway.getR2().toString();
                     } else {
@@ -422,7 +464,7 @@ public class GUI extends Application {
                     }
 
                     runwayRendererSideView.renderSideview();
-                    runwayRendererSideView.drawObstacle((int) currentlySelectedObstacle.getHeight(),distanceFromThreshold,thresholdName,unselectedThreshold );
+                    runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold );
 
                 }
 
@@ -465,7 +507,6 @@ public class GUI extends Application {
         canvas.setOnScroll(new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
-                System.out.println(event.getDeltaY());
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
                 runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
             }
@@ -475,6 +516,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
+                double currentAngle = runwayRenderer.getWindAngle();
+                System.out.println("Current angle = " + currentAngle);
+                currentAngle += Math.PI/4;
+                System.out.println("After addition = " + currentAngle);
+                runwayRenderer.setWindAngle(currentAngle);
             }
         });
 
@@ -561,7 +607,6 @@ public class GUI extends Application {
             public void handle(MouseEvent click) {
 
                 if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-
                     showObstacleDetails(userDefinedObstaclesLV, click, primaryStage);
 
                 }
@@ -579,6 +624,8 @@ public class GUI extends Application {
         todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
         asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
+
+        windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
 
         //Home screen plane rotation
         planePane = (Pane) primaryStage.getScene().lookup("#planePane");
@@ -816,6 +863,9 @@ public class GUI extends Application {
 
     private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage) {
 
+        //TODO the edit button should toggle editing of the current obstacle
+        editingObstacle = false;
+
         String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
         Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
@@ -825,12 +875,16 @@ public class GUI extends Application {
         box.getStyleClass().add("popup");
         box.getStylesheets().add("styles/layoutStyles.css");
 
-        VBox subBox = new VBox(100);
+        HBox subBox = new HBox(100);
 
         Label detailsLabel = new Label ("Overview of obstacle details");
-        Label nameLabel = new Label ("Name: " + selectedObstacle.getName());
-        Label heightLabel = new Label ("Height (m): " + selectedObstacle.getHeight());
+        Label nameLabel = new Label ("Name:");
+        Label nameContentLabel = new Label(selectedObstacle.getName());
+        Label heightLabel = new Label ("Height:");
+        Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
         Button returnButton = new Button("Go back");
+        Button editButton = new Button("Edit");
+
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -838,11 +892,39 @@ public class GUI extends Application {
             }
         });
 
+        editButton.setPadding(new Insets(2, 10, 2, 10));
+        editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                editingObstacle = !editingObstacle;
+                if (editingObstacle){
+                    editButton.setText("Save");
+                } else {
+                    editButton.setText("Edit");
+                }
+            }
+        });
+
+
+
+        detailsLabel.setStyle("-fx-font-size: 18px");
+        nameLabel.setStyle("-fx-font-weight: BOLD");
+        heightLabel.setStyle("-fx-font-weight: BOLD");
+
+        HBox nameHBox = new HBox(20);
+        nameHBox.getChildren().add(nameLabel);
+        nameHBox.getChildren().add(nameContentLabel);
+
+        HBox heightHBox = new HBox(15);
+        heightHBox.getChildren().add(heightLabel);
+        heightHBox.getChildren().add(heightContentLabel);
+
         subBox.setAlignment(Pos.CENTER);
+        subBox.getChildren().add(editButton);
         subBox.getChildren().add(returnButton);
         box.getChildren().add(detailsLabel);
-        box.getChildren().add(nameLabel);
-        box.getChildren().add(heightLabel);
+        box.getChildren().add(nameHBox);
+        box.getChildren().add(heightHBox);
         box.getChildren().add(subBox);
 
 
@@ -1058,9 +1140,6 @@ public class GUI extends Application {
 
     private void updateRunwayInfoLabels(RunwayPair runwayPair){
         runwayDesignatorLbl.setText(runwayPair.getName());
-        System.out.println("R1 and R2");
-        System.out.println(runwayPair.getR1());
-        System.out.println(runwayPair.getR2());
         toraLbl.setText("TORA : " + runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
         todaLbl.setText("TODA : " + runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
         asdaLbl.setText("ASDA : " + runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
@@ -1097,7 +1176,7 @@ public class GUI extends Application {
             userDefinedObstaclesLV.getItems().remove(selectedObstacle);
             obstacleSelect.getItems().remove(selectedObstacle);
 
-            userObstaclesSorted.remove(obstacleName);
+            userDefinedObstacles.remove(obstacleName);
             allObstaclesSorted.remove(obstacleName);
 
         }
@@ -1110,7 +1189,7 @@ public class GUI extends Application {
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(userObstaclesSorted.keySet());
+        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
     }
@@ -1195,8 +1274,12 @@ public class GUI extends Application {
 
     public void addObstacle(String name, double height){
         Obstacle obstacle = new Obstacle(name, height);
-        this.userObstaclesSorted.put(name, obstacle);
-        this.allObstaclesSorted.put(name, obstacle);
+        addObstacle(obstacle);
+    }
+
+    private void addObstacle(Obstacle obstacle){
+        this.userDefinedObstacles.put(obstacle.getName(), obstacle);
+        this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
 

@@ -10,6 +10,8 @@ public class RunwayRenderParams {
     private int runwayStartY;
     private int sideOnRunwayHeight;
     private int sideOnRunwayStartY;
+    private int realLifeMaxLenR1;
+    private int realLifeMaxLenR2;
 
     //Stopway
     private int stopwayLength;
@@ -41,6 +43,11 @@ public class RunwayRenderParams {
     private int remainingRunwayLength;
     private int dashCount;
     private int dashShift;
+
+    //Wind direction
+    private int windArrowLength;
+    private int windArrowX;
+    private int windArrowY;
 
 /*
     //Sideview parameters
@@ -319,5 +326,45 @@ public class RunwayRenderParams {
 
     public void setSideOnRunwayStartY(int sideOnRunwayStartY) {
         this.sideOnRunwayStartY = sideOnRunwayStartY;
+    }
+
+    public int getWindArrowLength() {
+        return windArrowLength;
+    }
+
+    public void setWindArrowLength(int windArrowLength) {
+        this.windArrowLength = windArrowLength;
+    }
+
+    public int getWindArrowX() {
+        return windArrowX;
+    }
+
+    public void setWindArrowX(int windArrowX) {
+        this.windArrowX = windArrowX;
+    }
+
+    public int getWindArrowY() {
+        return windArrowY;
+    }
+
+    public void setWindArrowY(int windArrowY) {
+        this.windArrowY = windArrowY;
+    }
+
+    public int getRealLifeMaxLenR1() {
+        return realLifeMaxLenR1;
+    }
+
+    public void setRealLifeMaxLenR1(int realLifeMaxLenR1) {
+        this.realLifeMaxLenR1 = realLifeMaxLenR1;
+    }
+
+    public int getRealLifeMaxLenR2() {
+        return realLifeMaxLenR2;
+    }
+
+    public void setRealLifeMaxLenR2(int realLifeMaxLenR2) {
+        this.realLifeMaxLenR2 = realLifeMaxLenR2;
     }
 }

@@ -11,6 +11,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +35,7 @@ public class FileIO {
         }
     }
 
-    public AirportConfig read(String filePath){
+    private Document getDocument(String filePath){
         Document document;
         try {
             document = documentBuilder.parse(filePath);
@@ -41,6 +43,11 @@ public class FileIO {
             e.printStackTrace();
             return null;
         }
+        return document;
+    }
+
+    public AirportConfig read(String filePath){
+        Document document = getDocument(filePath);
         String airportName = document.getElementsByTagName("name").item(0).getTextContent();
         AirportConfig airportConfig = new AirportConfig(airportName);
         //Retrieve list of runway pairs
@@ -63,6 +70,35 @@ public class FileIO {
             airportConfig.addRunwayPair(new RunwayPair(r1, r2));
         }
         return airportConfig;
+    }
+
+    public Collection<Obstacle> readObstacles(String filePath){
+        ArrayList<Obstacle> obstacles = new ArrayList<>();
+        Document document = getDocument(filePath);
+        if (document == null){
+            return obstacles;
+        }
+
+        NodeList obstaclesRaw = document.getElementsByTagName("Obstacle");
+        for (int i = 0; i < obstaclesRaw.getLength(); i++){
+            obstacles.add(readObstacle(obstaclesRaw.item(i)));
+        }
+        return obstacles;
+    }
+
+    private Obstacle readObstacle(Node node){
+        String name = "";
+        double height = -1.0;
+        NodeList obstacleDetails = node.getChildNodes();
+        for (int i = 0; i < obstacleDetails.getLength(); i++){
+            Node item = obstacleDetails.item(i);
+            if (item.getNodeName().equals("name")){
+                name = item.getTextContent();
+            } else if (item.getNodeName().equals("height")){
+                height = Double.parseDouble(item.getTextContent());
+            }
+        }
+        return new Obstacle(name, height);
     }
 
     public RunwayConfig parseRunwayConfig(Node runwayConfigNode){
@@ -124,20 +160,16 @@ public class FileIO {
 
     }
 
-    public void write(Obstacle obstacle, String filePath){
+    public void write(Collection<Obstacle> obstacles, String filePath){
         // obstacleRoot element
-        Element obstacleRoot = document.createElement("Obstacle");
-        root.appendChild(obstacleRoot);
+        Document obstacleDocument = documentBuilder.newDocument();
+        Element obstaclesRoot = obstacleDocument.createElement("Obstacles");
 
-        Element obstacleName = document.createElement("name");
-        obstacleName.appendChild(document.createTextNode(obstacle.getName()));
-        obstacleRoot.appendChild(obstacleName);
+        for (Obstacle obstacle : obstacles){
+            obstaclesRoot.appendChild(getObstacleElement(obstacle, obstacleDocument));
+        }
 
-        Element obstacleHeight = document.createElement("height");
-        obstacleHeight.appendChild(document.createTextNode(String.valueOf(obstacle.getHeight())));
-        obstacleRoot.appendChild(obstacleHeight);
-
-        write(root, filePath);
+        write(obstaclesRoot, filePath);
     }
 
     public void write(Element root, String filePath){
@@ -210,6 +242,22 @@ public class FileIO {
     public void write(String data){
 
     }
+
+    private Element getObstacleElement(Obstacle obstacle, Document documentToAddTo) {
+        Element obstacleRoot = documentToAddTo.createElement("Obstacle");
+        //obstacleRoot.appendChild(obstacleRoot);
+
+        Element obstacleName = documentToAddTo.createElement("name");
+        obstacleName.appendChild(documentToAddTo.createTextNode(obstacle.getName()));
+        obstacleRoot.appendChild(obstacleName);
+
+        Element obstacleHeight = documentToAddTo.createElement("height");
+        obstacleHeight.appendChild(documentToAddTo.createTextNode(String.valueOf(obstacle.getHeight())));
+        obstacleRoot.appendChild(obstacleHeight);
+
+        return obstacleRoot;
+    }
+
 
     public Element createRunwayConfigData(RunwayConfig runwayConfig){
         Element parent = document.createElement("RunwayConfig");

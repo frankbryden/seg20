@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><Obstacles>
     <Obstacle>
-        <name>Ariane</name>
-        <height>5.0</height>
-    </Obstacle>
-    <Obstacle>
         <name>Jash</name>
-        <height>1.2</height>
+        <height>1.5</height>
     </Obstacle>
     <Obstacle>
         <name>Jasmine</name>

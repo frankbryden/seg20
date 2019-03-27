@@ -12,8 +12,18 @@ public class RunwayConfig {
     private int STOPWAY;
     private int displacementThreshold;
     private RunwayDesignator runwayDesignator;
+    private RunwayPair parent;
+    private RunwayPair.Side side;
 
-    public RunwayConfig(RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA, int displacementThreshold){
+    public RunwayConfig(RunwayPair parent, RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA, int displacementThreshold){
+        this.parent = parent;
+        if (this.parent != null) {
+            this.side = (this.parent.getR1() == this) ? RunwayPair.Side.R1 : RunwayPair.Side.R2;
+            System.out.println("I am a runway config ! I am on side " + this.side + " with designator " + runwayDesignator);
+        } else {
+            this.side = RunwayPair.Side.Unknown;
+        }
+
         this.runwayDesignator = runwayDesignator;
         this.TORA = TORA;
         this.TODA = TODA;
@@ -22,6 +32,10 @@ public class RunwayConfig {
         this.displacementThreshold = displacementThreshold;
         this.STOPWAY = ASDA - TORA;
         this.CLEARWAY = TODA - TORA;
+    }
+
+    public RunwayConfig(RunwayDesignator runwayDesignator, int TORA, int TODA, int ASDA, int LDA, int displacementThreshold){
+        this(null, runwayDesignator, TORA, TODA, ASDA, LDA, displacementThreshold);
     }
 
     @Override
@@ -46,6 +60,9 @@ public class RunwayConfig {
         Line toraLine, todaLine, asdaLine, ldaLine;
         int toraY, todaY, asdaY, ldaY;
 
+        //max len
+        int maxLen = (this.side == RunwayPair.Side.R1) ? runwayRenderParams.getRealLifeMaxLenR1() : runwayRenderParams.getRealLifeMaxLenR2();
+
         toraY = getLabelYShift(runwayRenderParams, direction, 0);
         todaY = getLabelYShift(runwayRenderParams, direction, 1);
         asdaY = getLabelYShift(runwayRenderParams, direction, 2);
@@ -53,10 +70,10 @@ public class RunwayConfig {
 
         int p1 = runwayRenderParams.getRunwayStartX();
         int lineEndBelowRunway = p1 + runwayRenderParams.getRunwayLength();
-        double p2Tora = getNormalisedTORA(this.TORA)*runwayRenderParams.getRunwayLength();
-        double p2Toda = getNormalisedTODA(this.TORA)*runwayRenderParams.getRunwayLength();
-        double p2Asda = getNormalisedASDA(this.TORA)*runwayRenderParams.getRunwayLength();
-        double p2Lda = getNormalisedLDA(this.TORA)*runwayRenderParams.getRunwayLength();
+        double p2Tora = getNormalisedTORA(maxLen)*runwayRenderParams.getRunwayLength();
+        double p2Toda = getNormalisedTODA(maxLen)*runwayRenderParams.getRunwayLength();
+        double p2Asda = getNormalisedASDA(maxLen)*runwayRenderParams.getRunwayLength();
+        double p2Lda = getNormalisedLDA(maxLen)*runwayRenderParams.getRunwayLength();
         System.out.println("ref : " + System.identityHashCode(this));
         System.out.println("all obj : " + this.toString());
         System.out.println("TODA : " + this.TODA);
@@ -68,7 +85,7 @@ public class RunwayConfig {
             toraLine = new Line(p1, toraY, p1 + p2Tora, toraY);
             todaLine = new Line(p1, todaY, p1 + p2Toda, todaY);
             asdaLine = new Line(p1, asdaY, p1 + p2Asda, asdaY);
-            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(this.TORA), ldaY,p1 + p2Lda, ldaY);
+            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(maxLen), ldaY,p1 + p2Lda, ldaY);
         } else {
             toraLine = new Line(lineEndBelowRunway - p2Tora, toraY, lineEndBelowRunway, toraY);
             todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);
@@ -206,5 +223,21 @@ public class RunwayConfig {
 
     public void setRunwayDesignator(RunwayDesignator runwayDesignator) {
         this.runwayDesignator = runwayDesignator;
+    }
+
+    public RunwayPair.Side getSide() {
+        return side;
+    }
+
+    public void setSide(RunwayPair.Side side) {
+        this.side = side;
+    }
+
+    public RunwayPair getParent() {
+        return parent;
+    }
+
+    public void setParent(RunwayPair parent) {
+        this.parent = parent;
     }
 }
