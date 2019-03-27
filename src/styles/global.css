@@ -165,7 +165,7 @@
     -fx-opacity: 0;
 }
 
-#addAirportBtn, #addRunwayBtn{
+.primaryButton{
     -fx-border-width: 2 2 2 2;
     -fx-border-color: #1b88bb;
     -fx-background-color: white;
@@ -175,12 +175,12 @@
     -fx-border-radius: 2px;
 }
 
-#addAirportBtn:hover, #addRunwayBtn:hover{
+.primaryButton:hover{
     -fx-background-color: #1b88bb;
     -fx-text-fill: white;
 }
 
-#addRunwayBtn:selected, #addAirportBtn:selected{
+.primaryButton:selected{
     -fx-background-color: #1b88bb;
     -fx-text-fill: white;
 }

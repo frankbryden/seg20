@@ -1,0 +1,33 @@
+.dark {
+    -fx-background-color: #0f475f;
+}
+
+.dark > .label{
+    -fx-text-fill: white;
+}
+
+.light {
+    -fx-background-color: #1b88bb;
+}
+
+.lighter {
+    -fx-background-color: #20b9f9;
+}
+
+#runwayGrid .label{
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-padding: 30 0;
+}
+
+#runwayGrid > .leftCol > .label{
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-padding: 30 10;
+}
+
+#runwayGrid > .rightCol > .label{
+    -fx-font-weight: bold;
+    -fx-text-alignment: center;
+    -fx-padding: 30 10;
+}
