@@ -50,8 +50,10 @@ public class GUI extends Application {
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda, originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
-    private GridPane calculationResultsGrid;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, toraCntLbl, todaCntLbl, asdaCntLbl, ldaCntLbl,
+            runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
+    private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
@@ -348,6 +350,7 @@ public class GUI extends Application {
         distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
+        calculateBtn.getStyleClass().add("primaryButton");
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
@@ -619,11 +622,21 @@ public class GUI extends Application {
         obstacleNameTxt = (TextField) primaryStage.getScene().lookup("#obstacleNameTxt");
         obstacleHeightTxt = (TextField) primaryStage.getScene().lookup("#obstacleHeightTxt");
 
+        runwayGrid = (GridPane) primaryStage.getScene().lookup("#runwayGrid");
+        //runwayGrid.getStyleClass().add("light");
+
         runwayDesignatorLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl");
         toraLbl = (Label) primaryStage.getScene().lookup("#toraLbl");
         todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
         asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
+
+        runwayDesignatorCntLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorCntLbl");
+        toraCntLbl = (Label) primaryStage.getScene().lookup("#toraCntLbl");
+        todaCntLbl = (Label) primaryStage.getScene().lookup("#todaCntLbl");
+        asdaCntLbl = (Label) primaryStage.getScene().lookup("#asdaCntLbl");
+        ldaCntLbl = (Label) primaryStage.getScene().lookup("#ldaCntLbl");
+
 
         windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
 
@@ -1171,11 +1184,11 @@ public class GUI extends Application {
     }
 
     private void updateRunwayInfoLabels(RunwayPair runwayPair){
-        runwayDesignatorLbl.setText(runwayPair.getName());
-        toraLbl.setText("TORA : " + runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
-        todaLbl.setText("TODA : " + runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
-        asdaLbl.setText("ASDA : " + runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
-        ldaLbl.setText("LDA : " + runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
+        runwayDesignatorCntLbl.setText(runwayPair.getName());
+        toraCntLbl.setText(runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
+        todaCntLbl.setText(runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
+        asdaCntLbl.setText(runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
+        ldaCntLbl.setText(runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
     }
 
     public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated){
