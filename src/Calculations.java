@@ -1,11 +1,27 @@
+import java.util.HashMap;
+import java.util.Map;
+
 public class Calculations {
     private RunwayConfig originalConfig;
     private final int RESA = 240;
     private final int STRIP_END = 60;
     private final int BLAST_PROTECTION = 300;
     public enum Direction {TOWARDS, AWAY};
+    public static HashMap<Direction,String> directionSpecifier = new HashMap<Direction,String>(){{
+        put(Direction.TOWARDS, "Taking Off Towards, Landing Towards");
+        put(Direction.AWAY, "Taking Off Away, Landing Over");
+    }};
     private StringBuilder calcSummary;
 
+    public static Direction getKey(String runwayDirection){
+        System.out.println(runwayDirection);
+        for(Direction direction : Direction.values())
+        {
+            if(directionSpecifier.get(direction).equals(runwayDirection))
+                return direction;
+        }
+        return null;
+    }
     public Calculations(RunwayConfig runwayConfig){
         this.originalConfig = runwayConfig;
     }
