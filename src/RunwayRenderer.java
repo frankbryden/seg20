@@ -94,7 +94,7 @@ public class RunwayRenderer {
 
         } else {
             System.out.println("using runway instead " + runwayPair.getR1().getRunwayDesignator().toString());
-            objectStartX = runwayRenderParams.getRunwayStartX() + (distanceFromThreshold/runwayRenderParams.getRealLifeMaxLenR1() * runwayRenderParams.getRunwayLength());
+            objectStartX = runwayRenderParams.getRunwayStartX() + (int)(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR1()*1.0 * runwayRenderParams.getRunwayLength());
         }
         // Not too happy with this following line ._.
         //Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);

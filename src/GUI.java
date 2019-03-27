@@ -47,16 +47,16 @@ public class GUI extends Application {
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
+    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect, directionSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, toraCntLbl, todaCntLbl, asdaCntLbl, ldaCntLbl,
             runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
-            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
-    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
+    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, directionSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
@@ -346,38 +346,62 @@ public class GUI extends Application {
         runwayThresholdLbl = new Label("Distance from runway threshold (m)");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
+        directionSelectLbl  = new Label ("Select Runway Direction");
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
         calculateBtn.getStyleClass().add("primaryButton");
+
+        directionSelect = new ComboBox();
+        directionSelect.setVisibleRowCount(2);
+        directionSelect.setId("directionComboBox");
+        for(Calculations.Direction direction : Calculations.Direction.values())
+        {
+            directionSelect.getItems().add(Calculations.directionSpecifier.get(direction));
+        }
+
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
+
         VBox.setMargin(obstacleSelectHBox, calculationsInsets);
         Region obstacleSelectRegion = getHGrowingRegion();
         obstacleSelectHBox.getChildren().add(obstacleSelectLbl);
         obstacleSelectHBox.getChildren().add(obstacleSelectRegion);
         obstacleSelectHBox.getChildren().add(obstacleSelect);
         thresholdSelectHBox = new HBox(HBOX_SPACING);
+
         VBox.setMargin(thresholdSelectHBox, calculationsInsets);
         Region thresholdSelectRegion = getHGrowingRegion();
         thresholdSelectHBox.getChildren().add(thresholdSelectLbl);
         thresholdSelectHBox.getChildren().add(thresholdSelectRegion);
         thresholdSelectHBox.getChildren().add(thresholdSelect);
+
         VBox.setMargin(obstacleSelectHBox, new Insets(5, 20, 0, 0));
         centerlineHBox = new HBox(HBOX_SPACING);
+
         VBox.setMargin(centerlineHBox, calculationsInsets);
         Region centerlineHBoxRegion = getHGrowingRegion();
         centerlineHBox.getChildren().add(centrelineDistanceLbl);
         centerlineHBox.getChildren().add(centerlineHBoxRegion);
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
+
         VBox.setMargin(thresholdHBox, calculationsInsets);
         Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
         thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
+
+        directionSelectHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(directionSelectHBox, calculationsInsets);
+        Region directionSelectHBoxRegion = getHGrowingRegion();
+        directionSelectHBox.getChildren().add(directionSelectLbl);
+        directionSelectHBox.getChildren().add(directionSelectHBoxRegion);
+        directionSelectHBox.getChildren().add(directionSelect);
+
+
         HBox calculateBtnVBox = new HBox();
         VBox.setMargin(calculateBtnVBox, calculationsInsets);
         Region calculateBtnRegion = getHGrowingRegion();
@@ -389,6 +413,7 @@ public class GUI extends Application {
         calculationsRootBox.getChildren().add(centerlineHBox);
         calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
+        calculationsRootBox.getChildren().add(directionSelectHBox);
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
@@ -408,6 +433,8 @@ public class GUI extends Application {
                     System.out.println("No threshold selected");
                 } else if (obstacleSelect.getSelectionModel().isEmpty()){
                     System.out.println("No obstacle selected");
+                } else if (directionSelect.getSelectionModel().isEmpty()){
+                    System.out.println("No direction chosen");
                 }
                 else {
                     String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
@@ -432,12 +459,13 @@ public class GUI extends Application {
                     Calculations calculations = new Calculations(runwayConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
                     int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
-                    CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
+                    Calculations.Direction runwayDirection = Calculations.getKey(directionSelect.getSelectionModel().getSelectedItem().toString());
+                    CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
                     RunwayConfig recalculatedParams = results.getRecalculatedParams();
 
                     //Fix ? perform recalculation on the other runway config
                     Calculations calculations2 = new Calculations(otherConfig);
-                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, Calculations.Direction.AWAY);
+                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, runwayConfig.getTORA()-distanceFromThreshold, distanceFromCenterline, runwayDirection);
                     RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
 
 
@@ -456,7 +484,7 @@ public class GUI extends Application {
                         runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
                     }
 
-
+                    runwayRenderer.refreshLines();
                     runwayRenderer.render();
 
                     String unselectedThreshold;
