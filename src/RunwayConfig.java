@@ -55,7 +55,7 @@ public class RunwayConfig {
         return sb.toString();
     }
 
-    public ArrayList<Pair<Line, String>> getLabelLines(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, RunwayRenderer.RunwayParams highlightedLine){
+    public ArrayList<Pair<Line, String>> getLabelLines(RunwayRenderParams runwayRenderParams, RunwayRenderer.LabelRunwayDirection direction, RunwayRenderer.RunwayParams highlightedLine, int lineStartX){
         //Labels and lines to indicate runway params
         Line toraLine, todaLine, asdaLine, ldaLine;
         int toraY, todaY, asdaY, ldaY;
@@ -68,8 +68,7 @@ public class RunwayConfig {
         asdaY = getLabelYShift(runwayRenderParams, direction, 2);
         ldaY = getLabelYShift(runwayRenderParams, direction, 3);
 
-        int p1 = runwayRenderParams.getRunwayStartX();
-        int lineEndBelowRunway = p1 + runwayRenderParams.getRunwayLength();
+        int lineEndBelowRunway = lineStartX;// + runwayRenderParams.getRunwayLength();
         double p2Tora = getNormalisedTORA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Toda = getNormalisedTODA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Asda = getNormalisedASDA(maxLen)*runwayRenderParams.getRunwayLength();
@@ -82,10 +81,10 @@ public class RunwayConfig {
 
         // In both cases, we need to add the start point to the end point, as we have calculated the line LENGTH and not END X value
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
-            toraLine = new Line(p1, toraY, p1 + p2Tora, toraY);
-            todaLine = new Line(p1, todaY, p1 + p2Toda, todaY);
-            asdaLine = new Line(p1, asdaY, p1 + p2Asda, asdaY);
-            ldaLine = new Line(p1 + getNormalisedDisplacementThreshold(maxLen), ldaY,p1 + p2Lda, ldaY);
+            toraLine = new Line(lineStartX, toraY, lineStartX + p2Tora, toraY);
+            todaLine = new Line(lineStartX, todaY, lineStartX + p2Toda, todaY);
+            asdaLine = new Line(lineStartX, asdaY, lineStartX + p2Asda, asdaY);
+            ldaLine = new Line(lineStartX + getNormalisedDisplacementThreshold(maxLen), ldaY, lineStartX + p2Lda, ldaY);
         } else {
             toraLine = new Line(lineEndBelowRunway - p2Tora, toraY, lineEndBelowRunway, toraY);
             todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);

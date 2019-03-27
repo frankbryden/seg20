@@ -155,8 +155,8 @@ public class RunwayRenderer {
     }
 
     public void refreshLines(){
-        labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP, currentlyHighlightedParam);
-        labelLines.addAll(runwayPair.getR2().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN, currentlyHighlightedParam));
+        labelLines = runwayPair.getR1().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.UP, currentlyHighlightedParam, runwayRenderParams.getRunwayStartX());
+        labelLines.addAll(runwayPair.getR2().getLabelLines(this.runwayRenderParams, LabelRunwayDirection.DOWN, currentlyHighlightedParam, runwayRenderParams.getRunwayStartX()));
     }
 
     public void render(){
