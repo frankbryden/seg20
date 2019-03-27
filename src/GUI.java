@@ -452,23 +452,40 @@ public class GUI extends Application {
                         selectedSide = RunwayPair.Side.R2;
                     }
 
+
+
                     //Perform recalculations
                     Calculations calculations = new Calculations(runwayConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
                     int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
                     Calculations.Direction runwayDirection = Calculations.getKey(directionSelect.getSelectionModel().getSelectedItem().toString());
+
+                    Calculations.Direction otherDirection;
+                    if(runwayDirection == Calculations.Direction.TOWARDS){
+                        otherDirection = Calculations.Direction.AWAY;
+                    }
+                    else
+                        otherDirection = Calculations.Direction.TOWARDS;
+
                     CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
                     RunwayConfig recalculatedParams = results.getRecalculatedParams();
 
+
+
                     //Fix ? perform recalculation on the other runway config
                     Calculations calculations2 = new Calculations(otherConfig);
-                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, runwayConfig.getTORA()-distanceFromThreshold, distanceFromCenterline, runwayDirection);
+                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, otherConfig.getLDA()-distanceFromThreshold, distanceFromCenterline, otherDirection);
                     RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
 
+                    System.out.println("calculation details");
+                    System.out.println(results.getCalculationDetails());
+                    System.out.println(results2.getCalculationDetails());
 
-                    calculationDetails.setText(results.getCalculationDetails());
+
+                    calculationDetails.setText(results.getCalculationDetails() + "\n" + results2.getCalculationDetails());
                     System.out.println(recalculatedParams.toString());
                     updateCalculationResultsView(runwayConfig, recalculatedParams);
+                    //updateCalculationResultsView(otherConfig, recalculatedParams2);
                     switchCalculationsTabToView();
 
                     if (selectedSide == RunwayPair.Side.R1){

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><Obstacles>
+    <Obstacle>
+        <name>Test</name>
+        <height>12.0</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Test2</name>
+        <height>25.0</height>
+    </Obstacle>
+</Obstacles>

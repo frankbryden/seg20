@@ -29,7 +29,7 @@ public class RunwayConfig {
         this.TODA = TODA;
         this.ASDA = ASDA;
         this.LDA  = LDA;
-        this.displacementThreshold = displacementThreshold;
+        this.displacementThreshold = TORA - LDA;
         this.STOPWAY = ASDA - TORA;
         this.CLEARWAY = TODA - TORA;
     }
