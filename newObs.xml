@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?><Obstacles>
+    <Obstacle>
+        <name>Frank</name>
+        <height>1.7</height>
+    </Obstacle>
+    <Obstacle>
+        <name>James</name>
+        <height>1.5</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Jasmine</name>
+        <height>1.8</height>
+    </Obstacle>
+</Obstacles>
