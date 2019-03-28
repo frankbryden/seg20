@@ -294,11 +294,11 @@
                            <children>
                               <Label layoutX="16.0" layoutY="33.0" text="Colour scheme" />
                               <ChoiceBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
-                              <Button layoutX="383.0" layoutY="28.0" mnemonicParsing="false" text="Apply" />
+                              <Button layoutX="383.0" layoutY="25.0" mnemonicParsing="false" styleClass="primaryButton" text="Apply" />
                               <Label layoutX="16.0" layoutY="74.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
-                              <Button layoutX="245.0" layoutY="74.0" mnemonicParsing="false" text="OK" />
+                              <Button layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
                               <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
-                              <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" text="Load" />
+                              <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
                            </children>
                         </AnchorPane>
                   </content>

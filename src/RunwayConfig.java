@@ -68,7 +68,7 @@ public class RunwayConfig {
         asdaY = getLabelYShift(runwayRenderParams, direction, 2);
         ldaY = getLabelYShift(runwayRenderParams, direction, 3);
 
-        int lineEndBelowRunway = lineStartX;// + runwayRenderParams.getRunwayLength();
+        int lineEndBelowRunway = lineStartX + runwayRenderParams.getRunwayLength();
         double p2Tora = getNormalisedTORA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Toda = getNormalisedTODA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Asda = getNormalisedASDA(maxLen)*runwayRenderParams.getRunwayLength();
@@ -86,6 +86,11 @@ public class RunwayConfig {
             asdaLine = new Line(lineStartX, asdaY, lineStartX + p2Asda, asdaY);
             ldaLine = new Line(lineStartX + getNormalisedDisplacementThreshold(maxLen), ldaY, lineStartX + p2Lda, ldaY);
         } else {
+            /*toraLine = new Line(lineEndBelowRunway, toraY, lineEndBelowRunway + p2Tora, toraY);
+            todaLine = new Line(lineEndBelowRunway, todaY, lineEndBelowRunway + p2Toda, todaY);
+            asdaLine = new Line(lineEndBelowRunway, asdaY, lineEndBelowRunway + p2Asda, asdaY);
+            ldaLine = new Line(lineEndBelowRunway, ldaY, lineEndBelowRunway + p2Lda, ldaY);*/
+
             toraLine = new Line(lineEndBelowRunway - p2Tora, toraY, lineEndBelowRunway, toraY);
             todaLine = new Line(lineEndBelowRunway - p2Toda, todaY, lineEndBelowRunway, todaY);
             asdaLine = new Line(lineEndBelowRunway - p2Asda, asdaY, lineEndBelowRunway, asdaY);
