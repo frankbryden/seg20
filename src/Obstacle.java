@@ -18,4 +18,12 @@ public class Obstacle {
     public String getName() {
         return name;
     }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
