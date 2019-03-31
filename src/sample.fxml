@@ -22,7 +22,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -118,6 +118,7 @@
                                                         <columnConstraints>
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
                                                             <RowConstraints maxHeight="113.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
@@ -130,7 +131,7 @@
                                                          <children>
                                                             <Pane GridPane.rowIndex="1">
                                                                <children>
-                                                                  <Label fx:id="runwayDesignatorLbl" prefHeight="23.0" prefWidth="267.0" text="Runway Designator" />
+                                                                  <Label fx:id="runwayDesignatorLbl" prefHeight="86.0" prefWidth="197.0" text="Runway Designator" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="dark" />
@@ -139,7 +140,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="2">
                                                                <children>
-                                                                  <Label fx:id="toraLbl" text="TORA" />
+                                                                  <Label fx:id="toraLbl" prefHeight="86.0" prefWidth="197.0" text="TORA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -148,7 +149,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="3">
                                                                <children>
-                                                                  <Label fx:id="todaLbl" text="TODA" />
+                                                                  <Label fx:id="todaLbl" prefHeight="84.0" prefWidth="194.0" text="TODA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -157,7 +158,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="4">
                                                                <children>
-                                                                  <Label fx:id="asdaLbl" text="ASDA" />
+                                                                  <Label fx:id="asdaLbl" prefHeight="86.0" prefWidth="197.0" text="ASDA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -166,26 +167,26 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaLbl" text="LDA" />
+                                                                  <Label fx:id="ldaLbl" prefHeight="84.0" prefWidth="195.0" text="LDA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
                                                                   <String fx:value="leftCol" />
                                                                </styleClass>
                                                             </Pane>
-                                                            <Button fx:id="addRunwayBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Runway" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                                                            <Button fx:id="addRunwayBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Runway" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                                <children>
-                                                                  <Label fx:id="runwayDesignatorCntLbl" prefHeight="23.0" prefWidth="267.0" />
+                                                                  <Label fx:id="runwayDesignatorCntLbl" layoutX="5.0" prefHeight="85.0" prefWidth="187.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="dark" />
                                                                   <String fx:value="rightCol" />
                                                                </styleClass>
                                                             </Pane>
-                                                            <Pane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <Pane prefHeight="86.0" prefWidth="177.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                                <children>
-                                                                  <Label fx:id="toraCntLbl" />
+                                                                  <Label fx:id="toraCntLbl" layoutX="1.0" prefHeight="85.0" prefWidth="193.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -194,7 +195,7 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                                <children>
-                                                                  <Label fx:id="todaCntLbl" />
+                                                                  <Label fx:id="todaCntLbl" prefHeight="86.0" prefWidth="192.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -203,7 +204,7 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                                <children>
-                                                                  <Label fx:id="asdaCntLbl" />
+                                                                  <Label fx:id="asdaCntLbl" prefHeight="80.0" prefWidth="190.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -212,13 +213,33 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaCntLbl" />
+                                                                  <Label fx:id="ldaCntLbl" prefHeight="80.0" prefWidth="190.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
                                                                   <String fx:value="rightCol" />
                                                                </styleClass>
                                                             </Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #0f475f;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                               <children>
+                                                                  <Label fx:id="runwayDesignatorLbl2" layoutX="5.0" prefHeight="85.0" prefWidth="188.0" style="-fx-text-fill: #FFFFFF;" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #20b9f9;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                               <children>
+                                                                  <Label fx:id="toraCntLbl2" layoutX="1.0" layoutY="3.0" prefHeight="80.0" prefWidth="188.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #1b88bb;" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                               <children>
+                                                                  <Label fx:id="todaCntLbl2" layoutX="1.0" layoutY="3.0" prefHeight="80.0" prefWidth="187.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #20b9f9;" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                               <children>
+                                                                  <Label fx:id="asdaCntLbl2" layoutY="3.0" prefHeight="80.0" prefWidth="188.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #1b88bb;" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                               <children>
+                                                                  <Label fx:id="ldaCntLbl2" layoutY="3.0" prefHeight="80.0" prefWidth="185.0" />
+                                                               </children></Pane>
                                                          </children>
                                                       </GridPane>
                                                    </children>

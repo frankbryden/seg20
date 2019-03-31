@@ -50,7 +50,7 @@ public class GUI extends Application {
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect, directionSelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, toraCntLbl, todaCntLbl, asdaCntLbl, ldaCntLbl,
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
             originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
     private GridPane calculationResultsGrid, runwayGrid;
@@ -421,7 +421,6 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 //Get currently selected obstacle
-//HERE  can't change the textfield's width or the airport box width
                 if (centrelineTF.getText().isEmpty() && distanceFromThresholdTF.getText().isEmpty()) {
                     centrelineTF.setPromptText("Invalid centreline distance!");
                     distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
@@ -677,10 +676,15 @@ public class GUI extends Application {
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
 
         runwayDesignatorCntLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorCntLbl");
+        runwayDesignatorLbl2 = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl2");
         toraCntLbl = (Label) primaryStage.getScene().lookup("#toraCntLbl");
         todaCntLbl = (Label) primaryStage.getScene().lookup("#todaCntLbl");
         asdaCntLbl = (Label) primaryStage.getScene().lookup("#asdaCntLbl");
         ldaCntLbl = (Label) primaryStage.getScene().lookup("#ldaCntLbl");
+        toraCntLbl2 = (Label) primaryStage.getScene().lookup("#toraCntLbl2");
+        todaCntLbl2 = (Label) primaryStage.getScene().lookup("#todaCntLbl2");
+        asdaCntLbl2 = (Label) primaryStage.getScene().lookup("#asdaCntLbl2");
+        ldaCntLbl2 = (Label) primaryStage.getScene().lookup("#ldaCntLbl2");
 
 
         windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
@@ -883,7 +887,7 @@ public class GUI extends Application {
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
 
-        //HERE - can't change from red to grey easily
+
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -1229,11 +1233,16 @@ public class GUI extends Application {
     }
 
     private void updateRunwayInfoLabels(RunwayPair runwayPair){
-        runwayDesignatorCntLbl.setText(runwayPair.getName());
-        toraCntLbl.setText(runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
-        todaCntLbl.setText(runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
-        asdaCntLbl.setText(runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
-        ldaCntLbl.setText(runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
+        runwayDesignatorCntLbl.setText(" " + runwayPair.getR1().getRunwayDesignator().toString());
+        runwayDesignatorLbl2.setText(" " + runwayPair.getR2().getRunwayDesignator().toString());
+        toraCntLbl.setText(" " + runwayPair.getR1().getTORA());
+        todaCntLbl.setText(" " + runwayPair.getR1().getTODA());
+        asdaCntLbl.setText(" " + runwayPair.getR1().getASDA());
+        ldaCntLbl.setText(" " + runwayPair.getR1().getLDA());
+        toraCntLbl2.setText(" " + runwayPair.getR2().getTORA());
+        todaCntLbl2.setText(" " + runwayPair.getR2().getTODA());
+        asdaCntLbl2.setText(" " + runwayPair.getR2().getASDA());
+        ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
     }
 
     public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated){
