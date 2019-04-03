@@ -51,7 +51,7 @@ public class GUI extends Application {
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
-            runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
+            runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
             originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
@@ -203,6 +203,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                //TODO - position according to window size
                 Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
                 addObstaclePopup.show(primaryStage);
                 addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth()/2);
@@ -346,7 +347,7 @@ public class GUI extends Application {
         runwayThresholdLbl = new Label("Distance from runway threshold (m)");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
-        directionSelectLbl  = new Label ("Select Runway Direction");
+        directionSelectLbl  = new Label ("Select runway direction");
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
@@ -417,33 +418,22 @@ public class GUI extends Application {
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
+        // HERE - figuring out how to tell the user what input they're missing
         calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                //Get currently selected obstacle
-                if (centrelineTF.getText().isEmpty() && distanceFromThresholdTF.getText().isEmpty()) {
-                    centrelineTF.setPromptText("Invalid centreline distance!");
-                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-                } else if (distanceFromThresholdTF.getText().isEmpty()) {
-                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-                } else if (centrelineTF.getText().isEmpty()) {
-                    centrelineTF.setPromptText("Invalid centreline distance!");
-                } else if (thresholdSelect.getSelectionModel().isEmpty()) {
-                    System.out.println("No threshold selected");
-                } else if (obstacleSelect.getSelectionModel().isEmpty()){
-                    System.out.println("No obstacle selected");
-                } else if (directionSelect.getSelectionModel().isEmpty()){
-                    System.out.println("No direction chosen");
-                }
-                else {
+                if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
+                        thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
+                        || directionSelect.getSelectionModel().isEmpty()) {
+                    System.out.println("You haven't filled in all of the details before pressing Calculate");
+                } else {
                     String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
-
-
 
                     String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
                     RunwayConfig runwayConfig, otherConfig;
                     RunwayPair.Side selectedSide;
+
                     if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
                         runwayConfig = currentlySelectedRunway.getR1();
                         otherConfig = currentlySelectedRunway.getR2();
@@ -521,9 +511,7 @@ public class GUI extends Application {
         });
 
         //Calculations Pane - calculation results view
-        originalValuesLbl = new Label("Breakdown of the calculations");
-        originalValuesLbl.setId("calcBreakdownLabel");
-        originalValuesLbl.setId("breakdownTitle");
+        breakdownCalcLbl = new Label("Breakdown of the calculations");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
         calculationDetails.setId("calcBreakdown");
@@ -617,7 +605,7 @@ public class GUI extends Application {
         calculationResultsGrid.add(recalculatedLda, 2, 4);
 
         viewCalculationResultsVBox = new VBox();
-        viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
+        viewCalculationResultsVBox.getChildren().add(breakdownCalcLbl);
         viewCalculationResultsVBox.getChildren().add(calculationDetails);
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
         viewCalculationResultsVBox.getChildren().add(calculateBackBtnVBox);
@@ -853,7 +841,9 @@ public class GUI extends Application {
         Button addObstacleBtn, cancelBtn;
 
         nameLbl = new Label("Name");
+        nameLbl.setStyle("-fx-font-weight: BOLD");
         heightLbl = new Label("Height (m)");
+        heightLbl.setStyle("-fx-font-weight: BOLD");
 
         nameTF = new TextField();
         nameTF.setPromptText("Enter obstacle name");
@@ -862,7 +852,11 @@ public class GUI extends Application {
         heightTF.setPromptText("Enter obstacle height");
 
         addObstacleBtn = new Button("Add");
+        addObstacleBtn.getStyleClass().add("primaryButton");
+        addObstacleBtn.getStylesheets().add("styles/global.css");
         cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("primaryButton");
+        cancelBtn.getStylesheets().add("styles/global.css");
 
         HBox.setHgrow(nameRegion, Priority.ALWAYS);
         HBox.setHgrow(heightRegion, Priority.ALWAYS);
@@ -902,6 +896,9 @@ public class GUI extends Application {
                 } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
                     heightTF.clear();
                     heightTF.setPromptText("Invalid obstacle height!");
+                } else if (!validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
+                    nameTF.clear();
+                    nameTF.setPromptText("Invalid obstacle name!");
                 }
 
             }
@@ -944,12 +941,18 @@ public class GUI extends Application {
         Label nameContentLabel = new Label(selectedObstacle.getName());
         TextField nameEditTF = new TextField();
         Label heightLabel = new Label ("Height:");
-        Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
+        Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
-        Button returnButton = new Button("Go back");
-        Button editButton = new Button("Edit");
 
-        detailsLabel.setStyle("-fx-font-size: 18px");
+        Button returnButton = new Button("Go back");
+        returnButton.getStyleClass().add("primaryButton");
+        returnButton.getStylesheets().add("styles/global.css");
+        Button editButton = new Button("Edit");
+        editButton.getStyleClass().add("primaryButton");
+        editButton.getStylesheets().add("styles/global.css");
+
+
+        detailsLabel.setStyle("-fx-font-size: 16px");
         nameLabel.setStyle("-fx-font-weight: BOLD");
         heightLabel.setStyle("-fx-font-weight: BOLD");
 
@@ -968,7 +971,7 @@ public class GUI extends Application {
             }
         });
 
-        editButton.setPadding(new Insets(2, 10, 2, 10));
+      //  editButton.setPadding(new Insets(2, 10, 2, 10));
         editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -1024,10 +1027,11 @@ public class GUI extends Application {
 
         detailsPopUp.getContent().add(box);
 
+        //TODO - position according to window size
         Node eventSource = (Node) event.getSource();
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-        detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
+        detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
+        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
 
         detailsPopUp.show(primaryStage);
 
