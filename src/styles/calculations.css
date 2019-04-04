@@ -62,3 +62,8 @@
     -fx-pref-width: 575;
     -fx-pref-height: 275;
 }
+
+.fieldRequiredLabel{
+    -fx-text-fill: #DE4646;
+    -fx-font-size: 14px;
+}

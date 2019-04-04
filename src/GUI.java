@@ -42,6 +42,8 @@ import javafx.util.Duration;
 
 public class GUI extends Application {
     //TODO set currently selected obstacle in the ComboBox in the calculations tab
+    // (but you can select a single user-defined and pre-defined obstacle together)
+    // no error message for "Please select an obstacle" if this is to be done
     //TODO add airport database
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
@@ -53,6 +55,7 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
             originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
+    private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
@@ -418,15 +421,37 @@ public class GUI extends Application {
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
-        // HERE - figuring out how to tell the user what input they're missing
+
+        centreLineRequiredLabel = (Label) primaryStage.getScene().lookup("#centreLineRequiredLabel");
+        thresholdDistanceRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdDistanceRequiredLabel");
+        thresholdRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdRequiredLabel");
+
         calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+
                 if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
                         thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
                         || directionSelect.getSelectionModel().isEmpty()) {
-                    System.out.println("You haven't filled in all of the details before pressing Calculate");
+
+                    if (centrelineTF.getText().isEmpty()) {
+                        centreLineRequiredLabel.setText("This field is required");
+                    } else {
+                        centreLineRequiredLabel.setText("");
+                    }
+                    if (distanceFromThresholdTF.getText().isEmpty()) {
+                        thresholdDistanceRequiredLabel.setText("This field is required");
+                    } else {
+                        thresholdDistanceRequiredLabel.setText("");
+                    }
+                    if (thresholdSelect.getSelectionModel().isEmpty()) {
+                        thresholdRequiredLabel.setText("Please select a threshold");
+                    } else {
+                        thresholdRequiredLabel.setText("");
+                    }
+
                 } else {
+
                     String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
@@ -434,7 +459,7 @@ public class GUI extends Application {
                     RunwayConfig runwayConfig, otherConfig;
                     RunwayPair.Side selectedSide;
 
-                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)) {
                         runwayConfig = currentlySelectedRunway.getR1();
                         otherConfig = currentlySelectedRunway.getR2();
                         selectedSide = RunwayPair.Side.R1;
@@ -445,7 +470,6 @@ public class GUI extends Application {
                     }
 
 
-
                     //Perform recalculations
                     Calculations calculations = new Calculations(runwayConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
@@ -453,34 +477,33 @@ public class GUI extends Application {
                     Calculations.Direction runwayDirection = Calculations.getKey(directionSelect.getSelectionModel().getSelectedItem().toString());
 
                     Calculations.Direction otherDirection;
-                    if(runwayDirection == Calculations.Direction.TOWARDS){
+                    if (runwayDirection == Calculations.Direction.TOWARDS) {
                         otherDirection = Calculations.Direction.AWAY;
-                    }
-                    else
+                    } else
                         otherDirection = Calculations.Direction.TOWARDS;
 
                     CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
                     RunwayConfig recalculatedParams = results.getRecalculatedParams();
 
 
-
                     //Fix ? perform recalculation on the other runway config
                     Calculations calculations2 = new Calculations(otherConfig);
-                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, otherConfig.getLDA()-distanceFromThreshold, distanceFromCenterline, otherDirection);
+                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, otherConfig.getLDA() - distanceFromThreshold, distanceFromCenterline, otherDirection);
                     RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
 
                     System.out.println("calculation details");
                     System.out.println(results.getCalculationDetails());
                     System.out.println(results2.getCalculationDetails());
 
-
+                    // Printing results into the breakdown of calculations text box
                     calculationDetails.setText(results.getCalculationDetails() + "\n" + results2.getCalculationDetails());
+
                     System.out.println(recalculatedParams.toString());
                     updateCalculationResultsView(runwayConfig, recalculatedParams);
                     //updateCalculationResultsView(otherConfig, recalculatedParams2);
                     switchCalculationsTabToView();
 
-                    if (selectedSide == RunwayPair.Side.R1){
+                    if (selectedSide == RunwayPair.Side.R1) {
                         runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams, recalculatedParams2), canvas.getGraphicsContext2D());
                         runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(runwayConfig.getTORA());
                         runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(otherConfig.getTORA());
@@ -494,17 +517,16 @@ public class GUI extends Application {
                     runwayRenderer.render();
 
                     String unselectedThreshold;
-                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
+                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)) {
                         unselectedThreshold = currentlySelectedRunway.getR2().toString();
                     } else {
                         unselectedThreshold = currentlySelectedRunway.getR1().toString();
                     }
 
                     runwayRendererSideView.renderSideview();
-                    runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold );
+                    runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold);
 
                 }
-
 
 
             }
