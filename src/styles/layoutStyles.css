@@ -5,10 +5,15 @@
     -fx-border-color: black;
     -fx-border-width:1.5px;
     -fx-font-family: "Verdana";
-    -fx-font-size: 1.2em;
+    -fx-font-size: 14px;
 }
 
-.popup .label{
+.popUpTitles{
+    -fx-font-weight: BOLD;
+    -fx-text-fill: black;
+}
+
+.popUpText{
     -fx-text-fill: black;
 }
 .addRunwayAirportSelection{

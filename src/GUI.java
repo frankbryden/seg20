@@ -10,6 +10,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -846,32 +847,40 @@ public class GUI extends Application {
         }
     }
 
-
-
     public Popup createAddObstaclePopup(){
         Popup popup = new Popup();
 
         VBox rootBox = new VBox(20);
+        HBox emptyNameBox = new HBox();
+        HBox emptyHeightBox = new HBox();
         HBox nameBox = new HBox(20);
         HBox heightBox = new HBox(20);
         HBox buttonsBox = new HBox();
         Region nameRegion = new Region();
         Region heightRegion = new Region();
         Region buttonsRegion = new Region();
-        Label nameLbl, heightLbl;
+        Label nameLbl, heightLbl, nameRequiredLbl, heightRequiredLbl;
         TextField nameTF, heightTF;
         Button addObstacleBtn, cancelBtn;
 
         nameLbl = new Label("Name");
-        nameLbl.setStyle("-fx-font-weight: BOLD");
+        nameLbl.getStyleClass().add("popUpTitles");
+        nameLbl.getStylesheets().add("styles/layoutStyles.css");
+
         heightLbl = new Label("Height (m)");
-        heightLbl.setStyle("-fx-font-weight: BOLD");
+        heightLbl.getStyleClass().add("popUpTitles");
+        heightLbl.getStylesheets().add("styles/layoutStyles.css");
 
         nameTF = new TextField();
-        nameTF.setPromptText("Enter obstacle name");
         heightTF = new TextField();
 
-        heightTF.setPromptText("Enter obstacle height");
+        nameRequiredLbl = new Label("");
+        heightRequiredLbl = new Label("");
+
+        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
+        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
 
         addObstacleBtn = new Button("Add");
         addObstacleBtn.getStyleClass().add("primaryButton");
@@ -883,6 +892,9 @@ public class GUI extends Application {
         HBox.setHgrow(nameRegion, Priority.ALWAYS);
         HBox.setHgrow(heightRegion, Priority.ALWAYS);
         HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
+
+        emptyNameBox.getChildren().add(nameRequiredLbl);
+        emptyHeightBox.getChildren().add(heightRequiredLbl);
 
         nameBox.getChildren().add(nameLbl);
         nameBox.getChildren().add(nameRegion);
@@ -896,6 +908,7 @@ public class GUI extends Application {
         buttonsBox.getChildren().add(buttonsRegion);
         buttonsBox.getChildren().add(cancelBtn);
 
+
         rootBox.getChildren().add(nameBox);
         rootBox.getChildren().add(heightBox);
         rootBox.getChildren().add(buttonsBox);
@@ -903,22 +916,51 @@ public class GUI extends Application {
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
 
-
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))){
+                if (nameTF.getText().isEmpty()) {
+                    nameRequiredLbl.setText("                         This field is required");
+                    if (!rootBox.getChildren().contains(emptyNameBox)) {
+                        rootBox.getChildren().add(0, emptyNameBox);
+                    }
+                    nameTF.setPromptText("");
+                } else {
+                    if(rootBox.getChildren().contains(emptyNameBox)) {
+                        rootBox.getChildren().remove(emptyNameBox);
+                    }
+                    nameRequiredLbl.setText("");
+                }
+                if (heightTF.getText().isEmpty()) {
+                    heightRequiredLbl.setText("                         This field is required");
+                    if (rootBox.getChildren().contains(emptyNameBox)) {
+                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                            rootBox.getChildren().add(2, emptyHeightBox);
+                        }
+                    } else {
+                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                            rootBox.getChildren().add(1, emptyHeightBox);
+                        }
+                    }
+                    heightTF.setPromptText("");
+                } else {
+                    if(rootBox.getChildren().contains(emptyHeightBox)) {
+                        rootBox.getChildren().remove(emptyHeightBox);
+                    }
+                    heightRequiredLbl.setText("");
+                }
+
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
                     System.out.println("Add obstacle");
                     addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
                     nameTF.clear();
                     heightTF.clear();
-                    heightTF.setPromptText("Enter obstacle height");
                     updateObstaclesList();
                     addObstaclePopup.hide();
-                } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
+                } else if (!heightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
                     heightTF.clear();
                     heightTF.setPromptText("Invalid obstacle height!");
-                } else if (!validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
+                } else if (!nameTF.getText().isEmpty() && !validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
                     nameTF.clear();
                     nameTF.setPromptText("Invalid obstacle name!");
                 }
@@ -929,9 +971,18 @@ public class GUI extends Application {
         cancelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                if (rootBox.getChildren().contains(emptyNameBox)) {
+                    rootBox.getChildren().remove(emptyNameBox);
+                }
+                if (rootBox.getChildren().contains(emptyHeightBox)) {
+                    rootBox.getChildren().remove(emptyHeightBox);
+                }
+                nameRequiredLbl.setText("");
+                heightRequiredLbl.setText("");
                 nameTF.clear();
+                nameTF.setPromptText("");
                 heightTF.clear();
-                heightTF.setPromptText("Enter obstacle height");
+                heightTF.setPromptText("");
                 addObstaclePopup.hide();
             }
         });
@@ -966,17 +1017,25 @@ public class GUI extends Application {
         Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
 
+        // Styling of labels in the double-click obstacle details popup
+        detailsLabel.getStyleClass().add("popUpTitles");
+        detailsLabel.getStylesheets().add("styles/layoutStyles.css");
+        detailsLabel.setStyle("-fx-font-size: 16px");
+        nameLabel.getStyleClass().add("popUpTitles");
+        nameLabel.getStylesheets().add("styles/layoutStyles.css");
+        nameContentLabel.getStyleClass().add("popUpText");
+        nameContentLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightLabel.getStyleClass().add("popUpTitles");
+        heightLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightContentLabel.getStyleClass().add("popUpText");
+        heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
+
         Button returnButton = new Button("Go back");
         returnButton.getStyleClass().add("primaryButton");
         returnButton.getStylesheets().add("styles/global.css");
         Button editButton = new Button("Edit");
         editButton.getStyleClass().add("primaryButton");
         editButton.getStylesheets().add("styles/global.css");
-
-
-        detailsLabel.setStyle("-fx-font-size: 16px");
-        nameLabel.setStyle("-fx-font-weight: BOLD");
-        heightLabel.setStyle("-fx-font-weight: BOLD");
 
         HBox nameHBox = new HBox(20);
         nameHBox.getChildren().add(nameLabel);
