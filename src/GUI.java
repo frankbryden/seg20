@@ -654,7 +654,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent click) {
                 if (click.getClickCount() == 2) {
-                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
+                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
                 }
            }
         });
@@ -665,7 +665,7 @@ public class GUI extends Application {
             public void handle(MouseEvent click) {
 
                 if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage);
+                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
 
                 }
             }
@@ -993,13 +993,15 @@ public class GUI extends Application {
         return popup;
     }
 
-    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage) {
+    //TODO - error messages for this popup (obstacle name and height validation), some formatting of labels
+    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
 
-        //TODO the edit button should toggle editing of the current obstacle
+
         editingObstacle = false;
 
         String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
         Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+
 
         Popup detailsPopUp = new Popup();
 
@@ -1017,7 +1019,7 @@ public class GUI extends Application {
         Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
 
-        // Styling of labels in the double-click obstacle details popup
+        // Styling of labels in the obstacle details popup
         detailsLabel.getStyleClass().add("popUpTitles");
         detailsLabel.getStylesheets().add("styles/layoutStyles.css");
         detailsLabel.setStyle("-fx-font-size: 16px");
@@ -1031,9 +1033,11 @@ public class GUI extends Application {
         heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
 
         Button returnButton = new Button("Go back");
+        Button editButton = new Button("Edit");
+
+        // Styling of buttons in the obstacle details popup
         returnButton.getStyleClass().add("primaryButton");
         returnButton.getStylesheets().add("styles/global.css");
-        Button editButton = new Button("Edit");
         editButton.getStyleClass().add("primaryButton");
         editButton.getStylesheets().add("styles/global.css");
 
@@ -1041,7 +1045,7 @@ public class GUI extends Application {
         nameHBox.getChildren().add(nameLabel);
         nameHBox.getChildren().add(nameContentLabel);
 
-        HBox heightHBox = new HBox(15);
+        HBox heightHBox = new HBox(13.5);
         heightHBox.getChildren().add(heightLabel);
         heightHBox.getChildren().add(heightContentLabel);
 
@@ -1051,6 +1055,7 @@ public class GUI extends Application {
                 detailsPopUp.hide();
             }
         });
+
 
       //  editButton.setPadding(new Insets(2, 10, 2, 10));
         editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1078,22 +1083,44 @@ public class GUI extends Application {
                     heightHBox.getChildren().add(heightContentLabel);
                     heightHBox.getChildren().remove(heightEditTF);
 
-                    userDefinedObstacles.remove(selectedObstacle.getName());
-                    selectedObstacle.setName(nameEditTF.getText());
-                    selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                    userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
+                    if (typeOfList.equals("predefined")) {
+                        predefinedObstaclesSorted.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        predefinedObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
 
-                    nameContentLabel.setText(selectedObstacle.getName());
-                    heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
 
-                    updateObstaclesList();
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
 
-                    editButton.setText("Edit");
+                        updateObstaclesList();
+
+                        detailsPopUp.hide();
+                    } else if (typeOfList.equals("userDefined")) {
+                        userDefinedObstacles.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+
+                        updateObstaclesList();
+
+                        detailsPopUp.hide();
+                    }
                 }
             }
         });
-
-
 
 
 
@@ -1374,6 +1401,8 @@ public class GUI extends Application {
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.keySet());
+        predefinedObstaclesLV.getItems().clear();
+        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
     }
