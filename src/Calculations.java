@@ -78,9 +78,9 @@ public class Calculations {
             //LDA
             recalculatedLDA = distanceFromThreshold  - STRIP_END - RESA;
             spacing = charsBeforeEquals("LDA = Distance From Threshold - Strip End - RESA");
-            addCalcStep("LDA = Distance From Threshold - Strip End - RESA");
-            addCalcStep(spacing + "= " + distanceFromThreshold + " - " + STRIP_END + " - " + RESA);
-            addCalcStep(spacing + "= " + recalculatedLDA);
+            addCalcStep("LDA  = Distance From Threshold - Strip End - RESA");
+            addCalcStep(spacing + " = " + distanceFromThreshold + " - " + STRIP_END + " - " + RESA);
+            addCalcStep(spacing + " = " + recalculatedLDA);
 
         } else {
 
@@ -120,23 +120,25 @@ public class Calculations {
             addCalcStep(spacing + "= " + recalculatedASDA);
 
             //LDA
-            spacing = charsBeforeEquals("LDA  = ");
             if (STRIP_END + slopeCalculation > BLAST_PROTECTION || STRIP_END + RESA > BLAST_PROTECTION) {
                 if (slopeCalculation > RESA) {
                     recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - slopeCalculation - STRIP_END;
-                    addCalcStep("LDA = Original LDA - Distance From Threshold - Slope Calculation - Strip End");
-                    addCalcStep(spacing + "= " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + slopeCalculation + " - " + STRIP_END);
+                    String spacingLDA = charsBeforeEquals("LDA = Original LDA - Distance From Threshold - Slope Calculation - Strip End");
+                    addCalcStep("LDA  = Original LDA - Distance From Threshold - Slope Calculation - Strip End");
+                    addCalcStep(spacingLDA + " = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + slopeCalculation + " - " + STRIP_END);
                 } else {
                     recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - RESA - STRIP_END;
-                    addCalcStep("LDA = Original LDA - Distance From Threshold - RESA - Strip End");
-                    addCalcStep(spacing + "= " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + RESA + " - " + STRIP_END);
+                    String spacingLDA = charsBeforeEquals("LDA = Original LDA - Distance From Threshold - RESA - Strip End");
+                    addCalcStep("LDA  = Original LDA - Distance From Threshold - RESA - Strip End");
+                    addCalcStep(spacingLDA + " = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + RESA + " - " + STRIP_END);
                 }
             } else {
                 recalculatedLDA = originalConfig.getLDA() - distanceFromThreshold - BLAST_PROTECTION;
-                addCalcStep("LDA = Original LDA - Distance From Threshold - Blast Protection");
-                addCalcStep(spacing + "= " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + BLAST_PROTECTION);
+                String spacingLDA = charsBeforeEquals("LDA = Original LDA - Distance From Threshold - Blast Protection");
+                addCalcStep("LDA  = Original LDA - Distance From Threshold - Blast Protection");
+                addCalcStep(spacing + " = " + originalConfig.getLDA() + " - " + distanceFromThreshold + " - " + BLAST_PROTECTION);
             }
-            addCalcStep(spacing + "= " + recalculatedLDA);
+            addCalcStep( "     = " + recalculatedLDA);
 
 
         }

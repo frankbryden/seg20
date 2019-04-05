@@ -266,9 +266,10 @@
                                              <content>
                                                 <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css">
                                                    <children>
-                                                      <Label fx:id="centreLineRequiredLabel" layoutX="374.0" layoutY="47.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
-                                                      <Label fx:id="thresholdDistanceRequiredLabel" layoutX="373.0" layoutY="165.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
-                                                      <Label fx:id="thresholdRequiredLabel" layoutX="373.0" layoutY="108.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="centreLineRequiredLabel" layoutX="373.0" layoutY="75.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdDistanceRequiredLabel" layoutX="371.0" layoutY="194.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdRequiredLabel" layoutX="371.0" layoutY="134.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="obstacleRequiredLabel" layoutX="372.0" layoutY="14.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
                                                    </children></AnchorPane>
                                              </content>
                                           </Tab>

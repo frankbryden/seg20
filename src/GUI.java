@@ -53,7 +53,7 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
             originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
-    private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel;
+    private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
@@ -364,7 +364,7 @@ public class GUI extends Application {
         }
 
         calculationsRootBox = new VBox(20);
-        calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
+        calculationsRootBox.setPadding(new Insets(40, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
 
         VBox.setMargin(obstacleSelectHBox, calculationsInsets);
@@ -423,6 +423,7 @@ public class GUI extends Application {
         centreLineRequiredLabel = (Label) primaryStage.getScene().lookup("#centreLineRequiredLabel");
         thresholdDistanceRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdDistanceRequiredLabel");
         thresholdRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdRequiredLabel");
+        obstacleRequiredLabel = (Label) primaryStage.getScene().lookup("#obstacleRequiredLabel");
 
         calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -430,22 +431,27 @@ public class GUI extends Application {
 
                 if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
                         thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
-                        || directionSelect.getSelectionModel().isEmpty()) {
+                        ) {
 
                     if (centrelineTF.getText().isEmpty()) {
-                        centreLineRequiredLabel.setText("This field is required");
+                        centreLineRequiredLabel.setText("            This field is required");
                     } else {
                         centreLineRequiredLabel.setText("");
                     }
                     if (distanceFromThresholdTF.getText().isEmpty()) {
-                        thresholdDistanceRequiredLabel.setText("This field is required");
+                        thresholdDistanceRequiredLabel.setText("            This field is required");
                     } else {
                         thresholdDistanceRequiredLabel.setText("");
                     }
                     if (thresholdSelect.getSelectionModel().isEmpty()) {
-                        thresholdRequiredLabel.setText("Please select a threshold");
+                        thresholdRequiredLabel.setText("      Please select a threshold");
                     } else {
                         thresholdRequiredLabel.setText("");
+                    }
+                    if (obstacleSelect.getSelectionModel().isEmpty()) {
+                        obstacleRequiredLabel.setText("     Please select an obstacle");
+                    } else {
+                        obstacleRequiredLabel.setText("");
                     }
 
                 } else {
@@ -933,20 +939,21 @@ public class GUI extends Application {
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                // Checking for empty name and height fields
                 if (nameTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                         This field is required");
+                    nameRequiredLbl.setText("                                             This field is required");
                     if (!rootBox.getChildren().contains(emptyNameBox)) {
                         rootBox.getChildren().add(0, emptyNameBox);
                     }
                     nameTF.setPromptText("");
                 } else {
-                    if(rootBox.getChildren().contains(emptyNameBox)) {
+                    if (rootBox.getChildren().contains(emptyNameBox)) {
                         rootBox.getChildren().remove(emptyNameBox);
                     }
                     nameRequiredLbl.setText("");
                 }
                 if (heightTF.getText().isEmpty()) {
-                    heightRequiredLbl.setText("                         This field is required");
+                    heightRequiredLbl.setText("                                             This field is required");
                     if (rootBox.getChildren().contains(emptyNameBox)) {
                         if (!rootBox.getChildren().contains(emptyHeightBox)) {
                             rootBox.getChildren().add(2, emptyHeightBox);
@@ -958,17 +965,19 @@ public class GUI extends Application {
                     }
                     heightTF.setPromptText("");
                 } else {
-                    if(rootBox.getChildren().contains(emptyHeightBox)) {
+                    if (rootBox.getChildren().contains(emptyHeightBox)) {
                         rootBox.getChildren().remove(emptyHeightBox);
                     }
                     heightRequiredLbl.setText("");
                 }
-
+                // Checking for valid obstacle name and valid obstacle height
                 if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
                     System.out.println("Add obstacle");
                     addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
                     nameTF.clear();
                     heightTF.clear();
+                    nameTF.setPromptText("");
+                    heightTF.setPromptText("");
                     updateObstaclesList();
                     addObstaclePopup.hide();
                 } else if (!heightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
@@ -1007,7 +1016,6 @@ public class GUI extends Application {
         return popup;
     }
 
-    //TODO - error messages for this popup (obstacle name and height validation)
     private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
 
 
@@ -1022,7 +1030,7 @@ public class GUI extends Application {
         VBox box = new VBox(100);
         box.getStyleClass().add("popup");
         box.getStylesheets().add("styles/layoutStyles.css");
-
+        
         HBox subBox = new HBox(100);
 
         Label detailsLabel = new Label ("Overview of obstacle details");
@@ -1034,6 +1042,18 @@ public class GUI extends Application {
         Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
         heightEditTF.setPrefWidth(240);
+
+        // Content for error messages
+        Label nameRequiredLbl = new Label("");
+        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyNameBox = new HBox();
+        emptyNameBox.getChildren().add(nameRequiredLbl);
+        Label heightRequiredLbl = new Label("");
+        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyHeightBox = new HBox();
+        emptyHeightBox.getChildren().add(heightRequiredLbl);
 
         // Styling of labels in the obstacle details popup
         detailsLabel.getStyleClass().add("popUpTitles");
@@ -1050,12 +1070,15 @@ public class GUI extends Application {
 
         Button returnButton = new Button("Go back");
         Button editButton = new Button("Edit details");
+        Button saveButton = new Button("Save changes");
 
         // Styling of buttons in the obstacle details popup
         returnButton.getStyleClass().add("primaryButton");
         returnButton.getStylesheets().add("styles/global.css");
         editButton.getStyleClass().add("primaryButton");
         editButton.getStylesheets().add("styles/global.css");
+        saveButton.getStyleClass().add("primaryButton");
+        saveButton.getStylesheets().add("styles/global.css");
 
         HBox nameHBox = new HBox(20);
         nameHBox.getChildren().add(nameLabel);
@@ -1089,6 +1112,88 @@ public class GUI extends Application {
             }
         });
 
+
+        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // Checking for empty name and height fields
+                if (nameEditTF.getText().isEmpty()) {
+                    nameRequiredLbl.setText("                                       This field is required");
+                    if (!box.getChildren().contains(emptyNameBox)) {
+                        box.getChildren().add(1, emptyNameBox);
+                    }
+                    nameEditTF.setPromptText("");
+                } else {
+                    if (box.getChildren().contains(emptyNameBox)) {
+                        box.getChildren().remove(emptyNameBox);
+                    }
+                    nameRequiredLbl.setText("");
+                }
+                if (heightEditTF.getText().isEmpty()) {
+                    heightRequiredLbl.setText("                                       This field is required");
+                    if (box.getChildren().contains(emptyNameBox)) {
+                        if (!box.getChildren().contains(emptyHeightBox)) {
+                            box.getChildren().add(3, emptyHeightBox);
+                        }
+                    } else {
+                        if (!box.getChildren().contains(emptyHeightBox)) {
+                            box.getChildren().add(2, emptyHeightBox);
+                        }
+                    }
+                    heightEditTF.setPromptText("");
+                } else {
+                    if (box.getChildren().contains(emptyHeightBox)) {
+                        box.getChildren().remove(emptyHeightBox);
+                    }
+                    heightRequiredLbl.setText("");
+                }
+                // Checking for valid obstacle name and valid obstacle height
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameEditTF.getText())))) {
+                    System.out.println("Add -edited- obstacle");
+                    if (typeOfList.equals("predefined")) {
+                        predefinedObstaclesSorted.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        predefinedObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+
+                        updateObstaclesList();
+                        detailsPopUp.hide();
+                    } else if (typeOfList.equals("userDefined")) {
+                        userDefinedObstacles.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+
+                        updateObstaclesList();
+                        detailsPopUp.hide();
+                    }
+
+                } else if (!heightEditTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText())))) {
+                    heightEditTF.clear();
+                    heightEditTF.setPromptText("Invalid obstacle height!");
+                } else if (!nameEditTF.getText().isEmpty() && !validateStrForm(new ArrayList<>(Arrays.asList(nameEditTF.getText())))) {
+                    nameEditTF.clear();
+                    nameEditTF.setPromptText("Invalid obstacle name!");
+                }
+            }
+        });
+
         editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -1112,51 +1217,13 @@ public class GUI extends Application {
                     heightEditTF.setText(Double.toString(selectedObstacle.getHeight()));
 
                     detailsLabel.setText("Edit obstacle details");
-                    editButton.setText("Save changes");
+
+                    subBox.getChildren().remove(returnButton);
+                    subBox.getChildren().remove(editButton);
+                    subBox.getChildren().add(saveButton);
+                    subBox.getChildren().add(returnButton);
+
                     returnButton.setText("Cancel");
-                } else {
-                    //Save mode
-                    nameHBox.getChildren().add(nameContentLabel);
-                    nameHBox.getChildren().remove(nameEditTF);
-
-                    heightHBox.getChildren().add(heightContentLabel);
-                    heightHBox.getChildren().remove(heightEditTF);
-
-                    if (typeOfList.equals("predefined")) {
-                        predefinedObstaclesSorted.remove(selectedObstacle.getName());
-                        allObstaclesSorted.remove(selectedObstacle.getName());
-                        selectedObstacle.setName(nameEditTF.getText());
-                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        predefinedObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
-                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
-
-                        nameContentLabel.setText(selectedObstacle.getName());
-                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
-
-                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
-
-                        updateObstaclesList();
-
-                        detailsPopUp.hide();
-                    } else if (typeOfList.equals("userDefined")) {
-                        userDefinedObstacles.remove(selectedObstacle.getName());
-                        allObstaclesSorted.remove(selectedObstacle.getName());
-                        selectedObstacle.setName(nameEditTF.getText());
-                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
-                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
-
-                        nameContentLabel.setText(selectedObstacle.getName());
-                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
-
-                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
-
-                        updateObstaclesList();
-
-                        detailsPopUp.hide();
-                    }
                 }
             }
         });
@@ -1359,6 +1426,10 @@ public class GUI extends Application {
 
 
     private void switchCalculationsTabToView(){
+        centreLineRequiredLabel.setText("");
+        thresholdDistanceRequiredLabel.setText("");
+        thresholdRequiredLabel.setText("");
+        obstacleRequiredLabel.setText("");
         calculationsPane.getChildren().remove(calculationsRootBox);
         calculationsPane.getChildren().add(viewCalculationResultsVBox);
     }
@@ -1495,21 +1566,21 @@ public class GUI extends Application {
         return true;
     }
 
-    private Boolean validateStrForm(ArrayList<String> strVals){
-        for (String s : strVals){
-            if (s.length() < 1){
+    private Boolean validateStrForm(ArrayList<String> strVals) {
+        for (String s : strVals) {
+            if (s.length() < 1) {
                 return false;
             }
         }
         return true;
     }
 
-    public void addObstacle(String name, double height){
+    public void addObstacle(String name, double height) {
         Obstacle obstacle = new Obstacle(name, height);
         addObstacle(obstacle);
     }
 
-    private void addObstacle(Obstacle obstacle){
+    private void addObstacle(Obstacle obstacle) {
         this.userDefinedObstacles.put(obstacle.getName(), obstacle);
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
