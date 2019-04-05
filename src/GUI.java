@@ -42,9 +42,6 @@ import javafx.scene.image.Image;
 import javafx.util.Duration;
 
 public class GUI extends Application {
-    //TODO set currently selected obstacle in the ComboBox in the calculations tab
-    // (but you can select a single user-defined and pre-defined obstacle together)
-    // no error message for "Please select an obstacle" if this is to be done
     //TODO add airport database
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
     private Pane calculationsPane;
@@ -653,6 +650,15 @@ public class GUI extends Application {
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
+
+                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                    int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                    userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                    System.out.println("Obstacle in user-defined list was selected, has now been deselected");
+                }
+
+                obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem());
+
                 if (click.getClickCount() == 2) {
                     showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
                 }
@@ -663,6 +669,14 @@ public class GUI extends Application {
 
             @Override
             public void handle(MouseEvent click) {
+
+                if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                    int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                    predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                    System.out.println("Obstacle in predefined list was selected, has now been deselected");
+                }
+
+                obstacleSelect.setValue(userDefinedObstaclesLV.getSelectionModel().getSelectedItem());
 
                 if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
                     showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
@@ -993,7 +1007,7 @@ public class GUI extends Application {
         return popup;
     }
 
-    //TODO - error messages for this popup (obstacle name and height validation), some formatting of labels
+    //TODO - error messages for this popup (obstacle name and height validation)
     private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
 
 
@@ -1015,9 +1029,11 @@ public class GUI extends Application {
         Label nameLabel = new Label ("Name:");
         Label nameContentLabel = new Label(selectedObstacle.getName());
         TextField nameEditTF = new TextField();
+        nameEditTF.setPrefWidth(240);
         Label heightLabel = new Label ("Height:");
         Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
+        heightEditTF.setPrefWidth(240);
 
         // Styling of labels in the obstacle details popup
         detailsLabel.getStyleClass().add("popUpTitles");
@@ -1033,7 +1049,7 @@ public class GUI extends Application {
         heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
 
         Button returnButton = new Button("Go back");
-        Button editButton = new Button("Edit");
+        Button editButton = new Button("Edit details");
 
         // Styling of buttons in the obstacle details popup
         returnButton.getStyleClass().add("primaryButton");
@@ -1049,6 +1065,23 @@ public class GUI extends Application {
         heightHBox.getChildren().add(heightLabel);
         heightHBox.getChildren().add(heightContentLabel);
 
+        subBox.getChildren().add(editButton);
+        subBox.getChildren().add(returnButton);
+        box.getChildren().add(detailsLabel);
+        box.getChildren().add(nameHBox);
+        box.getChildren().add(heightHBox);
+        box.getChildren().add(subBox);
+
+        detailsPopUp.getContent().add(box);
+
+        //TODO - position according to window size
+        Node eventSource = (Node) event.getSource();
+        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
+        detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
+        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
+
+        detailsPopUp.show(primaryStage);
+
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -1056,14 +1089,19 @@ public class GUI extends Application {
             }
         });
 
-
-      //  editButton.setPadding(new Insets(2, 10, 2, 10));
         editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 editingObstacle = !editingObstacle;
                 if (editingObstacle){
                     //Edit mode
+
+                    nameLabel.setText("Name");
+                    heightLabel.setText("Height (m)");
+
+                    nameHBox.setSpacing(55);
+                    subBox.setSpacing(132);
+
                     nameHBox.getChildren().remove(nameContentLabel);
                     nameHBox.getChildren().add(nameEditTF);
 
@@ -1073,8 +1111,9 @@ public class GUI extends Application {
                     nameEditTF.setText(selectedObstacle.getName());
                     heightEditTF.setText(Double.toString(selectedObstacle.getHeight()));
 
-
-                    editButton.setText("Save");
+                    detailsLabel.setText("Edit obstacle details");
+                    editButton.setText("Save changes");
+                    returnButton.setText("Cancel");
                 } else {
                     //Save mode
                     nameHBox.getChildren().add(nameContentLabel);
@@ -1122,26 +1161,6 @@ public class GUI extends Application {
             }
         });
 
-
-
-        subBox.setAlignment(Pos.CENTER);
-        subBox.getChildren().add(editButton);
-        subBox.getChildren().add(returnButton);
-        box.getChildren().add(detailsLabel);
-        box.getChildren().add(nameHBox);
-        box.getChildren().add(heightHBox);
-        box.getChildren().add(subBox);
-
-
-        detailsPopUp.getContent().add(box);
-
-        //TODO - position according to window size
-        Node eventSource = (Node) event.getSource();
-        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-        detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
-
-        detailsPopUp.show(primaryStage);
 
     }
 
