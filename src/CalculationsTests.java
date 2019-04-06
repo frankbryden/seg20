@@ -3,10 +3,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
 
-/*
-Reason for tests failing -  problem is in the example calc doc with 09L/27R, I changed the LDA to 3596 hoping that the displaced threshold is right
- */
+
 public class CalculationsTests {
+    // Reason for tests failing -  problem is in the example calc doc with 09L/27R, I changed the LDA to 3596 hoping that the displaced threshold is right
 
     //Scenario 1 tests
     private RunwayDesignator runwayDesignatorScenario1 = new RunwayDesignator("09L");
@@ -31,9 +30,7 @@ public class CalculationsTests {
     private RunwayConfig initialRunwayScenario22 = new RunwayConfig(runwayDesignatorScenario22, 3660, 3660, 3660, 3660, 0);
     private Calculations calculationsScenario22 = new Calculations(initialRunwayScenario22);
     private RunwayConfig recalculatedRunwayScenario22 = calculationsScenario22.recalculateParams(obstacleScenario2, 500, 20, Calculations.Direction.AWAY).getRecalculatedParams();
-    //TODO checking formula, will remove later
-    private CalculationResults results = calculationsScenario22.recalculateParams(obstacleScenario2, 500, 20, Calculations.Direction.AWAY);
-    private String answers = results.getCalculationDetails();
+
 
     //Scenario 3 tests
     private RunwayDesignator runwayDesignatorScenario3 = new RunwayDesignator("09R");
@@ -58,9 +55,7 @@ public class CalculationsTests {
     private RunwayConfig initialRunwayScenario42 = new RunwayConfig(runwayDesignatorScenario42, 3884, 3962, 3884, 3884, 0);
     private Calculations calculationsScenario42 = new Calculations(initialRunwayScenario42);
     private RunwayConfig recalculatedRunwayScenario42 = calculationsScenario42.recalculateParams(obstacleScenario4, 50, 20, Calculations.Direction.AWAY).getRecalculatedParams();
-    //TODO checking formula, will remove later
-    private CalculationResults results2 = calculationsScenario42.recalculateParams(obstacleScenario4, 50, 20, Calculations.Direction.AWAY);
-    private String answers2 = results2.getCalculationDetails();
+
 
     @Test
     public void scenario1TestNewTORA() {
@@ -126,8 +121,6 @@ public class CalculationsTests {
     @Test
     public void scenario22TestNewTORA() {
         assertThat(recalculatedRunwayScenario22.getTORA(), is(equalTo(2860)));
-        // TODO - will remove later
-        System.out.println(answers);
     }
 
     @Test
@@ -208,8 +201,6 @@ public class CalculationsTests {
     @Test
     public void scenario42TestNewTORA() {
         assertThat(recalculatedRunwayScenario42.getTORA(), is(equalTo(3534)));
-        //TODO - will remove later
-        System.out.println(answers);
     }
 
     @Test

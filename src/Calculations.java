@@ -28,8 +28,11 @@ public class Calculations {
 
     public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, Direction direction){
 
+        //TODO - [in redeclaration conditions] should be originalConfig.getLength() not TORA as TORA != total length of runway so a RunwayConfig needs a length parameter
+        // We also need length for computing distance to threshold for the other logical runway, given the user's input of distance to threshold
+
         // Checking for the conditions for which no redeclaration of runway parameters is required
-        if (distanceFromCenterline > 75 || distanceFromCenterline < -75 || distanceFromThreshold < -60 || distanceFromThreshold > (originalConfig.getTORA() + 60)){
+        if (distanceFromCenterline > 75 || distanceFromCenterline < -75 || distanceFromThreshold + originalConfig.getDisplacementThreshold() < -60 || distanceFromThreshold + originalConfig.getDisplacementThreshold() > (originalConfig.getTORA() + 60)){
             return new CalculationResults(originalConfig, "No redeclaration of runway parameters is required.");
         }
 
@@ -89,7 +92,7 @@ public class Calculations {
 
             // (Take Off Away, Landing Over)
 
-            //TODO - Blast protection and STRIP_END + RESA is always equal, so we never get to see the use of the STRIP_END/RESA formula in the tests
+
             //TORA
             if (STRIP_END + RESA > BLAST_PROTECTION) {
                 recalculatedTORA = originalConfig.getTORA() - STRIP_END - RESA - distanceFromThreshold - originalConfig.getDisplacementThreshold();

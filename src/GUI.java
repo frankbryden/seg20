@@ -460,6 +460,7 @@ public class GUI extends Application {
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
                     String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
+
                     RunwayConfig runwayConfig, otherConfig;
                     RunwayPair.Side selectedSide;
 
@@ -558,6 +559,9 @@ public class GUI extends Application {
         recalculatedAsda = new Label();
         recalculatedLda = new Label();
         calculationsBackBtn = new Button("Back");
+        calculationsBackBtn.getStyleClass().add("primaryButton");
+        calculationsBackBtn.getStylesheets().add("styles/global.css");
+
         VBox calculateBackBtnVBox = new VBox();
         calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
@@ -611,26 +615,28 @@ public class GUI extends Application {
         //Add all the labels, col by col,  to create a table
 
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
-        calculationResultsGrid.add(todaRowLbl, 0, 1);
-        calculationResultsGrid.add(toraRowLbl, 0, 2);
+        calculationResultsGrid.add(toraRowLbl, 0, 1);
+        calculationResultsGrid.add(todaRowLbl, 0, 2);
         calculationResultsGrid.add(asdaRowLbl, 0, 3);
         calculationResultsGrid.add(ldaRowLbl, 0, 4);
 
         //Col 1 : the original values
         calculationResultsGrid.add(originalValuesGridLbl, 1, 0);
-        calculationResultsGrid.add(originalToda, 1, 1);
-        calculationResultsGrid.add(originalTora, 1, 2);
+        calculationResultsGrid.add(originalTora, 1, 1);
+        calculationResultsGrid.add(originalToda, 1, 2);
         calculationResultsGrid.add(originalAsda, 1, 3);
         calculationResultsGrid.add(originalLda, 1, 4);
 
         //Col 2 : the recalculated values
         calculationResultsGrid.add(recalculatedlValuesGridLbl, 2, 0);
-        calculationResultsGrid.add(recalculatedToda, 2, 1);
-        calculationResultsGrid.add(recalculatedTora, 2, 2);
+        calculationResultsGrid.add(recalculatedTora, 2, 1);
+        calculationResultsGrid.add(recalculatedToda, 2, 2);
         calculationResultsGrid.add(recalculatedAsda, 2, 3);
         calculationResultsGrid.add(recalculatedLda, 2, 4);
 
         viewCalculationResultsVBox = new VBox();
+        viewCalculationResultsVBox.setPadding(new Insets(8, 0, 0, 0));
+        breakdownCalcLbl.setPadding(new Insets(0, 0, 0, -5));
         viewCalculationResultsVBox.getChildren().add(breakdownCalcLbl);
         viewCalculationResultsVBox.getChildren().add(calculationDetails);
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
@@ -894,6 +900,11 @@ public class GUI extends Application {
         nameTF = new TextField();
         heightTF = new TextField();
 
+        nameTF.getStyleClass().add("redErrorPromptText");
+        nameTF.getStylesheets().add("styles/obstacles.css");
+        heightTF.getStyleClass().add("redErrorPromptText");
+        heightTF.getStylesheets().add("styles/obstacles.css");
+
         nameRequiredLbl = new Label("");
         heightRequiredLbl = new Label("");
 
@@ -1030,7 +1041,7 @@ public class GUI extends Application {
         VBox box = new VBox(100);
         box.getStyleClass().add("popup");
         box.getStylesheets().add("styles/layoutStyles.css");
-        
+
         HBox subBox = new HBox(100);
 
         Label detailsLabel = new Label ("Overview of obstacle details");
@@ -1042,6 +1053,12 @@ public class GUI extends Application {
         Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
         heightEditTF.setPrefWidth(240);
+
+        // Styling of name and height text fields to show red prompt text
+        nameEditTF.getStyleClass().add("redErrorPromptText");
+        nameEditTF.getStylesheets().add("styles/obstacles.css");
+        heightEditTF.getStyleClass().add("redErrorPromptText");
+        heightEditTF.getStylesheets().add("styles/obstacles.css");
 
         // Content for error messages
         Label nameRequiredLbl = new Label("");
@@ -1102,7 +1119,6 @@ public class GUI extends Application {
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
         detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
         detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
-
         detailsPopUp.show(primaryStage);
 
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {

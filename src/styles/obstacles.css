@@ -6,3 +6,7 @@
     -fx-background-color: #103b52;
     -fx-cursor: "pointer";
 }
+
+.redErrorPromptText {
+    -fx-prompt-text-fill: #DE4646;
+}
