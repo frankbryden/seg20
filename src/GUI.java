@@ -43,7 +43,8 @@ import javafx.util.Duration;
 
 public class GUI extends Application {
     //TODO add airport database
-    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
+    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
+            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -327,6 +328,13 @@ public class GUI extends Application {
                 System.out.println("Add airport");
                 addRunwayPopup.show();
             }
+        });
+
+        //Settings tab
+        saveSettingsBtn = (Button) primaryStage.getScene().lookup("#saveSettingsBtn");
+        saveSettingsBtn.setOnMouseClicked(value -> {
+            System.out.println("Clicked on save settings");
+            new Notification("hey").show(primaryStage, 10, 10);
         });
 
 
