@@ -48,17 +48,17 @@ public class GUI extends Application {
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect, directionSelect;
+    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
-            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
     private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
-    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, directionSelectHBox;
+    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
@@ -205,7 +205,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                //TODO - position according to window size
+                //TODO - position the add obstacle popup according to window size
                 Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
                 addObstaclePopup.show(primaryStage);
                 addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth()/2);
@@ -356,20 +356,11 @@ public class GUI extends Application {
         runwayThresholdLbl = new Label("Distance from runway threshold (m)");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
-        directionSelectLbl  = new Label ("Select runway direction");
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
         calculateBtn.getStyleClass().add("primaryButton");
-
-        directionSelect = new ComboBox();
-        directionSelect.setVisibleRowCount(2);
-        directionSelect.setId("directionComboBox");
-        for(Calculations.Direction direction : Calculations.Direction.values())
-        {
-            directionSelect.getItems().add(Calculations.directionSpecifier.get(direction));
-        }
 
         calculationsRootBox = new VBox(20);
         calculationsRootBox.setPadding(new Insets(40, 10, 10, 10));
@@ -404,13 +395,6 @@ public class GUI extends Application {
         thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
 
-        directionSelectHBox = new HBox(HBOX_SPACING);
-        VBox.setMargin(directionSelectHBox, calculationsInsets);
-        Region directionSelectHBoxRegion = getHGrowingRegion();
-        directionSelectHBox.getChildren().add(directionSelectLbl);
-        directionSelectHBox.getChildren().add(directionSelectHBoxRegion);
-        directionSelectHBox.getChildren().add(directionSelect);
-
 
         HBox calculateBtnVBox = new HBox();
         VBox.setMargin(calculateBtnVBox, calculationsInsets);
@@ -423,7 +407,7 @@ public class GUI extends Application {
         calculationsRootBox.getChildren().add(centerlineHBox);
         calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
-        calculationsRootBox.getChildren().add(directionSelectHBox);
+
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
@@ -464,6 +448,7 @@ public class GUI extends Application {
 
                 } else {
 
+
                     String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                     Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
@@ -485,24 +470,39 @@ public class GUI extends Application {
 
                     //Perform recalculations
                     Calculations calculations = new Calculations(runwayConfig);
+                    Calculations calculations2 = new Calculations(otherConfig);
                     int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
                     int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
-                    Calculations.Direction runwayDirection = Calculations.getKey(directionSelect.getSelectionModel().getSelectedItem().toString());
 
-                    Calculations.Direction otherDirection;
-                    if (runwayDirection == Calculations.Direction.TOWARDS) {
-                        otherDirection = Calculations.Direction.AWAY;
-                    } else
-                        otherDirection = Calculations.Direction.TOWARDS;
+                    // We take the greater TORA to be the length of the runway
+                    int runwayLength = 0;
+                    if (runwayConfig.getTORA() > otherConfig.getTORA()) {
+                        runwayLength = runwayConfig.getTORA();
+                    } else {
+                        runwayLength = otherConfig.getTORA();
+                    }
 
-                    CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
-                    RunwayConfig recalculatedParams = results.getRecalculatedParams();
+                    int distanceFromOtherThreshold = runwayLength - runwayConfig.getDisplacementThreshold() - distanceFromThreshold - otherConfig.getDisplacementThreshold();
 
 
-                    //Fix ? perform recalculation on the other runway config
-                    Calculations calculations2 = new Calculations(otherConfig);
-                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, otherConfig.getLDA() - distanceFromThreshold, distanceFromCenterline, otherDirection);
-                    RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
+                    // I compare the distances from each threshold. Whichever threshold the obstacle is closer to, that logical runway is used for taking off away
+                    CalculationResults results = null;
+                    CalculationResults results2 = null;
+                    RunwayConfig recalculatedParams = null;
+                    RunwayConfig recalculatedParams2 = null;
+                    if (distanceFromThreshold < distanceFromOtherThreshold) {
+                        // Closer to runwayConfig so runwayConfig is used for taking off away
+                        results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, "AWAY", runwayLength);
+                        recalculatedParams = results.getRecalculatedParams();
+                        results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromOtherThreshold, distanceFromCenterline, "TOWARDS", runwayLength);
+                        recalculatedParams2 = results2.getRecalculatedParams();
+                    } else {
+                        // Closer to otherConfig so otherConfig is used for taking off away
+                        results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, "TOWARDS", runwayLength);
+                        recalculatedParams = results.getRecalculatedParams();
+                        results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromOtherThreshold, distanceFromCenterline, "AWAY", runwayLength);
+                        recalculatedParams2 = results2.getRecalculatedParams();
+                    }
 
                     System.out.println("calculation details");
                     System.out.println(results.getCalculationDetails());
@@ -1122,7 +1122,7 @@ public class GUI extends Application {
 
         detailsPopUp.getContent().add(box);
 
-        //TODO - position according to window size
+        //TODO - position the show obstacle details popup according to window size
         Node eventSource = (Node) event.getSource();
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
         detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
