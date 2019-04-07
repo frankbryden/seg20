@@ -1,39 +1,20 @@
-import java.util.HashMap;
-import java.util.Map;
 
 public class Calculations {
     private RunwayConfig originalConfig;
     private final int RESA = 240;
     private final int STRIP_END = 60;
     private final int BLAST_PROTECTION = 300;
-    public enum Direction {TOWARDS, AWAY};
-    public static HashMap<Direction,String> directionSpecifier = new HashMap<Direction,String>(){{
-        put(Direction.TOWARDS, "Taking Off Towards, Landing Towards");
-        put(Direction.AWAY, "Taking Off Away, Landing Over");
-    }};
     private StringBuilder calcSummary;
 
-    public static Direction getKey(String runwayDirection){
-        System.out.println(runwayDirection);
-        for(Direction direction : Direction.values())
-        {
-            if(directionSpecifier.get(direction).equals(runwayDirection))
-                return direction;
-        }
-        return null;
-    }
     public Calculations(RunwayConfig runwayConfig){
         this.originalConfig = runwayConfig;
     }
 
-    public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, Direction direction){
+    public CalculationResults recalculateParams(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String direction, int runwayLength){
 
-        //TODO - [in redeclaration conditions] should be originalConfig.getLength() not TORA as TORA != total length of runway so a RunwayConfig needs a length parameter
-        // We also need length for computing distance to threshold for the other logical runway, given the user's input of distance to threshold
-
-        // Checking for the conditions for which no redeclaration of runway parameters is required
-        if (distanceFromCenterline > 75 || distanceFromCenterline < -75 || distanceFromThreshold + originalConfig.getDisplacementThreshold() < -60 || distanceFromThreshold + originalConfig.getDisplacementThreshold() > (originalConfig.getTORA() + 60)){
-            return new CalculationResults(originalConfig, "No redeclaration of runway parameters is required.");
+        // Checking the conditions for which no redeclaration of runway parameters is required
+        if (distanceFromCenterline > 75 || distanceFromCenterline < -75 || distanceFromThreshold + originalConfig.getDisplacementThreshold() < -60 || distanceFromThreshold + originalConfig.getDisplacementThreshold() > (runwayLength + 60)){
+            return new CalculationResults(originalConfig, "No redeclaration of runway parameters is required for threshold " + originalConfig.getRunwayDesignator() + ".");
         }
 
         int recalculatedTORA;
@@ -44,7 +25,7 @@ public class Calculations {
 
         beginCalculation();
 
-        if (direction == Direction.TOWARDS){
+        if (direction.equals("TOWARDS")){
 
             addCalcStep ( originalConfig.getRunwayDesignator().toString() + " (" + "Take Off " + direction, true);
             addCalcStep("," + "Landing TOWARDS):");
@@ -145,7 +126,6 @@ public class Calculations {
 
 
         }
-        //TODO now we might migrate this function to take in runway pairs instead of a single runway config - this needs to be discussed
         return new CalculationResults(new RunwayConfig(null, originalConfig.getRunwayDesignator(), recalculatedTORA, recalculatedTODA, recalculatedASDA, recalculatedLDA, originalConfig.getDisplacementThreshold()), getCalculationResults());
     }
 
@@ -162,6 +142,7 @@ public class Calculations {
     private void beginCalculation(){
         this.calcSummary = new StringBuilder();
     }
+
     private void addCalcStep(String step) {
         this.calcSummary.append(step).append("\n");
     }

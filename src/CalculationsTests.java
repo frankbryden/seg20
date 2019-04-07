@@ -12,49 +12,48 @@ public class CalculationsTests {
     private RunwayConfig initialRunwayScenario1 = new RunwayConfig(runwayDesignatorScenario1, 3902, 3902, 3902, 3596, 306);
     private Calculations calculationsScenario1 = new Calculations(initialRunwayScenario1);
     private Obstacle obstacleScenario1 = new Obstacle("testObstacle", 12);
-    private RunwayConfig recalculatedRunwayScenario1 = calculationsScenario1.recalculateParams(obstacleScenario1, -50, 0, Calculations.Direction.AWAY).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario1 = calculationsScenario1.recalculateParams(obstacleScenario1, -50, 0, "AWAY", 3902).getRecalculatedParams();
 
     private RunwayDesignator runwayDesignatorScenario12 = new RunwayDesignator("27R");
     private RunwayConfig initialRunwayScenario12 = new RunwayConfig(runwayDesignatorScenario12, 3884, 3962, 3884, 3884, 0);
     private Calculations calculationsScenario12 = new Calculations(initialRunwayScenario12);
-    private RunwayConfig recalculatedRunwayScenario12 = calculationsScenario12.recalculateParams(obstacleScenario1, 3646, 0, Calculations.Direction.TOWARDS).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario12 = calculationsScenario12.recalculateParams(obstacleScenario1, 3646, 0, "TOWARDS", 3902).getRecalculatedParams();
 
     //Scenario 2 tests
     private RunwayDesignator runwayDesignatorScenario2 = new RunwayDesignator("09R");
     private RunwayConfig initialRunwayScenario2 = new RunwayConfig(runwayDesignatorScenario2, 3660, 3660, 3660, 3353, 307);
     private Calculations calculationsScenario2 = new Calculations(initialRunwayScenario2);
     private Obstacle obstacleScenario2 = new Obstacle("testObstacle", 25);
-    private RunwayConfig recalculatedRunwayScenario2 = calculationsScenario2.recalculateParams(obstacleScenario2, 2853, 20, Calculations.Direction.TOWARDS).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario2 = calculationsScenario2.recalculateParams(obstacleScenario2, 2853, 20, "TOWARDS", 3660).getRecalculatedParams();
 
     private RunwayDesignator runwayDesignatorScenario22 = new RunwayDesignator("27L");
     private RunwayConfig initialRunwayScenario22 = new RunwayConfig(runwayDesignatorScenario22, 3660, 3660, 3660, 3660, 0);
     private Calculations calculationsScenario22 = new Calculations(initialRunwayScenario22);
-    private RunwayConfig recalculatedRunwayScenario22 = calculationsScenario22.recalculateParams(obstacleScenario2, 500, 20, Calculations.Direction.AWAY).getRecalculatedParams();
-
+    private RunwayConfig recalculatedRunwayScenario22 = calculationsScenario22.recalculateParams(obstacleScenario2, 500, -20, "AWAY", 3660).getRecalculatedParams();
 
     //Scenario 3 tests
     private RunwayDesignator runwayDesignatorScenario3 = new RunwayDesignator("09R");
     private RunwayConfig initialRunwayScenario3 = new RunwayConfig(runwayDesignatorScenario3, 3660, 3660, 3660, 3353, 307);
     private Calculations calculationsScenario3 = new Calculations(initialRunwayScenario3);
     private Obstacle obstacleScenario3 = new Obstacle("testObstacle", 15);
-    private RunwayConfig recalculatedRunwayScenario3 = calculationsScenario3.recalculateParams(obstacleScenario3, 150, 60, Calculations.Direction.AWAY).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario3 = calculationsScenario3.recalculateParams(obstacleScenario3, 150, 60, "AWAY", 3660).getRecalculatedParams();
 
-    private RunwayDesignator runwayDesignatorScenario32 = new RunwayDesignator("27R");
-    private RunwayConfig initialRunwayScenario32 = new RunwayConfig(runwayDesignatorScenario32, 3884, 3962, 3884, 3884, 0);
+    private RunwayDesignator runwayDesignatorScenario32 = new RunwayDesignator("27L");
+    private RunwayConfig initialRunwayScenario32 = new RunwayConfig(runwayDesignatorScenario32, 3660, 3660, 3660, 3660, 0);
     private Calculations calculationsScenario32 = new Calculations(initialRunwayScenario32);
-    private RunwayConfig recalculatedRunwayScenario32 = calculationsScenario32.recalculateParams(obstacleScenario3, 3203, 60, Calculations.Direction.TOWARDS).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario32 = calculationsScenario32.recalculateParams(obstacleScenario3, 3203, 60, "TOWARDS", 3660).getRecalculatedParams();
 
     //Scenario 4 tests
     private RunwayDesignator runwayDesignatorScenario4 = new RunwayDesignator("09L");
     private RunwayConfig initialRunwayScenario4 = new RunwayConfig(runwayDesignatorScenario4, 3902, 3902, 3902, 3596, 306);
     private Calculations calculationsScenario4 = new Calculations(initialRunwayScenario4);
     private Obstacle obstacleScenario4 = new Obstacle("testObstacle", 20);
-    private RunwayConfig recalculatedRunwayScenario4 = calculationsScenario4.recalculateParams(obstacleScenario4, 3546, 20, Calculations.Direction.TOWARDS).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario4 = calculationsScenario4.recalculateParams(obstacleScenario4, 3546, 20, "TOWARDS", 3902).getRecalculatedParams();
 
     private RunwayDesignator runwayDesignatorScenario42 = new RunwayDesignator("27R");
     private RunwayConfig initialRunwayScenario42 = new RunwayConfig(runwayDesignatorScenario42, 3884, 3962, 3884, 3884, 0);
     private Calculations calculationsScenario42 = new Calculations(initialRunwayScenario42);
-    private RunwayConfig recalculatedRunwayScenario42 = calculationsScenario42.recalculateParams(obstacleScenario4, 50, 20, Calculations.Direction.AWAY).getRecalculatedParams();
+    private RunwayConfig recalculatedRunwayScenario42 = calculationsScenario42.recalculateParams(obstacleScenario4, 50, 20, "AWAY", 3902).getRecalculatedParams();
 
 
     @Test
