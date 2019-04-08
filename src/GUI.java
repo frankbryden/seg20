@@ -73,6 +73,7 @@ public class GUI extends Application {
     private BorderPane canvasBorderPane;
     private ComboBox obstacleSelect;
     private Boolean editingObstacle;
+    private Stage primaryStage;
 
 
     @Override
@@ -83,6 +84,8 @@ public class GUI extends Application {
         primaryStage.setTitle("Runway Redeclaration Tool");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
+
+        this.primaryStage = primaryStage;
 
         fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
@@ -231,6 +234,8 @@ public class GUI extends Application {
                     addObstacle(obstacle);
                 });
                 updateObstaclesList();
+
+                notifyUpdate("Obstacles loaded");
             }
         });
 
@@ -271,6 +276,7 @@ public class GUI extends Application {
                 File file = fileChooser.showSaveDialog(primaryStage);
                 if (file != null){
                     fileIO.write(userDefinedObstacles.values(), file.getPath());
+                    notifyUpdate("Obstacles saved");
                 }
 
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
@@ -284,6 +290,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
+
+                notifyUpdate("TODA Highlighted");
             }
         });
 
@@ -292,6 +300,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
+
+                notifyUpdate("TORA Highlighted");
             }
         });
 
@@ -300,6 +310,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
+
+                notifyUpdate("ASDA Highlighted");
             }
         });
 
@@ -308,6 +320,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
+
+                notifyUpdate("LDA Highlighted");
             }
         });
 
@@ -325,7 +339,7 @@ public class GUI extends Application {
         addRunwayBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                System.out.println("Add airport");
+                System.out.println("Add runway");
                 addRunwayPopup.show();
             }
         });
@@ -819,6 +833,7 @@ public class GUI extends Application {
                 airportConfigs.put(ac.getName(), ac);
                 updateAirportSelects();
 
+                notifyUpdate("Airport config loaded");
                 //tabPane.getSelectionModel().select(1);
             }
         });
@@ -999,6 +1014,10 @@ public class GUI extends Application {
                     heightTF.setPromptText("");
                     updateObstaclesList();
                     addObstaclePopup.hide();
+
+                    //notify user obstacle was added
+                    notifyUpdate("Obstacle added");
+
                 } else if (!heightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
                     heightTF.clear();
                     heightTF.setPromptText("Invalid obstacle height!");
@@ -1504,11 +1523,8 @@ public class GUI extends Application {
             userDefinedObstacles.remove(obstacleName);
             allObstaclesSorted.remove(obstacleName);
 
+            notifyUpdate("Obstacle removed");
         }
-
-
-
-
     }
 
 
@@ -1607,6 +1623,10 @@ public class GUI extends Application {
     private void addObstacle(Obstacle obstacle) {
         this.userDefinedObstacles.put(obstacle.getName(), obstacle);
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
+    }
+
+    private void notifyUpdate(String message){
+        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
     }
 
 

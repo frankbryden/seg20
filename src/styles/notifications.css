@@ -1,5 +1,5 @@
 #mainPane{
-    -fx-background-color: #6b62ff;
+    -fx-background-color: #103b52;
     -fx-min-height: 100px;
     -fx-min-width: 200px;
     -fx-border-radius: 20px;
@@ -7,7 +7,9 @@
 }
 
 .label{
-    -fx-text-fill: #c4dbff;
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
 }
 
 .root.popup{

@@ -189,15 +189,22 @@ public class FileIO {
     }
 
     public Map<String, AirportConfig> readRunwayDB(String filePath){
-        File file = new File(filePath);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
+        InputStreamReader isr;
+        boolean modeJAR = false;
+        if (!modeJAR){
+            File file = new File(filePath);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+            isr = new InputStreamReader(fis);
+        } else {
+            isr = new InputStreamReader(getClass().getResourceAsStream(filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
         }
-        InputStreamReader isr = new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
+
         BufferedReader bufferedReader = new BufferedReader(isr);
         Map<String, AirportConfig> airportConfigs = new HashMap<>();
         String line;

@@ -9,7 +9,9 @@ import javafx.util.Duration;
 
 public class Notification extends Popup {
     String message;
-    int showTime = 1400; //ms
+    private static final int showTime = 2400; //ms
+    public static final int HEIGHT = 70;
+    private static final int MARGIN = 50;
 
     //GUI elements
     private BorderPane rootPane;
@@ -28,14 +30,14 @@ public class Notification extends Popup {
         rootPane.setPrefHeight(70);
         rootPane.setCenter(msgLbl);
         rootPane.setId("mainPane");
-        this.getScene().setFill(Color.PINK);
+        //this.getScene().setFill(Color.PINK);
         this.getContent().add(rootPane);
 
     }
 
     @Override
     public void show(Window ownerWindow, double anchorX, double anchorY) {
-        super.show(ownerWindow, anchorX, anchorY);
+        super.show(ownerWindow, anchorX + MARGIN, anchorY - MARGIN);
         PauseTransition delay = new PauseTransition(Duration.millis(this.showTime));
         delay.setOnFinished( event -> super.hide() );
         delay.play();
