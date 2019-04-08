@@ -74,6 +74,7 @@ public class GUI extends Application {
     private ComboBox obstacleSelect;
     private Boolean editingObstacle;
     private Stage primaryStage;
+    private Printer printer;
 
 
     @Override
@@ -348,7 +349,9 @@ public class GUI extends Application {
         saveSettingsBtn = (Button) primaryStage.getScene().lookup("#saveSettingsBtn");
         saveSettingsBtn.setOnMouseClicked(value -> {
             System.out.println("Clicked on save settings");
-            new Notification("hey").show(primaryStage, 10, 10);
+            //new Notification("hey").show(primaryStage, 10, 10);
+
+            printer.print();
         });
 
 
@@ -523,7 +526,9 @@ public class GUI extends Application {
                     System.out.println(results2.getCalculationDetails());
 
                     // Printing results into the breakdown of calculations text box
-                    calculationDetails.setText(results.getCalculationDetails() + "\n" + results2.getCalculationDetails());
+                    String resultsDetails = results.getCalculationDetails() + "\n" + results2.getCalculationDetails();
+                    calculationDetails.setText(resultsDetails);
+                    printer.setCalculations(resultsDetails);
 
                     System.out.println(recalculatedParams.toString());
                     updateCalculationResultsView(runwayConfig, recalculatedParams);
@@ -864,6 +869,9 @@ public class GUI extends Application {
         Map<String, AirportConfig> airportConfigsDB = fileIO.readRunwayDB("runways.csv");
         airportConfigs.putAll(airportConfigsDB);
         updateAirportSelects();
+
+        printer = new Printer(primaryStage);
+        printer.setRunway(canvas);
 
     }
 
