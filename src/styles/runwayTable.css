@@ -31,3 +31,11 @@
     -fx-text-alignment: center;
     -fx-padding: 30 10;
 }
+
+.paintMe {
+    -fx-background-color: red;
+}
+
+#smallRunwayGrid > .label{
+    -fx-font-weight: bold;
+}

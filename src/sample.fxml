@@ -112,7 +112,7 @@
                                         </Tab>
                                         <Tab text="Runway">
                                           <content>
-                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="609.0" stylesheets="@styles/runway.css">
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="609.0" stylesheets="@styles/runwayTable.css">
                                                    <children>
                                                       <GridPane id="runwayGrid" fx:id="runwayGrid" layoutX="1.0" prefHeight="505.0" prefWidth="577.0">
                                                         <columnConstraints>
