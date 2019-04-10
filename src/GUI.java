@@ -593,7 +593,7 @@ public class GUI extends Application {
                 System.out.println("Current angle = " + currentAngle);
                 currentAngle += Math.PI/4;
                 System.out.println("After addition = " + currentAngle);
-                runwayRenderer.setWindAngle(currentAngle);
+                //runwayRenderer.setWindAngle(currentAngle);
             }
         });
 

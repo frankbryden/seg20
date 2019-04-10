@@ -2,14 +2,13 @@ import javafx.print.PageLayout;
 import javafx.print.PageOrientation;
 import javafx.print.Paper;
 import javafx.print.PrinterJob;
-import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.scene.*;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
@@ -33,6 +32,8 @@ public class Printer {
     private Pair<Pane, Node> originalRecalculatedPane;
     private Canvas runway;
     private Font headerFont, titleFont, subtitleFont;
+
+    private int currentPageCount;
     /*
     What needs to be printed :
         - The airport and relevant runway
@@ -60,6 +61,7 @@ public class Printer {
     }
 
     private boolean printContents(PrinterJob job){
+        currentPageCount = 0;
         return printCoverPage(job) && printContentPage(job) && printCalculations(job) && printRunway(job) && printOriginalRecalculatedValues(job);
     }
 
@@ -146,7 +148,7 @@ public class Printer {
         int stepY = 20;
         int step = 0;
         for (Text item : contentsItems){
-            item.setText((step + 1) + ". " + item.getText());
+            item.setText((step + 1) + ". " + item.getText() + " (p. " + (step + 2) + ")");
             item.setFont(subtitleFont);
             item.setX(startX);
             item.setY(startY + step*stepY);
@@ -156,6 +158,7 @@ public class Printer {
         root.getChildren().add(title);
         root.getChildren().addAll(contentsItems);
 
+        addPageNumber(root, job.getPrinter().getDefaultPageLayout());
 
         return job.printPage(root);
     }
@@ -172,6 +175,9 @@ public class Printer {
         Group root = new Group();
         root.getChildren().add(heading);
         root.getChildren().add(text);
+
+        addPageNumber(root, job.getPrinter().getDefaultPageLayout());
+
         return job.printPage(root);
     }
 
@@ -179,7 +185,27 @@ public class Printer {
         //Transform rotate = Transform.rotate(90, 20, 20);
         //this.runway.getTransforms().add(rotate);//Transform.rotate(90, runway.getWidth()/2, runway.getHeight()/2));
         PageLayout pageLayout = job.getPrinter().createPageLayout(Paper.A4, PageOrientation.LANDSCAPE, javafx.print.Printer.MarginType.DEFAULT);
-        return job.printPage(pageLayout, this.runway);
+
+        Group root = new Group();
+
+        //We invert width and height here as we create the image in portrait, but we'll be flipping to landscape
+        Image image = this.runway.snapshot(new SnapshotParameters(), new WritableImage((int) runway.getWidth(), (int) runway.getHeight()));
+        ImageView imageView = new ImageView(image);
+        imageView.getTransforms().add(Transform.scale(0.7, 0.7));
+        imageView.setX(90);
+        imageView.setY(0);
+        //imageView.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+        System.out.println("x : " + imageView.getX());
+        System.out.println("y : " + imageView.getY());
+        System.out.println(imageView.getLayoutBounds().getWidth() + " by " + imageView.getLayoutBounds().getHeight());
+        imageView.getTransforms().add(Transform.rotate(90, image.getWidth()/2, image.getHeight()/2));
+
+
+
+        root.getChildren().addAll(imageView);
+        addPageNumber(root, pageLayout);
+
+        return job.printPage(root);
     }
 
     private boolean printOriginalRecalculatedValues(PrinterJob job){
@@ -200,6 +226,8 @@ public class Printer {
         GridPane gp = (GridPane) recalculatedVals;
         gp.setPrefWidth(400);
         root.getChildren().add(originalRecalculatedPane.getValue());
+
+        addPageNumber(root, job.getPrinter().getDefaultPageLayout());
 
         boolean result = job.printPage(root);
 
@@ -227,6 +255,17 @@ public class Printer {
                 System.err.println("Print job failed");
             }
         }
+    }
+
+    private void addPageNumber(Group root, PageLayout pl){
+        currentPageCount++;
+
+        Text pageNumber = new Text(String.valueOf(currentPageCount));
+        pageNumber.setX(centerNode(pageNumber, pl) + 32);
+        pageNumber.setY(pl.getPrintableHeight());
+
+        root.getChildren().add(pageNumber);
+
     }
 
     private String padOutDate(int dateItem){
