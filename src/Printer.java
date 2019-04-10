@@ -76,10 +76,13 @@ public class Printer {
 
         //Subtitle - date
         Calendar currentDate = Calendar.getInstance();
+        int currentHour = currentDate.get(Calendar.HOUR_OF_DAY);
+        int currentMinutes = currentDate.get(Calendar.MINUTE);
         int currentDay = currentDate.get(Calendar.DAY_OF_MONTH);
         int currentMonth = currentDate.get(Calendar.MONTH);
         int currentYear = currentDate.get(Calendar.YEAR);
         String currentDateString = padOutDate(currentDay) + "/" + padOutDate(currentMonth) + "/" + currentYear;
+        String currentTimeString = currentHour + ":" + padOutDate(currentMinutes);
         System.out.println("Current date is " + currentDateString);
 
         //Logo
@@ -95,26 +98,32 @@ public class Printer {
         System.out.println("X : " + planeView.getX());
         System.out.println("Y : " + planeView.getY());
 
-        Text subtitle = new Text(currentDateString);
-        subtitle.setX(centerNode(subtitle, pl) + 30);
-        subtitle.setY(pageHeight/4 + subtitle.getLayoutBounds().getHeight()*2);
-        subtitle.setFont(subtitleFont);
+        //Subtitle - date and time
+        Text dateText = new Text(currentTimeString + " - " + currentDateString);
+        dateText.setX(centerNode(dateText, pl) + 30);
+        dateText.setY(pageHeight/4 + dateText.getLayoutBounds().getHeight()*2);
+        dateText.setFont(subtitleFont);
+
+        /*Text timeText = new Text(currentTimeString);
+        timeText.setX(centerNode(timeText, pl) + 20);
+        timeText.setY(dateText.getY() + 20);
+        timeText.setFont(subtitleFont); */
 
         System.out.println("Title");
         printPos(title);
         System.out.println("Subtitle");
-        printPos(subtitle);
+        printPos(dateText);
 
         Pane titlePane = new Pane(title);
-        Pane subtitlePane = new Pane(subtitle);
+        Pane subtitlePane = new Pane(dateText);
         titlePane.setStyle("-fx-background-color: red");
         subtitlePane.setStyle("-fx-background-color: blue");
         //root.getChildren().addAll(titlePane, subtitlePane);
-        root.getChildren().addAll(title, subtitle, planeView);
+        root.getChildren().addAll(title, dateText, planeView);
         System.out.println("Title");
         printPos(title);
         System.out.println("Subtitle");
-        printPos(subtitle);
+        printPos(dateText);
         return job.printPage(root);
     }
 
