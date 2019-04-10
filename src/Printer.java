@@ -20,6 +20,8 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import javafx.scene.image.ImageView;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Printer {
@@ -58,7 +60,7 @@ public class Printer {
     }
 
     private boolean printContents(PrinterJob job){
-        return printCoverPage(job) && printCalculations(job) && printRunway(job) && printOriginalRecalculatedValues(job);
+        return printCoverPage(job) && printContentPage(job) && printCalculations(job) && printRunway(job) && printOriginalRecalculatedValues(job);
     }
 
     private boolean printCoverPage(PrinterJob job){
@@ -104,11 +106,6 @@ public class Printer {
         dateText.setY(pageHeight/4 + dateText.getLayoutBounds().getHeight()*2);
         dateText.setFont(subtitleFont);
 
-        /*Text timeText = new Text(currentTimeString);
-        timeText.setX(centerNode(timeText, pl) + 20);
-        timeText.setY(dateText.getY() + 20);
-        timeText.setFont(subtitleFont); */
-
         System.out.println("Title");
         printPos(title);
         System.out.println("Subtitle");
@@ -124,6 +121,42 @@ public class Printer {
         printPos(title);
         System.out.println("Subtitle");
         printPos(dateText);
+        return job.printPage(root);
+    }
+
+    private boolean printContentPage(PrinterJob job){
+        //TODO check if canvas can export to some img, so we don't have to freaking move that node around all the time
+        /*
+        Contents :
+            - Calculations Breakdown
+            - Runway Top-down and side-on view
+            - Original and recalculated values
+         */
+        Group root = new Group();
+        Text title = new Text(5, 20, "Contents");
+        title.setFont(titleFont);
+
+        ArrayList<Text> contentsItems = new ArrayList<>();
+        contentsItems.add(new Text("Calculations Breakdown"));
+        contentsItems.add(new Text("Runway Top-down and side-on view"));
+        contentsItems.add(new Text("Original and recalculated values"));
+
+        int startX = 0;
+        int startY = 50;
+        int stepY = 20;
+        int step = 0;
+        for (Text item : contentsItems){
+            item.setText((step + 1) + ". " + item.getText());
+            item.setFont(subtitleFont);
+            item.setX(startX);
+            item.setY(startY + step*stepY);
+            step++;
+        }
+
+        root.getChildren().add(title);
+        root.getChildren().addAll(contentsItems);
+
+
         return job.printPage(root);
     }
 
