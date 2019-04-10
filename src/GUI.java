@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -128,41 +129,38 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println("we're just gonna get some data here");
-                                String apiKey = "473ade203bfbbf2d4346749e61a37a95";
-                                String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + ac.getLatitude() + "&lon=" + ac.getLongitude() + "&appid=" + apiKey;
-                                try {
-                                    URL url = new URL(urlString);
-                                    URLConnection urlConnection = url.openConnection();
-                                    InputStreamReader is = new InputStreamReader(urlConnection.getInputStream());
-                                    StringBuilder data = new StringBuilder();
-                                    while (is.ready()){
-                                        data.append((char) is.read());
-                                    }
-                                    System.out.println(data.toString());
-                                    Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
-                                    System.out.println(p.toString());
-                                    Matcher m = p.matcher(data.toString());
-                                    m.find();
-                                    System.out.println("Speed extracted from response : " + m.group(1));
-                                    System.out.println("Angle extracted from response : " + m.group(2));
-
-                                    double speed = Double.valueOf(m.group(1));
-                                    int angleDeg = Integer.valueOf(m.group(2));
-                                    //Convert angle to radians
-                                    double angleRad = angleDeg * Math.PI/180;
-                                    //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
-                                    angleRad += Math.PI/2;
-                                    windlLbl.setText(String.valueOf(speed) + "km/h, ang : " + angleDeg + "/" + angleRad);
-                                    runwayRenderer.setWindAngle(angleRad);
-
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                        Runnable runnable = () -> {
+                            System.out.println("we're just gonna get some data here");
+                            String apiKey = "473ade203bfbbf2d4346749e61a37a95";
+                            String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + ac.getLatitude() + "&lon=" + ac.getLongitude() + "&appid=" + apiKey;
+                            try {
+                                URL url = new URL(urlString);
+                                URLConnection urlConnection = url.openConnection();
+                                InputStreamReader is = new InputStreamReader(urlConnection.getInputStream());
+                                StringBuilder data = new StringBuilder();
+                                while (is.ready()){
+                                    data.append((char) is.read());
                                 }
+                                System.out.println(data.toString());
+                                Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
+                                System.out.println(p.toString());
+                                Matcher m = p.matcher(data.toString());
+                                m.find();
+                                System.out.println("Speed extracted from response : " + m.group(1));
+                                System.out.println("Angle extracted from response : " + m.group(2));
+
+                                double speed = Double.valueOf(m.group(1));
+                                int angleDeg = Integer.valueOf(m.group(2));
+                                //Convert angle to radians
+                                double angleRad = angleDeg * Math.PI/180;
+                                //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
+                                angleRad += Math.PI/2;
+                                windlLbl.setText(speed + "km/h, ang : " + angleDeg + "/" + angleRad);
+                                runwayRenderer.setWindAngle(angleRad);
+
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         };
                         Platform.runLater(runnable);
@@ -175,28 +173,22 @@ public class GUI extends Application {
 
         airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.setId("airportComboBox");
-        airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                System.out.println("Here");
-                System.out.println((String) newValue);
-                if (newValue == null){
-                    System.out.println("Selection cleared");
-                    return;
-                }
-                updateRunwaySelect((String) newValue);
+        airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Here");
+            System.out.println((String) newValue);
+            if (newValue == null){
+                System.out.println("Selection cleared");
+                return;
             }
+            updateRunwaySelect((String) newValue);
         });
 
         addObstacleBtn = new Button("Add Button");
-        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Add obstacle");
-                if (validateObstaclesForm()){
-                    addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
-                    updateObstaclesList();
-                }
+        addObstacleBtn.setOnMouseClicked(event -> {
+            System.out.println("Add obstacle");
+            if (validateObstaclesForm()){
+                addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
+                updateObstaclesList();
             }
         });
 
@@ -335,7 +327,7 @@ public class GUI extends Application {
         saveSettingsBtn.setOnMouseClicked(value -> {
             System.out.println("Clicked on save settings");
             //new Notification("hey").show(primaryStage, 10, 10);
-            printer.print();
+
         });
 
 
@@ -874,6 +866,24 @@ public class GUI extends Application {
             }
         });
 
+
+        //Listeners for the print and export button on the top right side of the GUI
+        Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
+        Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
+
+        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is, look the same under xfce ubuntu
+        printBtnPane.setCursor(Cursor.HAND);
+        exportBtnPane.setCursor(Cursor.OPEN_HAND);
+
+        printBtnPane.setOnMouseClicked(event -> {
+            System.out.println("Print report");
+            printer.print();
+        });
+
+        exportBtnPane.setOnMouseClicked(event -> {
+            //TODO implement exporting, and link back to here when done
+            System.out.println("Export data");
+        });
 
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");

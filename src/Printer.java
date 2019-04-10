@@ -7,6 +7,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -18,9 +19,8 @@ import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.util.Pair;
 
-import java.awt.*;
-import java.util.function.Consumer;
-
+import javafx.scene.image.ImageView;
+import java.util.Calendar;
 
 public class Printer {
     private Stage primaryStage;
@@ -30,7 +30,7 @@ public class Printer {
     //DM me if you have any questions about is - Frankie
     private Pair<Pane, Node> originalRecalculatedPane;
     private Canvas runway;
-    private Font headerFont;
+    private Font headerFont, titleFont, subtitleFont;
     /*
     What needs to be printed :
         - The airport and relevant runway
@@ -41,7 +41,9 @@ public class Printer {
 
     public Printer(Stage primaryStage){
         this.primaryStage = primaryStage;
-        this.headerFont = Font.font("Verdana", FontWeight.BOLD, 14);
+        this.titleFont    = Font.font("Verdana", FontWeight.BOLD, 21);
+        this.subtitleFont = Font.font("Verdana", FontWeight.BOLD, 16);
+        this.headerFont   = Font.font("Verdana", FontWeight.BOLD, 14);
     }
 
     private Scene getContentsToPrint(){
@@ -53,6 +55,71 @@ public class Printer {
 
         root.getChildren().add(c);
         return scene;
+    }
+
+    private boolean printContents(PrinterJob job){
+        return printCoverPage(job) && printCalculations(job) && printRunway(job) && printOriginalRecalculatedValues(job);
+    }
+
+    private boolean printCoverPage(PrinterJob job){
+        PageLayout pl = job.getPrinter().getDefaultPageLayout();
+        double pageWidth = pl.getPrintableWidth();
+        double pageHeight = pl.getPrintableHeight();
+        Group root = new Group();
+
+        //Title
+        Text title = new Text("Runway Redeclaration Tool Report");
+        title.setX(centerNode(title, pl) - 30);
+        title.setY(pageHeight/4);
+        title.setFont(titleFont);
+        System.out.println("Computed width of text is " + title.getLayoutBounds().getWidth() + ", and width of page is " + pageWidth);
+
+        //Subtitle - date
+        Calendar currentDate = Calendar.getInstance();
+        int currentDay = currentDate.get(Calendar.DAY_OF_MONTH);
+        int currentMonth = currentDate.get(Calendar.MONTH);
+        int currentYear = currentDate.get(Calendar.YEAR);
+        String currentDateString = padOutDate(currentDay) + "/" + padOutDate(currentMonth) + "/" + currentYear;
+        System.out.println("Current date is " + currentDateString);
+
+        //Logo
+        ImageView planeView = new ImageView();
+        Image planeImg = new Image("rec/plane.png");
+        planeView.setImage(planeImg);
+        planeView.setScaleX(0.25);
+        planeView.setScaleY(0.25);
+        planeView.setX(-260);//centerNode(planeView, pl));
+        planeView.setY(-150);// + pageHeight/2);//pageHeight/2);
+        System.out.println("width : " + planeView.getBoundsInLocal().getWidth());
+        System.out.println("height : " + planeView.getBoundsInLocal().getHeight());
+        System.out.println("X : " + planeView.getX());
+        System.out.println("Y : " + planeView.getY());
+
+        Text subtitle = new Text(currentDateString);
+        subtitle.setX(centerNode(subtitle, pl) + 30);
+        subtitle.setY(pageHeight/4 + subtitle.getLayoutBounds().getHeight()*2);
+        subtitle.setFont(subtitleFont);
+
+        System.out.println("Title");
+        printPos(title);
+        System.out.println("Subtitle");
+        printPos(subtitle);
+
+        Pane titlePane = new Pane(title);
+        Pane subtitlePane = new Pane(subtitle);
+        titlePane.setStyle("-fx-background-color: red");
+        subtitlePane.setStyle("-fx-background-color: blue");
+        //root.getChildren().addAll(titlePane, subtitlePane);
+        root.getChildren().addAll(title, subtitle, planeView);
+        System.out.println("Title");
+        printPos(title);
+        System.out.println("Subtitle");
+        printPos(subtitle);
+        return job.printPage(root);
+    }
+
+    private void printPos(Node node){
+        System.out.println("(" + node.getLayoutX() + "; " + node.getLayoutY() + ")");
     }
 
     private boolean printCalculations(PrinterJob job){
@@ -71,14 +138,6 @@ public class Printer {
         //this.runway.getTransforms().add(rotate);//Transform.rotate(90, runway.getWidth()/2, runway.getHeight()/2));
         PageLayout pageLayout = job.getPrinter().createPageLayout(Paper.A4, PageOrientation.LANDSCAPE, javafx.print.Printer.MarginType.DEFAULT);
         return job.printPage(pageLayout, this.runway);
-    }
-
-    private boolean printContents(PrinterJob job){
-        return printCalculations(job) && printRunway(job) && printOriginalRecalculatedValues(job);
-    }
-
-    void printPos(GridPane gp){
-        System.out.println("(" + gp.getLayoutX() + "; " + gp.getLayoutY() + ")");
     }
 
     private boolean printOriginalRecalculatedValues(PrinterJob job){
@@ -128,6 +187,14 @@ public class Printer {
         }
     }
 
+    private String padOutDate(int dateItem){
+        return String.format("%02d", dateItem);
+    }
+
+    private double centerNode(Node node, PageLayout pl){
+        return (pl.getPrintableWidth() - node.getLayoutBounds().getWidth())/2 - pl.getLeftMargin();
+    }
+
     public void setCalculations(String calculations) {
         this.calculations = calculations;
     }
@@ -143,4 +210,6 @@ public class Printer {
     public void setOriginalRecalculatedPane(Pair<Pane, Node> originalRecalculatedPane) {
         this.originalRecalculatedPane = originalRecalculatedPane;
     }
+
+
 }

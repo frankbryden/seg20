@@ -22,7 +22,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -335,16 +335,24 @@
                   <Insets />
                </opaqueInsets>
             </TabPane>
-             <ImageView fx:id="printerBtn" fitHeight="32" fitWidth="32" layoutX="1316.0" layoutY="3.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8">
-                 <image>
-                     <Image url="@rec/printerWhite.png" />
-                 </image>
-             </ImageView>
-             <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32" layoutX="1385.0" layoutY="3.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8">
-                 <image>
-                     <Image url="@rec/outArrowWhite.png" />
-                 </image>
-             </ImageView>
+            <Pane fx:id="printBtnPane" layoutX="1256.0" layoutY="9.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8.0">
+               <children>
+                   <ImageView fx:id="printerBtn" fitHeight="32" fitWidth="32">
+                       <image>
+                           <Image url="@rec/printerWhite.png" />
+                       </image>
+                   </ImageView>
+               </children>
+            </Pane>
+            <Pane fx:id="exportBtnPane" layoutX="1325.0" layoutY="9.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+               <children>
+                   <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32">
+                       <image>
+                           <Image url="@rec/outArrowWhite.png" />
+                       </image>
+                   </ImageView>
+               </children>
+            </Pane>
          </children>
       </AnchorPane>
    </center>
