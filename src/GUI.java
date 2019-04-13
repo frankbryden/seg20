@@ -213,7 +213,7 @@ public class GUI extends Application {
         });
 
         editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
-        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/edit.png")));
+        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/load.png")));
         editObstacleImgView.setFitWidth(iconSize);
         editObstacleImgView.setFitHeight(iconSize);
         editObstacleBtn.setGraphic(editObstacleImgView);

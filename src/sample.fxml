@@ -22,7 +22,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -101,11 +101,15 @@
                                     <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
                                     <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
-                                        <Tab text="Airport">
+                                        <Tab text="View">
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0">
                                                    <children>
-                                                      <Button fx:id="addAirportBtn" layoutX="467.0" layoutY="23.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" />
+                                                      <Button fx:id="addAirportBtn" layoutX="467.0" layoutY="23.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="23.0" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="124.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="282.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="281.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="124.0" />
                                                    </children>
                                                 </AnchorPane>
                                           </content>
@@ -250,14 +254,14 @@
                                              <content>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0" stylesheets="@styles/obstacles.css">
                                                    <children>
-                                                      <Label layoutX="6.0" layoutY="20.0" prefHeight="22.0" prefWidth="333.0" text="Predefined obstacles " />
-                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="580.0" />
-                                                      <Label layoutX="6.0" layoutY="268.0" prefHeight="29.0" prefWidth="258.0" text="User-defined obstacles" />
-                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="297.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="580.0" />
-                                                      <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Label layoutX="6.0" layoutY="24.0" prefHeight="30.0" prefWidth="333.0" text="Predefined obstacles " />
+                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="54.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
+                                                      <Label layoutX="6.0" layoutY="308.0" prefHeight="30.0" prefWidth="333.0" text="User-defined obstacles" />
+                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="338.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
+                                                      <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
@@ -275,10 +279,6 @@
                                           </Tab>
                                       </tabs>
                                     </TabPane>
-                                    <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="587.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="121.0" />
-                                    <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="587.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="279.0" />
-                                    <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="645.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="278.0" />
-                                    <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="645.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="121.0" />
                                  </children>
                               </AnchorPane>
                            </right>
@@ -348,7 +348,7 @@
                <children>
                    <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32">
                        <image>
-                           <Image url="@rec/outArrowWhite.png" />
+                           <Image url="@rec/outArrow.png" />
                        </image>
                    </ImageView>
                </children>
