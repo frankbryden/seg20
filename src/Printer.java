@@ -127,7 +127,7 @@ public class Printer {
     }
 
     private boolean printContentPage(PrinterJob job){
-        //check if canvas can export to some img, so we don't have to freaking move that node around all the time
+        //TODO check if canvas can export to some img, so we don't have to freaking move that node around all the time
         /*
         Contents :
             - Calculations Breakdown

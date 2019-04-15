@@ -189,7 +189,23 @@ public class FileIO {
     }
 
     public Map<String, AirportConfig> readRunwayDB(String filePath){
-        BufferedReader bufferedReader = readRecFile(filePath);
+        InputStreamReader isr;
+        boolean modeJAR = false;
+        if (!modeJAR){
+            File file = new File(filePath);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+            isr = new InputStreamReader(fis);
+        } else {
+            isr = new InputStreamReader(getClass().getResourceAsStream(filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
+        }
+
+        BufferedReader bufferedReader = new BufferedReader(isr);
         Map<String, AirportConfig> airportConfigs = new HashMap<>();
         String line;
         RunwayPair runwayPair = new RunwayPair();
@@ -230,52 +246,8 @@ public class FileIO {
         return airportConfigs;
     }
 
-    public Map<AirportCode, String> readAirportDB(String filePath){
-        BufferedReader bufferedReader = readRecFile(filePath);
-        Map<AirportCode, String> airportDB = new HashMap<>();
+    public void write(String data){
 
-        String line;
-        try {
-
-            while ((line = bufferedReader.readLine()) != null){
-                String[] parts = line.split(",");
-                String airportName = stripQuotes(parts[1]);
-                AirportCode airportCode = new AirportCode(stripQuotes(parts[4]));
-                if (!airportCode.isValid()){
-                    continue;
-                }
-                airportDB.put(airportCode, airportName);
-            }
-        } catch (IOException e){
-            e.printStackTrace();
-        }
-        System.out.println("Read " + airportDB.size() + " airports");
-        return airportDB;
-    }
-
-    public void write(String filePath){
-
-    }
-
-    private BufferedReader readRecFile(String filePath){
-        InputStreamReader isr;
-        boolean modeJAR = false;
-        System.out.println("Current directory : \n" + System.getProperty("user.dir"));
-        if (!modeJAR){
-            File file = new File(filePath);
-            FileInputStream fis = null;
-            try {
-                fis = new FileInputStream(file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                return null;
-            }
-            isr = new InputStreamReader(fis);
-        } else {
-            isr = new InputStreamReader(getClass().getResourceAsStream(filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
-        }
-
-        return new BufferedReader(isr);
     }
 
     private Element getObstacleElement(Obstacle obstacle, Document documentToAddTo) {
@@ -321,9 +293,5 @@ public class FileIO {
         parent.appendChild(lda);
 
         return parent;
-    }
-
-    private String stripQuotes(String in){
-        return in.substring(1, in.length() - 1);
     }
 }
