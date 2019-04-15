@@ -48,7 +48,7 @@ import javafx.util.Pair;
 public class GUI extends Application {
     //TODO add airport database
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
-            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn;
+            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -727,10 +727,10 @@ public class GUI extends Application {
         resetCalculationsTab();
 
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
-        predefinedObstaclesLV.setId("predefinedList");
+        predefinedObstaclesLV.getStyleClass().add("obstacleList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
-        userDefinedObstaclesLV.setId("userList");
+        userDefinedObstaclesLV.getStyleClass().add("obstacleList");
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -887,6 +887,8 @@ public class GUI extends Application {
 
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
+        /*loadAirportButton.getStyleClass().add("loadBtn");
+        loadAirportButton.getStylesheets().add("styles/fileTab.css");*/
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -905,6 +907,17 @@ public class GUI extends Application {
 
                 notifyUpdate("Airport config loaded");
                 //tabPane.getSelectionModel().select(1);
+            }
+        });
+
+        startBtn = (Button) primaryStage.getScene().lookup("#startBtn");
+        /*startBtn.getStyleClass().add("loadBtn");
+        startBtn.getStylesheets().add("styles/fileTab.css");*/
+        startBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Tab Switched!");
+                tabPane.getSelectionModel().select(1);
             }
         });
 

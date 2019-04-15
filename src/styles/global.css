@@ -1,3 +1,9 @@
+*{
+    -fx-header-color: #075170;
+    -fx-primary-color: #1b88bb;
+    -fx-secondary-color: #103b52;
+}
+
 .Button{
     -fx-font-family: "Vivaldi";
 }
@@ -20,14 +26,8 @@
 .label {
     -fx-font-family: "Verdana";
     -fx-font-size: 16px;
-    -fx-text-fill: #103b52;
+    -fx-text-fill: -fx-secondary-color;
 }
-
-/*.tab-pane .large-tabs{
-    -fx-tab-min-width: 156px;
-    -fx-tab-min-height: 64px;
-}*/
-
 
 .tab{
     -fx-background-insets: 0 1 0 1,0,0;
@@ -39,27 +39,19 @@
 .large-tabs .tab{
     -fx-end-margin: 3px 10px 3px 10px;
     -fx-border-radius: 0px;
-    -fx-background-color: #075170;
+    -fx-background-color: -fx-header-color;
 }
 
-.large-tabs .tab:hover{
+.large-tabs .tab:hover, .tab:selected{
     -fx-border-width:  0 0 3 0;
-    -fx-border-color: white;
-}
-
-.large-tabs .tab:selected{
-    -fx-border-width:  0 0 3 0;
-    -fx-border-color: white;
+    -fx-border-color: #ffffff;
 }
 
 .mini-tabs .tab{
     -fx-end-margin: 3px 10px 3px 10px;
     -fx-border-radius: 0px;
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
 }
-/*.tab-pane .tab:focused {
-    -fx-background-color: #1cade6;
-}*/
 
 .large-tabs .tab-label {
     -fx-alignment: CENTER;
@@ -85,50 +77,25 @@
     -fx-border-color: #545454;
 }
 
-.designator-tabs{
+/*.designator-tabs{
     -fx-background-color: #0f5875;
-    /*-fx-background-color: #1ec0ff;*/
     -fx-text-fill: #ffffff;
     -fx-font-family: "Verdana";
     -fx-font-size: 18px;
 }
 
 .designator-tabs:hover{
-    /*-fx-background-color: #1cade6;*/
     -fx-background-color: #0f475f;
 }
 
 .designator-tabs:focused{
-    -fx-background-color: #103b52;
-}
-
-/*#predefinedList .label:hover{
-    -fx-background-color: #1ec0ff;
+    -fx-background-color: -fx-secondary-color;
 }*/
 
-.list-cell:filled:hover{
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: #ffffff;
-}
-
-#userList .list-cell:filled:hover, #predefinedList .list-cell:filled:hover{
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: #ffffff;
-}
-
-#userList .list-cell:selected, #predefinedList .list-cell:selected {
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: #ffffff;
-}
-
-#userList .list-cell, #predefinedList .list-cell{
-    -fx-text-fill: #000000;
-}
-
 .combo-box {
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
     -fx-padding: 0 0 0 0;
-    -fx-border-color: #1b88bb;
+    -fx-border-color: -fx-primary-color;
     -fx-border-width: 1 1 0 1;
 }
 
@@ -138,18 +105,18 @@
 
 .combo-box .list-cell
 {
-    -fx-background-color: white;
-    -fx-text-fill: black;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #000000;
 }
 
 .combo-box .list-cell:hover
 {
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: white;
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
 }
 
 .scroll-bar:vertical{
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
 }
 
 .scroll-bar .track {
@@ -157,7 +124,7 @@
 }
 
 .scroll-bar:vertical .thumb{
-    -fx-background-color: white;
+    -fx-background-color: #ffffff;
     -fx-background-radius: 5em;
 }
 
@@ -167,22 +134,34 @@
 
 .primaryButton{
     -fx-border-width: 2 2 2 2;
-    -fx-border-color: #1b88bb;
-    -fx-background-color: white;
-    -fx-text-fill: #1b88bb;
+    -fx-border-color: -fx-primary-color;
+    -fx-background-color: #ffffff;
+    -fx-text-fill: -fx-primary-color;
     -fx-font-size: 14px;
     -fx-font-weight: bold;
     -fx-border-radius: 2px;
 }
 
 .primaryButton:hover{
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: white;
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
 }
 
 .primaryButton:selected{
-    -fx-background-color: #1b88bb;
-    -fx-text-fill: white;
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
 }
 
+#runwayComboBox{
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 120px;
+}
 
+#airportComboBox{
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
+    -fx-pref-height: 30px;
+    -fx-pref-width: 230px;
+}

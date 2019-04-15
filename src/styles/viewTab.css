@@ -1,0 +1,14 @@
+.designator-tabs{
+    -fx-background-color: #0f5875;
+    -fx-text-fill: #ffffff;
+    -fx-font-family: "Verdana";
+    -fx-font-size: 18px;
+}
+
+.designator-tabs:hover{
+    -fx-background-color: #0f475f;
+}
+
+.designator-tabs:focused{
+    -fx-background-color: -fx-secondary-color;
+}

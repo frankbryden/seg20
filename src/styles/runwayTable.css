@@ -3,11 +3,11 @@
 }
 
 .dark > .label{
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
 }
 
 .light {
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
 }
 
 .lighter {

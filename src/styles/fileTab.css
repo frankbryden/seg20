@@ -1,17 +1,16 @@
-#loadAirportBtn{
+.loadBtn{
     -fx-background-color: #0f475f;
     -fx-border-radius: 5px;
-    -fx-min-width: 200px;
-    -fx-min-height: 80px;
-    -fx-text-fill: rgb(255, 255, 255);
+    -fx-min-width: 150px;
+    -fx-min-height: 96px;
+    -fx-text-fill: #ffffff;
     -fx-font-family: "Verdana";
     -fx-font-size: 28px;
 }
 
-#loadAirportBtn:hover, #loadAirportBtn:focused{
-    -fx-background-color: #103b52;
+.loadBtn:hover, .loadBtn:focused{
+    -fx-background-color: -fx-secondary-color;
 }
-
 
 .mainLabels{
     -fx-font-family: "Verdana";
