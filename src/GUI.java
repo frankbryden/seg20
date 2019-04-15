@@ -46,7 +46,6 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 
 public class GUI extends Application {
-    //TODO add airport database
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
             editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn;
     private Pane calculationsPane;
