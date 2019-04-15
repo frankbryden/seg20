@@ -916,7 +916,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Tab Switched!");
-                tabPane.getSelectionModel().select(1);
+                takeOffTransition.play();
+                //tabPane.getSelectionModel().select(1);
             }
         });
 
