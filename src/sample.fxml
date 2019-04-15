@@ -75,15 +75,27 @@
                                           <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="96.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="24.0" />
-                                             </font>
-                                          </Button>
                                           <Label prefHeight="73.0" prefWidth="258.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RUNWAY" />
                                           <Label prefHeight="73.0" prefWidth="510.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RE-DECLARATION" GridPane.rowIndex="1" />
                                           <Label styleClass="head-label" stylesheets="@styles/fileTab.css" text="TOOL" GridPane.rowIndex="2" />
                                           <Line endX="410.5" startX="-100.0" stroke="#616369" strokeWidth="3.0" GridPane.rowIndex="3" />
+                                          <GridPane GridPane.rowIndex="4">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="268.0" minWidth="10.0" prefWidth="177.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="464.0" minWidth="10.0" prefWidth="418.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <Button fx:id="startBtn" mnemonicParsing="false" styleClass="loadBtn" stylesheets="@styles/fileTab.css" text="Start" />
+                                                <Button fx:id="loadAirportBtn" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="96.0" prefWidth="322.0" styleClass="loadBtn" stylesheets="@styles/fileTab.css" text="Load Custom Config" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="24.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </GridPane>
                                        </children>
                                     </GridPane>
                                  </children>
@@ -105,11 +117,10 @@
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0">
                                                    <children>
-                                                      <Button fx:id="addAirportBtn" layoutX="467.0" layoutY="23.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="23.0" />
-                                                      <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="124.0" />
-                                                      <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="282.0" />
-                                                      <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="281.0" />
-                                                      <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="124.0" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="124.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="282.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="281.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="124.0" />
                                                    </children>
                                                 </AnchorPane>
                                           </content>
@@ -244,6 +255,7 @@
                                                                <children>
                                                                   <Label fx:id="ldaCntLbl2" layoutY="3.0" prefHeight="80.0" prefWidth="185.0" />
                                                                </children></Pane>
+                                                            <Button fx:id="addAirportBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" />
                                                          </children>
                                                       </GridPane>
                                                    </children>

@@ -1,12 +1,26 @@
 .imageButton {
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
 }
 
 .imageButton:hover {
-    -fx-background-color: #103b52;
+    -fx-background-color: -fx-secondary-color;
     -fx-cursor: "pointer";
 }
 
 .redErrorPromptText {
     -fx-prompt-text-fill: #DE4646;
+}
+
+.obstacleList .list-cell:filled:hover{
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
+}
+
+.obstacleList .list-cell:filled:selected{
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
+}
+
+.obstacleList .list-cell{
+    -fx-text-fill: #000000;
 }

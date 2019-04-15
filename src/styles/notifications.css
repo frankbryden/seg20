@@ -1,5 +1,5 @@
 #mainPane{
-    -fx-background-color: #103b52;
+    -fx-background-color: -fx-secondary-color;
     -fx-min-height: 100px;
     -fx-min-width: 200px;
     -fx-border-radius: 20px;
