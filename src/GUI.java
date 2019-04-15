@@ -12,7 +12,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -79,6 +78,7 @@ public class GUI extends Application {
     private Boolean editingObstacle;
     private Stage primaryStage;
     private Printer printer;
+    private AirportDatabase airportDB;
 
 
     @Override
@@ -100,6 +100,8 @@ public class GUI extends Application {
         userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
         allObstaclesSorted = new TreeMap<>();
+
+        airportDB = new AirportDatabase();
 
         airportConfigs = new HashMap<>();
 
@@ -1370,10 +1372,43 @@ public class GUI extends Application {
         Button cancelButton = new Button("Cancel");
         TextField airportName, airportCode;
         Label airportNameLbl, airportCodeLbl;
+        ListView airportSuggestions;
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
         airportCode = new TextField();
+        airportSuggestions = new ListView();
+        airportSuggestions.setMaxHeight(100);
+
+        //Add auto-completion to the airport code
+        airportCode.setOnKeyReleased(event -> {
+            airportSuggestions.getItems().clear();
+            System.out.println("text is " + airportCode.getText());
+            if (airportCode.getText().length() > 0){
+                airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
+                if (airportSuggestions.getItems().size() == 1){
+                    String suggestedAirportName = (String) airportSuggestions.getItems().get(0);
+                    airportName.setText((String) airportSuggestions.getItems().get(0));
+                    airportCode.setText(airportDB.getEntryReversed(suggestedAirportName));
+                    airportCode.positionCaret(airportCode.getText().length());
+                }
+            } else {
+                airportSuggestions.getItems().clear();
+            }
+        });
+
+        //On double click in the suggestions, add to the
+        //TODO we can also do on single click - what do you guys think?
+        airportSuggestions.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2){
+                String selectedAirportName = (String) airportSuggestions.getSelectionModel().getSelectedItem();
+                System.out.println(selectedAirportName);
+                airportName.setText(selectedAirportName);
+                airportCode.setText(airportDB.getEntryReversed(selectedAirportName));
+            } else {
+                System.out.println("Not a double click");
+            }
+        });
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox();
@@ -1389,7 +1424,8 @@ public class GUI extends Application {
         gridPane.add(airportName, 1, 0);
         gridPane.add(airportCodeLbl, 0, 1);
         gridPane.add(airportCode, 1, 1);
-        gridPane.add(hbox, 1, 2);
+        gridPane.add(airportSuggestions, 1, 2, 2, 1);
+        gridPane.add(hbox, 1, 3);
         Scene scene = new Scene(gridPane);
 
         //Add some spacing around and in between the cells
