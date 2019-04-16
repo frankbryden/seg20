@@ -32,9 +32,9 @@
     -fx-padding: 30 10;
 }
 
-.paintMe {
-    -fx-background-color: red;
-}
+/*.paintMe {
+    -fx-background-color: -fx-error-color;
+}*/
 
 #smallRunwayGrid > .label{
     -fx-font-weight: bold;

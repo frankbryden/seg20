@@ -13,7 +13,7 @@
 }
 
 .root.popup{
-    -fx-background-color: #ff0021;
+    -fx-background-color: -fx-error-color;
     -fx-min-height: 100px;
     -fx-min-width: 200px;
     -fx-border-radius: 20px;
