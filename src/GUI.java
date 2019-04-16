@@ -64,7 +64,7 @@ public class GUI extends Application {
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
-    private Stage addAirportPopup, addRunwayPopup;
+    private Stage addAirportPopup, addRunwayPopup, exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
     private TabPane tabPane;
@@ -105,8 +105,9 @@ public class GUI extends Application {
         airportConfigs = new HashMap<>();
 
         addAirportPopup = createAddAirportPopup(primaryStage);
-        addRunwayPopup = createAddRunwayPopup(primaryStage);
+        addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
+        exportPopup = createExportPopup();
 
         //TODO add event listeners for the two new images (print and share)
 
@@ -590,11 +591,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
-                double currentAngle = runwayRenderer.getWindAngle();
+                /*double currentAngle = runwayRenderer.getWindAngle();
                 System.out.println("Current angle = " + currentAngle);
                 currentAngle += Math.PI/4;
                 System.out.println("After addition = " + currentAngle);
-                //runwayRenderer.setWindAngle(currentAngle);
+                runwayRenderer.setWindAngle(currentAngle);*/
             }
         });
 
@@ -884,6 +885,7 @@ public class GUI extends Application {
         exportBtnPane.setOnMouseClicked(event -> {
             //TODO implement exporting, and link back to here when done
             System.out.println("Export data");
+            exportPopup.show();
         });
 
 
@@ -1143,6 +1145,48 @@ public class GUI extends Application {
         return popup;
     }
 
+    public Stage createExportPopup(){
+
+        GridPane rootPane = new GridPane();
+        RadioButton airports = new RadioButton("Airports");
+
+        Stage stage = new Stage();
+        stage.setTitle("Export Data");
+
+        //Components for the popup
+        Button confirmButton = new Button("Export");
+        Button cancelButton = new Button("Cancel");
+
+        cancelButton.setOnMouseClicked(event -> {
+            stage.hide();
+        });
+
+        rootPane.add(airports, 0, 0, 2, 1);
+        rootPane.add(confirmButton, 0, 1);
+        rootPane.add(cancelButton, 1, 1);
+
+        //Add some spacing around and in between the cells
+        rootPane.setHgap(10);
+        rootPane.setVgap(10);
+        rootPane.setPadding(new Insets(15, 15, 15, 15));
+
+        //Add the style sheet containing the primary button styling
+        rootPane.getStylesheets().add("src/global.css");
+
+        //Apply the primary button class to the two buttons
+        confirmButton.getStyleClass().add("primaryButton");
+        cancelButton.getStyleClass().add("primaryButton");
+
+
+        Scene scene = new Scene(rootPane);
+        stage.setScene(scene);
+        /*stage.setWidth(500);
+        stage.setHeight(300);*/
+
+        return stage;
+    }
+
+
     private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
 
 
@@ -1231,10 +1275,12 @@ public class GUI extends Application {
         detailsPopUp.getContent().add(box);
 
         //TODO - position the show obstacle details popup according to window size
+        //TODO ask Jasmine if she wants to center it - also, seems that getWidth get Height is correct. Also, what's the point? looks good the way it is.
         Node eventSource = (Node) event.getSource();
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
         detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
         detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
+        System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1459,7 +1505,7 @@ public class GUI extends Application {
     }
 
 
-    public Stage createAddRunwayPopup(Stage primaryStage){
+    public Stage createAddRunwayPopup(){
         Stage stage = new Stage();
         stage.setTitle("Add Runway");
 
