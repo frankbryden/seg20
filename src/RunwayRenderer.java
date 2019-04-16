@@ -124,7 +124,7 @@ public class RunwayRenderer {
         }
 
         //obstacle will not cover the take off message
-        renderTakeOfMessages(maxWidth, (int) maxHeight, this.graphicsContext);
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
 
 
     }
@@ -319,7 +319,7 @@ public void renderSideview(){
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
 
-        renderTakeOfMessages(maxWidth, (int) maxHeight, this.graphicsContext);
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
 
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),runwayRenderParams.getSideOnRunwayStartY() , runwayRenderParams.getRunwayLength(), runwayRenderParams.getSideOnRunwayHeight());
         Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
@@ -358,7 +358,7 @@ public void renderSideview(){
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
     }
 
-    public void renderTakeOfMessages(int maxWidth, int maxHeight, GraphicsContext graphicsContext){
+    public void renderTakeOfMessages(int maxWidth, int maxHeight){
         Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
         this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
         this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
