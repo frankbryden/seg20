@@ -5,15 +5,11 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
-<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -26,7 +22,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -121,29 +117,10 @@
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0">
                                                    <children>
-                                                      <Button fx:id="highlightTodaBtn" layoutX="264.0" layoutY="356.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="100.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="264.0" AnchorPane.topAnchor="356.0" />
-                                                      <Button fx:id="highlightAsdaBtn" layoutX="159.0" layoutY="356.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="100.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="159.0" AnchorPane.topAnchor="356.0" />
-                                                      <Button fx:id="highlightToraBtn" layoutX="159.0" layoutY="407.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="100.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="159.0" AnchorPane.topAnchor="407.0" />
-                                                      <Button fx:id="highlightLdaBtn" layoutX="264.0" layoutY="407.0" mnemonicParsing="false" prefHeight="45.0" prefWidth="100.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="264.0" AnchorPane.topAnchor="407.0" />
-                                                      <RadioButton layoutX="33.0" layoutY="314.0" mnemonicParsing="false" text="Hide All Designator Lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="314.0">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </RadioButton>
-                                                      <RadioButton layoutX="33.0" layoutY="262.0" mnemonicParsing="false" text="Rotate to match compass heading" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="262.0">
-                                                         <font>
-                                                            <Font size="16.0" />
-                                                         </font>
-                                                      </RadioButton>
-                                                      <ColorPicker layoutX="381.0" layoutY="192.0" promptText="Pick color" AnchorPane.leftAnchor="381.0" AnchorPane.topAnchor="192.0" />
-                                                      <Label layoutX="33.0" layoutY="198.0" text="Change side-on view background" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="198.0" />
-                                                      <Label layoutX="33.0" layoutY="148.0" text="Change top-down view background" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="148.0" />
-                                                      <ColorPicker layoutX="381.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="381.0" AnchorPane.topAnchor="142.0" />
-                                                      <Label layoutX="33.0" layoutY="58.0" prefHeight="20.0" prefWidth="174.0" text="Adjust Runway Zoom" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="58.0" />
-                                                      <Slider layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
-                                                      <Button layoutX="506.0" layoutY="55.0" mnemonicParsing="false" text="Reset" AnchorPane.leftAnchor="506.0" AnchorPane.topAnchor="55.0" />
-                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter Value" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
-                                                      <Button layoutX="506.0" layoutY="94.0" mnemonicParsing="false" prefWidth="53.0" text="Enter" AnchorPane.leftAnchor="506.0" AnchorPane.topAnchor="94.0" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="124.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="534.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="282.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="281.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="592.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="124.0" />
                                                    </children>
                                                 </AnchorPane>
                                           </content>

@@ -2,9 +2,7 @@
     -fx-background-color: #0f5875;
     -fx-text-fill: #ffffff;
     -fx-font-family: "Verdana";
-    -fx-font-size: 13px;
-    -fx-min-height: 45px;
-    -fx-min-width: 100px;
+    -fx-font-size: 18px;
 }
 
 .designator-tabs:hover{
