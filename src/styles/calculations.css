@@ -9,7 +9,6 @@
 .label {
     -fx-label-padding: 5 5 5 5;
     -fx-font-size: 18px;
-    -fx-text-fill: #4a5366;
 }
 
 #thresholdComboBox {

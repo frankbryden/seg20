@@ -9,9 +9,9 @@
     src: url("fonts/Verdana.ttf");
 }
 
-.button{
+/*.button{
     -fx-font-family: "Verdana";
-}
+}*/
 
 .tab-pane .tab-header-area .tab-header-background {
     -fx-opacity: 0;

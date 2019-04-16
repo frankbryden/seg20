@@ -364,6 +364,8 @@ public class GUI extends Application {
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
+        calculationsPane.getStylesheets().add("styles/global.css");
+        calculationsPane.getStylesheets().add("styles/calculations.css");
         obstacleSelect = new ComboBox();
 
 
@@ -1023,6 +1025,9 @@ public class GUI extends Application {
         Popup popup = new Popup();
 
         VBox rootBox = new VBox(20);
+        rootBox.getStylesheets().add("styles/global.css");
+        rootBox.getStylesheets().add("styles/layoutStyles.css");
+        rootBox.getStylesheets().add("styles/obstacles.css");
         HBox emptyNameBox = new HBox();
         HBox emptyHeightBox = new HBox();
         HBox nameBox = new HBox(20);
