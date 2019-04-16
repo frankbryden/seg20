@@ -79,7 +79,7 @@ public class GUI extends Application {
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
-    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip;
+    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -114,6 +114,14 @@ public class GUI extends Application {
         obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
         airportCodeTooltip = new Tooltip();
         airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
+        toraButtonTooltip = new Tooltip();
+        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
+        todaButtonTooltip = new Tooltip();
+        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
+        asdaButtonTooltip = new Tooltip();
+        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
+        ldaButtonTooltip = new Tooltip();
+        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
 
         addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
@@ -169,7 +177,7 @@ public class GUI extends Application {
                                 double angleRad = angleDeg * Math.PI/180;
                                 //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
                                 angleRad += Math.PI/2;
-                                windlLbl.setText(speed + "km/h, ang : " + angleDeg + "/" + angleRad);
+                                windlLbl.setText("Wind speed:  " + speed + "km/h");
                                 runwayRenderer.setWindAngle(angleRad);
 
 
@@ -298,6 +306,8 @@ public class GUI extends Application {
             }
         });
         highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
+        highlightTodaBtn.setTooltip(todaButtonTooltip);
+
         highlightTodaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
 
@@ -305,6 +315,7 @@ public class GUI extends Application {
         });
 
         highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
+        highlightToraBtn.setTooltip(toraButtonTooltip);
         highlightToraBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
 
@@ -312,6 +323,7 @@ public class GUI extends Application {
         });
 
         highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
+        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
         highlightAsdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
 
@@ -319,6 +331,7 @@ public class GUI extends Application {
         });
 
         highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
+        highlightLdaBtn.setTooltip(ldaButtonTooltip);
         highlightLdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
 
