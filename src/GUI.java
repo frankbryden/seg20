@@ -78,7 +78,7 @@ public class GUI extends Application {
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
-
+    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -103,6 +103,16 @@ public class GUI extends Application {
         airportDB = new AirportDatabase();
 
         airportConfigs = new HashMap<>();
+
+        // Setting the texts for each tooltip
+        centrelineDistTooltip = new Tooltip();
+        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
+        thresholdDistTooltip = new Tooltip();
+        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
+        obstacleHeightTooltip = new Tooltip();
+        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+        airportCodeTooltip = new Tooltip();
+        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
 
         addAirportPopup = createAddAirportPopup(primaryStage);
         addRunwayPopup = createAddRunwayPopup();
@@ -347,12 +357,17 @@ public class GUI extends Application {
 
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
-        centrelineDistanceLbl = new Label("Distance from runway centreline (m)");
-        runwayThresholdLbl = new Label("Distance from runway threshold (m)");
+        centrelineDistanceLbl = new Label("Distance from runway centreline");
+        runwayThresholdLbl = new Label("Distance from runway threshold");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
+
+        // Setting tool tips for the text fields in the Calculations tab
         centrelineTF = new TextField();
+        centrelineTF.setTooltip(centrelineDistTooltip);
         distanceFromThresholdTF = new TextField();
+        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
         calculateBtn.getStyleClass().add("primaryButton");
@@ -1007,12 +1022,13 @@ public class GUI extends Application {
         nameLbl.getStyleClass().add("popUpTitles");
         nameLbl.getStylesheets().add("styles/layoutStyles.css");
 
-        heightLbl = new Label("Height (m)");
+        heightLbl = new Label("Height");
         heightLbl.getStyleClass().add("popUpTitles");
         heightLbl.getStylesheets().add("styles/layoutStyles.css");
 
         nameTF = new TextField();
         heightTF = new TextField();
+        heightTF.setTooltip(obstacleHeightTooltip);
 
         nameTF.getStyleClass().add("redErrorPromptText");
         nameTF.getStylesheets().add("styles/obstacles.css");
@@ -1096,7 +1112,7 @@ public class GUI extends Application {
                     heightRequiredLbl.setText("");
                 }
                 // Checking for valid obstacle name and valid obstacle height
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && !nameTF.getText().isEmpty()) {
                     System.out.println("Add obstacle");
                     addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
                     nameTF.clear();
@@ -1112,9 +1128,6 @@ public class GUI extends Application {
                 } else if (!heightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
                     heightTF.clear();
                     heightTF.setPromptText("Invalid obstacle height!");
-                } else if (!nameTF.getText().isEmpty() && !validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))) {
-                    nameTF.clear();
-                    nameTF.setPromptText("Invalid obstacle name!");
                 }
 
             }
@@ -1326,7 +1339,7 @@ public class GUI extends Application {
                     heightRequiredLbl.setText("");
                 }
                 // Checking for valid obstacle name and valid obstacle height
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameEditTF.getText())))) {
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
                     System.out.println("Add -edited- obstacle");
                     if (typeOfList.equals("predefined")) {
                         predefinedObstaclesSorted.remove(selectedObstacle.getName());
@@ -1365,9 +1378,6 @@ public class GUI extends Application {
                 } else if (!heightEditTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText())))) {
                     heightEditTF.clear();
                     heightEditTF.setPromptText("Invalid obstacle height!");
-                } else if (!nameEditTF.getText().isEmpty() && !validateStrForm(new ArrayList<>(Arrays.asList(nameEditTF.getText())))) {
-                    nameEditTF.clear();
-                    nameEditTF.setPromptText("Invalid obstacle name!");
                 }
             }
         });
@@ -1422,7 +1432,11 @@ public class GUI extends Application {
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
+
+        //Setting the tooltip
         airportCode = new TextField();
+        airportCode.setTooltip(airportCodeTooltip);
+
         airportSuggestions = new ListView();
         airportSuggestions.setMaxHeight(100);
 
@@ -1757,7 +1771,7 @@ public class GUI extends Application {
             } catch (NumberFormatException e){
                 return false;
             }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 100) {
+            if (Double.parseDouble(s) < 1) {
                 return false;
             }
         }
@@ -1769,15 +1783,6 @@ public class GUI extends Application {
             try {
                 Integer.parseInt(s);
             } catch (NumberFormatException e){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private Boolean validateStrForm(ArrayList<String> strVals) {
-        for (String s : strVals) {
-            if (s.length() < 1) {
                 return false;
             }
         }
