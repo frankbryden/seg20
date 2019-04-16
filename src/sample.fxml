@@ -4,7 +4,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
@@ -22,7 +21,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -106,7 +105,7 @@
                   </Tab>
                 <Tab text="Application">
                   <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1363.0">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1363.0" stylesheets="@styles/global.css">
                            <right>
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="589.0" BorderPane.alignment="CENTER">
                                  <children>
@@ -329,10 +328,10 @@
                 </Tab>
                 <Tab text="Settings">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@styles/global.css">
                            <children>
                               <Label layoutX="16.0" layoutY="33.0" text="Colour scheme" />
-                              <ChoiceBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
+                              <ComboBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
                               <Button layoutX="383.0" layoutY="25.0" mnemonicParsing="false" styleClass="primaryButton" text="Apply" />
                               <Label layoutX="16.0" layoutY="74.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
                               <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
