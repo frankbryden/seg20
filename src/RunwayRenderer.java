@@ -5,6 +5,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.*;
+import javafx.stage.Window;
 import javafx.util.Pair;
 
 import java.awt.*;
@@ -24,6 +25,9 @@ public class RunwayRenderer {
     //Tranform properties
     private int rotation;
     private int zoom;
+    private int totalZoom;
+    private final double MIN_ZOOM = 0.2;
+    private final double MAX_ZOOM = 2.2;
 
     //Tranforms
     private Affine scaleAffine;
@@ -52,6 +56,7 @@ public class RunwayRenderer {
         this.translateAffine = new Affine(new Translate(0, 0));
         this.mouseLoc = new Point(0, 0);
         this.zoom = 1;
+        this.totalZoom = 0;
         this.translateX = 0;
         this.translateY = 0;
         this.windAngle = -1;
@@ -169,6 +174,8 @@ public class RunwayRenderer {
         rotationAngle -= 9;
         Affine rotate = new Affine(new Rotate(rotationAngle*10, getCenterX(), getCenterY()));
         Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
+
+        //we can zoom, just decide whether user wants to zoom in or zoom out
         if (zoom > 0){
             scaleAffine.append(myScale);
         } else if (zoom < 0){
@@ -178,7 +185,30 @@ public class RunwayRenderer {
                 e.printStackTrace();
             }
         }
-        zoom = 0;
+
+        //Clamp zoom to boundary levels, as Jasmine wanted
+        if (scaleAffine.getMxx() > MAX_ZOOM){
+            scaleAffine.setMxx(MAX_ZOOM);
+            scaleAffine.setMyy(MAX_ZOOM);
+            scaleAffine.setToTransform(new Scale(MAX_ZOOM, MAX_ZOOM, getCenterY()));
+        } else if (scaleAffine.getMxx() < MIN_ZOOM) {
+            scaleAffine.setMxx(MIN_ZOOM);
+            scaleAffine.setMyy(MIN_ZOOM);
+            scaleAffine.setToTransform(new Scale(MIN_ZOOM, MIN_ZOOM, getCenterX(), getCenterY()));
+        }
+
+        System.out.println(scaleAffine.toString());
+
+
+        //Did a zoom happen? if one did happen, we need to notify user along with resetting the delta
+        if (zoom != 0){
+            int zoomLevel = (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
+            Window window = graphicsContext.getCanvas().getScene().getWindow();
+            new Notification("Zoom level : " + zoomLevel + "%").show(window, window.getX() + graphicsContext.getCanvas().getLayoutX(), window.getY() + graphicsContext.getCanvas().getLayoutY());
+            zoom = 0;
+        }
+
+
 
         Translate myTranslate = new Translate(translateX, translateY);
         translateX = 0;
@@ -531,6 +561,7 @@ public void renderSideview(){
 
     public void updateZoom(int zoom) {
         this.zoom = zoom;
+        System.out.println("current zoom is " + zoom);
         this.render();
     }
 
