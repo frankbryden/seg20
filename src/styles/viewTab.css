@@ -1,7 +1,7 @@
 .designator-tabs{
     -fx-background-color: #0f5875;
     -fx-text-fill: #ffffff;
-    -fx-font-family: "Verdana";
+    /*-fx-font-family: "Verdana";*/
     -fx-font-size: 18px;
 }
 

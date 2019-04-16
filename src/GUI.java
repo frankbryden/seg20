@@ -1184,7 +1184,7 @@ public class GUI extends Application {
         rootPane.setPadding(new Insets(15, 15, 15, 15));
 
         //Add the style sheet containing the primary button styling
-        rootPane.getStylesheets().add("src/global.css");
+        rootPane.getStylesheets().add("styles/global.css");
 
         //Apply the primary button class to the two buttons
         confirmButton.getStyleClass().add("primaryButton");

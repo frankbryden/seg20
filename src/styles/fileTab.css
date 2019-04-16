@@ -4,7 +4,7 @@
     -fx-min-width: 150px;
     -fx-min-height: 96px;
     -fx-text-fill: #ffffff;
-    -fx-font-family: "Verdana";
+    /*-fx-font-family: "Verdana";*/
     -fx-font-size: 28px;
 }
 
@@ -13,7 +13,7 @@
 }
 
 .mainLabels{
-    -fx-font-family: "Verdana";
+    /*-fx-font-family: "Verdana";*/
     -fx-font-size: 38px;
     -fx-text-fill: #000000;
 }
@@ -29,5 +29,5 @@
 
 .head-label{
     -fx-font-size: 56px;
-    -fx-font-family: "Verdana";
+    /*-fx-font-family: "Verdana";*/
 }

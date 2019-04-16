@@ -24,6 +24,7 @@ public class Notification extends Popup {
 
     private void init(){
         rootPane = new BorderPane();
+        rootPane.getStylesheets().add("styles/global.css");
         rootPane.getStylesheets().add("styles/notifications.css");
         msgLbl = new Label(this.message);
         rootPane.setPrefWidth(150);

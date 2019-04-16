@@ -2,10 +2,15 @@
     -fx-header-color: #075170;
     -fx-primary-color: #1b88bb;
     -fx-secondary-color: #103b52;
+    -fx-error-color: #DE4646;
 }
 
-.Button{
-    -fx-font-family: "Vivaldi";
+@font-face {
+    src: url("fonts/Verdana.ttf");
+}
+
+.button{
+    -fx-font-family: "Verdana";
 }
 
 .tab-pane .tab-header-area .tab-header-background {
@@ -76,21 +81,6 @@
     -fx-border-width: 2px;
     -fx-border-color: #545454;
 }
-
-/*.designator-tabs{
-    -fx-background-color: #0f5875;
-    -fx-text-fill: #ffffff;
-    -fx-font-family: "Verdana";
-    -fx-font-size: 18px;
-}
-
-.designator-tabs:hover{
-    -fx-background-color: #0f475f;
-}
-
-.designator-tabs:focused{
-    -fx-background-color: -fx-secondary-color;
-}*/
 
 .combo-box {
     -fx-background-color: -fx-primary-color;
