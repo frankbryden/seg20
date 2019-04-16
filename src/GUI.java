@@ -26,6 +26,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
@@ -114,10 +115,11 @@ public class GUI extends Application {
         airportCodeTooltip = new Tooltip();
         airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
 
-        addAirportPopup = createAddAirportPopup(primaryStage);
+        addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
         exportPopup = createExportPopup();
+
 
         //TODO add event listeners for the two new images (print and share)
 
@@ -257,8 +259,10 @@ public class GUI extends Application {
         deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                removeUserObstacle();
-                updateObstaclesList();
+                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                        String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+                        displayDeletePrompt(obstacleName);
+                }
             }
         });
 
@@ -1424,7 +1428,8 @@ public class GUI extends Application {
 
     }
 
-    public Stage createAddAirportPopup(Stage primaryStage){
+
+    public Stage createAddAirportPopup(){
         Stage stage = new Stage();
         stage.setTitle("Add Airport");
 
@@ -1650,6 +1655,36 @@ public class GUI extends Application {
         return stage;
     }
 
+    //TODO - position according to window size
+    private void displayDeletePrompt(String obstacleName) {
+        Stage deleteWindow = new Stage();
+        deleteWindow.initModality(Modality.APPLICATION_MODAL);
+        deleteWindow.setTitle("Delete Obstacle");
+
+        // Components for the delete obstacle window
+        Label confirmationLabel = new Label("Are you sure you want to delete " + obstacleName + "?");
+        Button cancelDeletion = new Button ("Cancel");
+        Button confirmDeletion = new Button ("Confirm");
+
+        HBox buttonsBox = new HBox(20);
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
+        VBox windowLayout = new VBox(10);
+        windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
+        windowLayout.setAlignment(Pos.CENTER);
+
+        cancelDeletion.setOnAction(e -> deleteWindow.close());
+        confirmDeletion.setOnAction(e -> {
+            removeUserObstacle();
+            updateObstaclesList();
+            deleteWindow.close();
+        } );
+
+        Scene scene = new Scene(windowLayout, 300, 100);
+        deleteWindow.setScene(scene);
+        deleteWindow.showAndWait();
+    }
+
     private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
@@ -1776,7 +1811,7 @@ public class GUI extends Application {
             } catch (NumberFormatException e){
                 return false;
             }
-            if (Double.parseDouble(s) < 1) {
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
                 return false;
             }
         }

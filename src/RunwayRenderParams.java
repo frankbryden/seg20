@@ -82,6 +82,10 @@ public class RunwayRenderParams {
     private int labelSpacing;
     private int highLightWidth = 3;
 
+    //Obstacles will scale with the size of the canvas
+    private int obstacleHeight;
+    private int obastacleWidth;
+
     public RunwayRenderParams(int maxWidth, int runwayHeight, int zebraMarginInner, int zebraMarginOuter, int identifierMargin, int zebraDashLength, int zebraDashOn, int zebraDashOff, int dashOn, int dashOff, int dashHeight) {
         //User configurable values below
         this.margin = (int) (0.01*maxWidth);
@@ -366,5 +370,21 @@ public class RunwayRenderParams {
 
     public void setRealLifeMaxLenR2(int realLifeMaxLenR2) {
         this.realLifeMaxLenR2 = realLifeMaxLenR2;
+    }
+
+    public int getObstacleHeight() {
+        return obstacleHeight;
+    }
+
+    public void setObstacleHeight(int obstacleHeight) {
+        this.obstacleHeight = obstacleHeight;
+    }
+
+    public int getObastacleWidth() {
+        return obastacleWidth;
+    }
+
+    public void setObastacleWidth(int obastacleWidth) {
+        this.obastacleWidth = obastacleWidth;
     }
 }

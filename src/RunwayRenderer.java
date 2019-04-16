@@ -1,5 +1,8 @@
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -84,6 +87,7 @@ public class RunwayRenderer {
 
     public void drawObstacle(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String selectedTresholdName, String unselectedTresholdName){
 
+        Image planeImage;
         int selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
         int unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
         System.out.println("Draw obstacle, runways are : " + selected + unSelected);
@@ -97,16 +101,37 @@ public class RunwayRenderer {
             System.out.println(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR2()*1.0);
             System.out.println("Shifting the obstacle by " + obstacleShift + "m");
 
+            planeImage = new Image("/rec/object-airplaneLeft.png");
+
         } else {
+            planeImage = new Image("/rec/object-airplaneRight.png");
             System.out.println("using runway instead " + runwayPair.getR1().getRunwayDesignator().toString());
             objectStartX = runwayRenderParams.getRunwayStartX() + (int)(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR1()*1.0 * runwayRenderParams.getRunwayLength());
         }
         // Not too happy with this following line ._.
         //Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
 
-        Rectangle obstacleRect = new Rectangle(objectStartX,runwayRenderParams.getRunwayCenterlineY(),10 ,20);
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+        // 100 height scaled to the length of the runway
+        int obstacleHeight = (int) (obstacle.getHeight() * maxHeight) / 100;
+        // 80 m length of airplane
+        int obstacleWidth = (int) ( maxWidth) * 80 / 1000;
+        runwayRenderParams.setObstacleHeight(obstacleHeight);
+        runwayRenderParams.setObastacleWidth(obstacleWidth);
 
-        drawRect(obstacleRect, Color.RED);
+        if(obstacle.getName().contains("Airbus") || obstacle.getName().contains("Boeing")){
+
+            this.graphicsContext.drawImage(planeImage,objectStartX,runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth, obstacleHeight);
+        }else{
+            Rectangle obstacleRect = new Rectangle(objectStartX, runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth/4, obstacleHeight);
+            drawRect(obstacleRect, Color.RED);
+        }
+
+        //obstacle will not cover the take off message
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
+
+
     }
 
     public void initParams(){
@@ -324,25 +349,7 @@ public void renderSideview(){
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
 
-        Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
-        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setStroke(Color.BLACK);
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
-
-        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
-        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
-        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
 
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),runwayRenderParams.getSideOnRunwayStartY() , runwayRenderParams.getRunwayLength(), runwayRenderParams.getSideOnRunwayHeight());
         Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
@@ -379,6 +386,28 @@ public void renderSideview(){
         this.graphicsContext.setFill(Color.BLACK);
         this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
+    }
+
+    public void renderTakeOfMessages(int maxWidth, int maxHeight){
+        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
+        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
+        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+
+        Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
+        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setStroke(Color.BLACK);
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
     }
 
     public void renderParamLine(Pair<Line, String> labelLine){
