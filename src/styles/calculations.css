@@ -1,3 +1,11 @@
+@font-face {
+    src: url("fonts/cour.ttf");
+}
+
+/*@font-face {
+    src: url("fonts/moolbor_0.ttf");
+}*/
+
 .label {
     -fx-label-padding: 5 5 5 5;
     -fx-font-size: 18px;
@@ -44,11 +52,12 @@
 
 #calcBreakdown{
     -fx-font-family: "Courier New";
+    /*-fx-font-family: "MoolBoran";*/
     -fx-pref-width: 575;
     -fx-pref-height: 275;
 }
 
 .fieldRequiredLabel{
-    -fx-text-fill: #DE4646;
+    -fx-text-fill: -fx-error-color;
     -fx-font-size: 14px;
 }

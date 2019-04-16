@@ -8,7 +8,7 @@
 }
 
 .redErrorPromptText {
-    -fx-prompt-text-fill: #DE4646;
+    -fx-prompt-text-fill: -fx-error-color;
 }
 
 .obstacleList .list-cell:filled:hover{
