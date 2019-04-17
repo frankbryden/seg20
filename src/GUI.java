@@ -199,41 +199,20 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        Runnable runnable = () -> {
-                            System.out.println("we're just gonna get some data here");
-                            String apiKey = "473ade203bfbbf2d4346749e61a37a95";
-                            String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + ac.getLatitude() + "&lon=" + ac.getLongitude() + "&appid=" + apiKey;
-                            try {
-                                URL url = new URL(urlString);
-                                URLConnection urlConnection = url.openConnection();
-                                InputStreamReader is = new InputStreamReader(urlConnection.getInputStream());
-                                StringBuilder data = new StringBuilder();
-                                while (is.ready()){
-                                    data.append((char) is.read());
-                                }
-                                System.out.println(data.toString());
-                                Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
-                                System.out.println(p.toString());
-                                Matcher m = p.matcher(data.toString());
-                                m.find();
-                                System.out.println("Speed extracted from response : " + m.group(1));
-                                System.out.println("Angle extracted from response : " + m.group(2));
+                        //TODO insert LiveWindService instance here
+                        LiveWindService liveWindService = new LiveWindService();
+                        liveWindService.setLatitude(ac.getLatitude());
+                        liveWindService.setLongitude(ac.getLongitude());
+                        liveWindService.setOnSucceeded(t -> {
+                            Map<String, Double> result = (HashMap<String, Double>) t.getSource().getValue();
+                            System.out.println("We have a result!");
+                            windlLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
+                            runwayRenderer.setWindAngle(result.get("direction"));
+                        });
+                        liveWindService.start();
+                        /*
 
-                                double speed = Double.valueOf(m.group(1));
-                                int angleDeg = Integer.valueOf(m.group(2));
-                                //Convert angle to radians
-                                double angleRad = angleDeg * Math.PI/180;
-                                //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
-                                angleRad += Math.PI/2;
-                                windlLbl.setText("Wind speed:  " + speed + "km/h");
-                                runwayRenderer.setWindAngle(angleRad);
-
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        };
-                        Platform.runLater(runnable);
+                         */
                         break;
                     }
                 }
