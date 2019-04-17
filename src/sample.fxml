@@ -23,9 +23,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -118,7 +119,7 @@
                                       <tabs>
                                         <Tab text="View">
                                           <content>
-                                            <AnchorPane stylesheets="@styles/viewTab.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0">
+                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0" stylesheets="@styles/viewTab.css">
                                                    <children>
                                                       <Button fx:id="highlightTodaBtn" layoutX="309.0" layoutY="427.0" mnemonicParsing="false" prefHeight="88.0" prefWidth="203.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="309.0" AnchorPane.topAnchor="427.0" />
                                                       <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="94.0" AnchorPane.topAnchor="529.0" />
@@ -138,11 +139,11 @@
                                                       <Label layoutX="33.0" layoutY="198.0" text="Change side-on view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="198.0" />
                                                       <Label layoutX="33.0" layoutY="148.0" text="Change top-down view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="148.0" />
                                                       <ColorPicker fx:id="topDownColorPicker" layoutX="390.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="142.0" />
-                                                      <Label layoutX="33.0" layoutY="58.0" prefHeight="20.0" prefWidth="174.0" text="Adjust runway zoomDelta" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="58.0" />
+                                                      <Label layoutX="36.0" layoutY="58.0" prefHeight="21.0" prefWidth="231.0" text="Adjust top-down view zoom" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="58.0" />
                                                       <Slider fx:id="zoomSlider" layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
-                                                      <Button styleClass="primaryButton" layoutX="506.0" layoutY="55.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Reset" AnchorPane.leftAnchor="506.0" AnchorPane.topAnchor="55.0" />
-                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoomDelta value" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
-                                                      <Button styleClass="primaryButton" layoutX="505.0" layoutY="95.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
+                                                      <Button layoutX="506.0" layoutY="55.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Reset" AnchorPane.leftAnchor="506.0" AnchorPane.topAnchor="55.0" />
+                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoom %" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
+                                                      <Button layoutX="505.0" layoutY="95.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
                                                    </children>
                                                 </AnchorPane>
                                           </content>
@@ -215,6 +216,7 @@
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                                <children>
                                                                   <Label fx:id="runwayDesignatorCntLbl" layoutX="5.0" prefHeight="85.0" prefWidth="187.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0f475f" height="83.0" layoutX="178.0" layoutY="1.0" stroke="#0f475f" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="dark" />
@@ -224,6 +226,7 @@
                                                             <Pane prefHeight="86.0" prefWidth="177.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                                <children>
                                                                   <Label fx:id="toraCntLbl" layoutX="1.0" prefHeight="85.0" prefWidth="193.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#20b9f9" height="84.0" layoutX="179.0" layoutY="2.0" stroke="#20b9f9" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -233,6 +236,7 @@
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                                <children>
                                                                   <Label fx:id="todaCntLbl" prefHeight="86.0" prefWidth="192.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1b88bb" height="86.0" layoutX="178.0" layoutY="1.0" stroke="#1b88bb" strokeType="INSIDE" width="28.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -241,7 +245,8 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                                <children>
-                                                                  <Label fx:id="asdaCntLbl" prefHeight="80.0" prefWidth="190.0" />
+                                                                  <Label fx:id="asdaCntLbl" prefHeight="85.0" prefWidth="193.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#20b9f9" height="86.0" layoutX="176.0" stroke="#20b9f9" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -250,7 +255,8 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaCntLbl" prefHeight="80.0" prefWidth="190.0" />
+                                                                  <Label fx:id="ldaCntLbl" prefHeight="84.0" prefWidth="190.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1b88bb" height="83.0" layoutX="176.0" layoutY="1.0" stroke="#1b88bb" strokeType="INSIDE" width="28.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -275,7 +281,7 @@
                                                                </children></Pane>
                                                             <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #1b88bb;" GridPane.columnIndex="2" GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaCntLbl2" layoutY="3.0" prefHeight="80.0" prefWidth="185.0" />
+                                                                  <Label fx:id="ldaCntLbl2" layoutY="3.0" prefHeight="55.0" prefWidth="185.0" />
                                                                </children></Pane>
                                                             <Button fx:id="addAirportBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="122.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" />
                                                          </children>
