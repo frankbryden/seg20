@@ -50,6 +50,7 @@ public class RunwayRenderer {
     //Dynamic rendering properties
     private boolean renderLabelLines = true;
     private boolean renderRunwayRotated = false;
+    private boolean renderWindCompass = true;
     private Color topDownBackgroundColor = Color.GOLD;
     private Color sideOnBackgroundColor = Color.SKYBLUE;
 
@@ -71,6 +72,7 @@ public class RunwayRenderer {
         this.red = 50;
         this.initParams();
         this.runwayRenderParams.init();
+        this.setZoom(MIN_ZOOM + (MAX_ZOOM-MIN_ZOOM)/3);
     }
 
 
@@ -338,7 +340,7 @@ public class RunwayRenderer {
 
         graphicsContext.restore();
 
-        if (this.windAngle != -1){
+        if (windAngle != -1 && renderWindCompass){
             Pair<Line, Line> lines = getWindLinePair();
             drawLine(lines.getKey(), Color.BLUE);
             drawLine(lines.getValue(), Color.RED);
@@ -661,6 +663,11 @@ public void renderSideview(){
 
     public void setRenderRunwayRotated(boolean renderRunwayRotated) {
         this.renderRunwayRotated = renderRunwayRotated;
+        this.render();
+    }
+
+    public void setRenderWindCompass(boolean renderWindCompass) {
+        this.renderWindCompass = renderWindCompass;
         this.render();
     }
 

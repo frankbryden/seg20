@@ -2,7 +2,6 @@ import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
@@ -36,14 +35,8 @@ import javafx.util.Pair;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
@@ -79,7 +72,7 @@ public class GUI extends Application {
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
-    private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx;
+    private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx, renderWindCompass;
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
@@ -154,9 +147,11 @@ public class GUI extends Application {
         //Set up checkboxes in the View tab
         renderRunwayLabelLinesChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayLabelLinesChkbx");
         renderRunwayRotatedChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayRotatedChkbx");
+        renderWindCompass = (CheckBox) primaryStage.getScene().lookup("#renderWindCompass");
 
         renderRunwayLabelLinesChkbx.setSelected(true);
         renderRunwayLabelLinesChkbx.setSelected(true);
+        renderWindCompass.setSelected(true);
 
         renderRunwayLabelLinesChkbx.selectedProperty().addListener(state -> {
             runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
@@ -164,6 +159,10 @@ public class GUI extends Application {
 
         renderRunwayRotatedChkbx.selectedProperty().addListener(state -> {
             runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        });
+
+        renderWindCompass.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
         });
 
         //Set up the slider controlling the zoom in the View tab
@@ -199,7 +198,6 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        //TODO insert LiveWindService instance here
                         LiveWindService liveWindService = new LiveWindService();
                         liveWindService.setLatitude(ac.getLatitude());
                         liveWindService.setLongitude(ac.getLongitude());
@@ -210,9 +208,6 @@ public class GUI extends Application {
                             runwayRenderer.setWindAngle(result.get("direction"));
                         });
                         liveWindService.start();
-                        /*
-
-                         */
                         break;
                     }
                 }
