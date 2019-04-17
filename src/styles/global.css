@@ -89,6 +89,10 @@
     -fx-border-width: 1 1 0 1;
 }
 
+.combo-box .arrow{
+    -fx-background-color: #ffffff;
+}
+
 .combo-box:focused{
     -fx-border-width: 1 1 1 1;
 }
