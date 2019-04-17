@@ -30,6 +30,7 @@ import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -79,6 +80,7 @@ public class GUI extends Application {
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
+    private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
 
     @Override
@@ -127,6 +129,20 @@ public class GUI extends Application {
         addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
         exportPopup = createExportPopup();
+
+        renderRunwayLabelLinesChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayLabelLinesChkbx");
+        renderRunwayRotatedChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayRotatedChkbx");
+
+        renderRunwayLabelLinesChkbx.setSelected(true);
+        renderRunwayLabelLinesChkbx.setSelected(true);
+
+        renderRunwayLabelLinesChkbx.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
+        });
+
+        renderRunwayRotatedChkbx.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        });
 
 
         //TODO add event listeners for the two new images (print and share)
@@ -702,34 +718,25 @@ public class GUI extends Application {
         calculationResultsGrid.add(recalculatedLda, 2, 4);
 
 */
-        int lightCount = 0;
-        int lighterCount = 0;
-        int totalCount = 0;
         //Style the newly created and populated table
         ArrayList<Pair<Node, Point>> wrappedUpNodes = new ArrayList<>();
         ObservableList<Node> nodesObservable = calculationResultsGrid.getChildrenUnmodifiable();
         List<Node> nodes = nodesObservable.subList(0, nodesObservable.size());
-        System.out.println("We have " + nodes.size() + " nodes to colour");
         for (Node node : nodes){
             int rowIndex = GridPane.getRowIndex(node);
 
 
             wrappedUpNodes.add(new Pair<>(node, new Point(GridPane.getColumnIndex(node), GridPane.getRowIndex(node))));
 
-            System.out.println("Node " + totalCount + " : " + GridPane.getRowIndex(node) + " out of " + nodes.size());
-            totalCount++;
             if (rowIndex == 0){
                 node.getStyleClass().add("dark");
             } else if (rowIndex % 2 == 0){
                 node.getStyleClass().add("lighter");
-                lighterCount++;
             } else {
                 node.getStyleClass().add("light");
-                lightCount++;
             }
         }
 
-        System.out.println("We made " + lightCount + " nodes light, and " + lighterCount + " nodes lighter");
 
         for (Pair<Node, Point> wrappedUpNodeToAdd : wrappedUpNodes){
             //Remove this simple labels and wrap them in expanding panes

@@ -48,6 +48,10 @@ public class RunwayRenderer {
     //used to create a gap in the lines to display a textual label
     private double lableWidth = 25;
 
+    //Dynamic rendering properties
+    private boolean renderLabelLines = true;
+    private boolean renderRunwayRotated = false;
+
     private List<Pair<Line, String>> labelLines;
     private RunwayParams currentlyHighlightedParam = RunwayParams.NONE;
 
@@ -252,7 +256,9 @@ public class RunwayRenderer {
         //Rotate runway as per orientation of it
         graphicsContext.save();
         graphicsContext.transform(translateAffine);
-        graphicsContext.transform(rotate);
+        if (renderRunwayRotated){
+            graphicsContext.transform(rotate);
+        }
         graphicsContext.transform(scaleAffine);
 
 
@@ -320,11 +326,14 @@ public class RunwayRenderer {
         //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
         //And the labels identifying the runway params
-        for (Pair<Line, String> line : labelLines){
-            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
-            graphicsContext.setStroke(Color.BLACK);
-            renderParamLine(line);
+        if (renderLabelLines){
+            for (Pair<Line, String> line : labelLines){
+                graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+                graphicsContext.setStroke(Color.BLACK);
+                renderParamLine(line);
+            }
         }
+
         graphicsContext.restore();
 
         if (this.windAngle != -1){
@@ -616,5 +625,15 @@ public void renderSideview(){
 
     public RunwayRenderParams getRunwayRenderParams() {
         return runwayRenderParams;
+    }
+
+    public void setRenderLabelLines(boolean renderLabelLines) {
+        this.renderLabelLines = renderLabelLines;
+        this.render();
+    }
+
+    public void setRenderRunwayRotated(boolean renderRunwayRotated) {
+        this.renderRunwayRotated = renderRunwayRotated;
+        this.render();
     }
 }
