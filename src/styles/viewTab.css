@@ -13,23 +13,23 @@
     -fx-background-color: -fx-secondary-color;
 }
 
-.colorPicker{
+.color-picker{
     -fx-background-color: #ffffff;
     -fx-border-color: -fx-primary-color;
     -fx-pref-width: 50px;
     -fx-border-radius: 0px;
 }
 
-.colorPicker .arrow-button{
+.color-picker .arrow-button{
     -fx-background-color: -fx-primary-color;
     -fx-alignment: center;
     -fx-border-radius: 0px;
 }
 
-.colorPicker .arrow{
+.color-picker .arrow{
     -fx-background-color: #ffffff;
 }
 
-.colorPicker .label .text{
+.color-picker .label .text{
     visibility: false;
 }
