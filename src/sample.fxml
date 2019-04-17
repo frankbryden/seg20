@@ -135,14 +135,14 @@
                                                             <Font size="16.0" />
                                                          </font>
                                                       </CheckBox>
-                                                      <ColorPicker fx:id="sideOnBackgroundCol" layoutX="390.0" layoutY="192.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="192.0" />
+                                                      <ColorPicker fx:id="sideOnColorPicker" layoutX="390.0" layoutY="192.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="192.0" />
                                                       <Label layoutX="33.0" layoutY="198.0" text="Change side-on view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="198.0" />
                                                       <Label layoutX="33.0" layoutY="148.0" text="Change top-down view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="148.0" />
-                                                      <ColorPicker fx:id="topDownBackgroundCol" layoutX="390.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="142.0" />
-                                                      <Label layoutX="33.0" layoutY="58.0" prefHeight="20.0" prefWidth="174.0" text="Adjust runway zoom" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="58.0" />
-                                                      <Slider layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
+                                                      <ColorPicker fx:id="topDownColorPicker" layoutX="390.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="142.0" />
+                                                      <Label layoutX="33.0" layoutY="58.0" prefHeight="20.0" prefWidth="174.0" text="Adjust runway zoomDelta" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="58.0" />
+                                                      <Slider fx:id="zoomSlider" layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
                                                       <Button layoutX="506.0" layoutY="55.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="50.0" text="Reset" AnchorPane.leftAnchor="506.0" AnchorPane.topAnchor="55.0" />
-                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoom value" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
+                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoomDelta value" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
                                                       <Button layoutX="505.0" layoutY="95.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="51.0" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
                                                    </children>
                                                 </AnchorPane>

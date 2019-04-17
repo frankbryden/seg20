@@ -16,20 +16,23 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-
+import javafx.util.Duration;
+import javafx.util.Pair;
 
 import java.awt.*;
 import java.io.File;
@@ -37,14 +40,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javafx.scene.image.Image;
-import javafx.util.Duration;
-import javafx.util.Pair;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
@@ -81,6 +80,8 @@ public class GUI extends Application {
     private Printer printer;
     private AirportDatabase airportDB;
     private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx;
+    private ColorPicker topDownColorPicker, sideOnColorPicker;
+    private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
 
     @Override
@@ -130,6 +131,27 @@ public class GUI extends Application {
         addObstaclePopup = createAddObstaclePopup();
         exportPopup = createExportPopup();
 
+        //Set up color pickers in the view tab
+        topDownColorPicker = (ColorPicker) primaryStage.getScene().lookup("#topDownColorPicker");
+        sideOnColorPicker = (ColorPicker) primaryStage.getScene().lookup("#sideOnColorPicker");
+
+        topDownColorPicker.setValue(Color.GOLD);
+        sideOnColorPicker.setValue(Color.SKYBLUE);
+
+        topDownColorPicker.setOnAction(event -> {
+            if (runwayRenderer != null){
+                runwayRenderer.setTopDownBackgroundColor(topDownColorPicker.getValue());
+            }
+        });
+
+
+        sideOnColorPicker.setOnAction(event -> {
+            if (runwayRendererSideView != null){
+                runwayRendererSideView.setSideOnBackgroundColor(sideOnColorPicker.getValue());
+            }
+        });
+
+        //Set up checkboxes in the View tab
         renderRunwayLabelLinesChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayLabelLinesChkbx");
         renderRunwayRotatedChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayRotatedChkbx");
 
@@ -142,6 +164,16 @@ public class GUI extends Application {
 
         renderRunwayRotatedChkbx.selectedProperty().addListener(state -> {
             runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        });
+
+        //Set up the slider controlling the zoom in the View tab
+        zoomSlider = (Slider) primaryStage.getScene().lookup("#zoomSlider");
+        zoomSlider.setMin(RunwayRenderer.MIN_ZOOM);
+        zoomSlider.setMax(RunwayRenderer.MAX_ZOOM);
+        zoomSlider.setBlockIncrement(RunwayRenderer.ZOOM_STEP);
+
+        zoomSlider.valueProperty().addListener(event -> {
+            runwayRenderer.setZoom(zoomSlider.getValue());
         });
 
 
@@ -633,7 +665,13 @@ public class GUI extends Application {
             @Override
             public void handle(ScrollEvent event) {
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
-                runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
+                if (event.getDeltaY() > 0){
+                    runwayRenderer.incZoom();
+                } else if (event.getDeltaY() < 0){
+                    runwayRenderer.decZoom();
+                }
+                zoomSlider.setValue(runwayRenderer.getZoom());
+                //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
             }
         });
 

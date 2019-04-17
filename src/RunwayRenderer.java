@@ -1,8 +1,6 @@
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
@@ -27,10 +25,11 @@ public class RunwayRenderer {
 
     //Tranform properties
     private int rotation;
-    private int zoom;
-    private int totalZoom;
-    private final double MIN_ZOOM = 0.2;
-    private final double MAX_ZOOM = 2.2;
+    private int zoomDelta;
+    private double currentZoom;
+    public static final double MIN_ZOOM = 0.2;
+    public static final double MAX_ZOOM = 2.2;
+    public static final double ZOOM_STEP = (MAX_ZOOM - MIN_ZOOM)/30;
 
     //Tranforms
     private Affine scaleAffine;
@@ -51,6 +50,8 @@ public class RunwayRenderer {
     //Dynamic rendering properties
     private boolean renderLabelLines = true;
     private boolean renderRunwayRotated = false;
+    private Color topDownBackgroundColor = Color.GOLD;
+    private Color sideOnBackgroundColor = Color.SKYBLUE;
 
     private List<Pair<Line, String>> labelLines;
     private RunwayParams currentlyHighlightedParam = RunwayParams.NONE;
@@ -62,8 +63,8 @@ public class RunwayRenderer {
         this.scaleAffine = new Affine(new Scale(1, 1, getCenterX(), getCenterY()));
         this.translateAffine = new Affine(new Translate(0, 0));
         this.mouseLoc = new Point(0, 0);
-        this.zoom = 1;
-        this.totalZoom = 0;
+        this.zoomDelta = 1;
+        this.currentZoom = 0;
         this.translateX = 0;
         this.translateY = 0;
         this.windAngle = -1;
@@ -202,12 +203,13 @@ public class RunwayRenderer {
         }
         rotationAngle -= 9;
         Affine rotate = new Affine(new Rotate(rotationAngle*10, getCenterX(), getCenterY()));
-        Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
-
-        //we can zoom, just decide whether user wants to zoom in or zoom out
-        if (zoom > 0){
+//        Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
+        Scale myScale = new Scale(currentZoom, currentZoom, getCenterX(), getCenterY());
+        scaleAffine.setToTransform(new Scale(currentZoom, currentZoom, getCenterX(), getCenterY()));
+        //we can zoomDelta, just decide whether user wants to zoomDelta in or zoomDelta out
+        if (zoomDelta > 0){
             scaleAffine.append(myScale);
-        } else if (zoom < 0){
+        } else if (zoomDelta < 0){
             try {
                 scaleAffine.append(myScale.createInverse());
             } catch (NonInvertibleTransformException e) {
@@ -215,26 +217,26 @@ public class RunwayRenderer {
             }
         }
 
-        //Clamp zoom to boundary levels, as Jasmine wanted
+        //Clamp zoomDelta to boundary levels, as Jasmine wanted
         if (scaleAffine.getMxx() > MAX_ZOOM){
             scaleAffine.setMxx(MAX_ZOOM);
             scaleAffine.setMyy(MAX_ZOOM);
-            scaleAffine.setToTransform(new Scale(MAX_ZOOM, MAX_ZOOM, getCenterY()));
+            scaleAffine.setToTransform(new Scale(MAX_ZOOM, MAX_ZOOM, getCenterX(), getCenterY()));
         } else if (scaleAffine.getMxx() < MIN_ZOOM) {
             scaleAffine.setMxx(MIN_ZOOM);
             scaleAffine.setMyy(MIN_ZOOM);
             scaleAffine.setToTransform(new Scale(MIN_ZOOM, MIN_ZOOM, getCenterX(), getCenterY()));
         }
 
-        System.out.println(scaleAffine.toString());
+        //System.out.println(scaleAffine.toString());
 
 
-        //Did a zoom happen? if one did happen, we need to notify user along with resetting the delta
-        if (zoom != 0){
+        //Did a zoomDelta happen? if one did happen, we need to notify user along with resetting the delta
+        if (zoomDelta != 0){
             int zoomLevel = (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
             Window window = graphicsContext.getCanvas().getScene().getWindow();
             new Notification("Zoom level : " + zoomLevel + "%").show(window, window.getX() + graphicsContext.getCanvas().getLayoutX(), window.getY() + graphicsContext.getCanvas().getLayoutY());
-            zoom = 0;
+            zoomDelta = 0;
         }
 
 
@@ -245,7 +247,7 @@ public class RunwayRenderer {
         translateAffine.append(myTranslate);
 
         //Draw background
-        graphicsContext.setFill(Color.GOLD);
+        graphicsContext.setFill(topDownBackgroundColor);
         //graphicsContext.setFill(Color.rgb(red, 0, 0));
         red += 5;
         if (red > 255){
@@ -353,7 +355,7 @@ public void renderSideview(){
 
         graphicsContext.clearRect(0,0,maxWidth,maxHeight);
         //set environment color
-        graphicsContext.setFill(Color.SKYBLUE);
+        graphicsContext.setFill(sideOnBackgroundColor);
         graphicsContext.fillRect(0, 0, maxWidth, maxHeight/2);
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
@@ -598,9 +600,34 @@ public void renderSideview(){
     }
 
     public void updateZoom(int zoom) {
-        this.zoom = zoom;
-        System.out.println("current zoom is " + zoom);
+        this.zoomDelta = zoom;
+        System.out.println("current zoomDelta is " + zoom);
         this.render();
+    }
+
+    public void setZoom(double zoom){
+        this.currentZoom = zoom;
+        this.render();
+    }
+
+    public void incZoom(){
+        this.currentZoom += ZOOM_STEP;
+        if (this.currentZoom > MAX_ZOOM) {
+            this.currentZoom = MAX_ZOOM;
+        }
+        this.render();
+    }
+
+    public void decZoom(){
+        this.currentZoom -= ZOOM_STEP;
+        if (this.currentZoom < MIN_ZOOM){
+            this.currentZoom = MIN_ZOOM;
+        }
+        this.render();
+    }
+
+    public double getZoom(){
+        return currentZoom;
     }
 
     public void setMouseLocation(int x, int y) {
@@ -635,5 +662,16 @@ public void renderSideview(){
     public void setRenderRunwayRotated(boolean renderRunwayRotated) {
         this.renderRunwayRotated = renderRunwayRotated;
         this.render();
+    }
+
+    public void setTopDownBackgroundColor(Color topDownBackgroundColor) {
+        this.topDownBackgroundColor = topDownBackgroundColor;
+        this.render();
+    }
+
+    public void setSideOnBackgroundColor(Color sideOnBackgroundColor) {
+        System.out.println("Change ");
+        this.sideOnBackgroundColor = sideOnBackgroundColor;
+        this.renderSideview();
     }
 }
