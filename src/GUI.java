@@ -1722,11 +1722,11 @@ public class GUI extends Application {
         // Components for the delete obstacle window
         Label confirmationLabel = new Label("Are you sure you want to delete " + obstacleName + "?");
         Button cancelDeletion = new Button ("Cancel");
-        Button confirmDeletion = new Button ("Confirm");
+        Button confirmDeletion = new Button ("Delete");
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
+        buttonsBox.getChildren().addAll(cancelDeletion, confirmDeletion);
         VBox windowLayout = new VBox(10);
         windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
         windowLayout.setAlignment(Pos.CENTER);
