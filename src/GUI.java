@@ -26,7 +26,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
@@ -46,7 +45,6 @@ public class GUI extends Application {
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
-    private FileChooser fileChooser;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
@@ -59,7 +57,8 @@ public class GUI extends Application {
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
-    private Stage addAirportPopup, addRunwayPopup, exportPopup;
+    private Stage addAirportPopup, addRunwayPopup;
+    private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
     private TabPane tabPane;
@@ -77,8 +76,6 @@ public class GUI extends Application {
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
-    private enum ExportPopupStates {MENU, AIRPORTS, OBSTACLES};
-    private ExportPopupStates currentExportPopupState;
 
 
     @Override
@@ -92,9 +89,6 @@ public class GUI extends Application {
 
         this.primaryStage = primaryStage;
 
-        fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        fileChooser.setInitialDirectory(new File("."));
 
         fileIO = new FileIO();
         userDefinedObstacles = new TreeMap<>();
@@ -130,7 +124,7 @@ public class GUI extends Application {
         addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
-        exportPopup = createExportPopup();
+        exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
 
         //Set up color pickers in the view tab
         topDownColorPicker = (ColorPicker) primaryStage.getScene().lookup("#topDownColorPicker");
@@ -273,7 +267,7 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                File file = fileChooser.showOpenDialog(primaryStage);
+                File file = fileIO.fileChooser.showOpenDialog(primaryStage);
                 if (file == null){
                     return;
                 }
@@ -323,7 +317,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                File file = fileChooser.showSaveDialog(primaryStage);
+                File file = fileIO.fileChooser.showSaveDialog(primaryStage);
                 if (file != null){
                     fileIO.write(userDefinedObstacles.values(), file.getPath());
                     notifyUpdate("Obstacles saved");
@@ -957,7 +951,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Click !");
-                File xmlFileToLoad = fileChooser.showOpenDialog(primaryStage);
+                File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
                 if (xmlFileToLoad == null){
                     System.err.println("User did not select a file");
                     return;
@@ -1191,99 +1185,6 @@ public class GUI extends Application {
 
 
         return popup;
-    }
-
-    public Stage createExportPopup(){
-
-        GridPane rootPane = new GridPane();
-        RadioButton airportsRadio = new RadioButton("Airports");
-        RadioButton obstaclesRadio = new RadioButton("Obstacles");
-        ToggleGroup toggleGroup = new ToggleGroup();
-        airportsRadio.setToggleGroup(toggleGroup);
-        obstaclesRadio.setToggleGroup(toggleGroup);
-
-        Stage stage = new Stage();
-        stage.setTitle("Export Data");
-
-        currentExportPopupState = ExportPopupStates.MENU;
-
-        //Components for the popup
-        Button confirmButton = new Button("Next");
-        Button cancelButton = new Button("Cancel");
-
-        rootPane.add(airportsRadio, 0, 0, 2, 1);
-        rootPane.add(obstaclesRadio, 0, 1, 2, 1);
-        rootPane.add(confirmButton, 0, 2);
-        rootPane.add(cancelButton, 1, 2);
-
-        //Add some spacing around and in between the cells
-        rootPane.setHgap(10);
-        rootPane.setVgap(10);
-        rootPane.setPadding(new Insets(15, 15, 15, 15));
-
-        //Add the style sheet containing the primary button styling
-        rootPane.getStylesheets().add("styles/global.css");
-
-        //Apply the primary button class to the two buttons
-        confirmButton.getStyleClass().add("primaryButton");
-        cancelButton.getStyleClass().add("primaryButton");
-
-
-        Scene scene = new Scene(rootPane);
-        stage.setScene(scene);
-        /*stage.setWidth(500);
-        stage.setHeight(300);*/
-
-        //Above is the initial menu, which then leads to one of 2 menus : Airport export, or Obstacle export
-
-        //Airports first, they're cooler
-        ComboBox airportsCombo = new ComboBox();
-        airportsCombo.getItems().addAll(airportConfigs.keySet().stream().sorted().collect(Collectors.toList()));
-        System.out.println(airportConfigs.keySet());
-
-        //Obstacles second, they're just an inconvenience
-        ComboBox obstaclesCombo = new ComboBox();
-        obstaclesCombo.getItems().addAll(userDefinedObstacles.keySet().stream().sorted().collect(Collectors.toList()));
-
-        confirmButton.setOnMouseClicked(event -> {
-            switch (currentExportPopupState){
-                case MENU:
-                    rootPane.getChildren().removeAll(obstaclesRadio, airportsRadio);
-                    confirmButton.setText("Export");
-                    if (airportsRadio.selectedProperty().get()){
-                        currentExportPopupState = ExportPopupStates.AIRPORTS;
-                        rootPane.add(airportsCombo, 0, 1, 2, 1);
-                    } else if (obstaclesRadio.selectedProperty().get()){
-                        currentExportPopupState = ExportPopupStates.OBSTACLES;
-                        rootPane.add(obstaclesCombo, 0, 1, 2, 1);
-                    }
-                    break;
-                case AIRPORTS:
-                    //TODO export airports
-                    String selectedAirportName = (String) airportsCombo.getSelectionModel().getSelectedItem();
-                    if (selectedAirportName != null){
-                        System.out.println("Exporting airport " + selectedAirportName);
-                        File outFile = fileChooser.showSaveDialog(primaryStage);
-                        System.out.println("Exporting airport " + selectedAirportName + " to " + outFile.getName());
-                        fileIO.write(airportConfigs.get(selectedAirportName), outFile.getPath());
-                    } else {
-                        //TODO show some kind of error message to user - could you do that please Jasmine? like what you did so well with the create runway and airport forms
-                        System.err.println("No airport currently selected");
-                    }
-
-                    break;
-                case OBSTACLES:
-                    //TODO export obstacle
-                    System.out.println("Exporting obstacle " + obstaclesCombo.getSelectionModel().getSelectedItem());
-                    break;
-            }
-        });
-
-        cancelButton.setOnMouseClicked(event -> {
-            stage.hide();
-        });
-
-        return stage;
     }
 
 
