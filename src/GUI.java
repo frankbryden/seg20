@@ -76,6 +76,7 @@ public class GUI extends Application {
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
+    private StackPane trackPane;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -171,10 +172,21 @@ public class GUI extends Application {
         zoomSlider.setMax(RunwayRenderer.MAX_ZOOM);
         zoomSlider.setBlockIncrement(RunwayRenderer.ZOOM_STEP);
 
+        trackPane = (StackPane) zoomSlider.lookup(".track");
         zoomSlider.valueProperty().addListener(event -> {
             runwayRenderer.setZoom(zoomSlider.getValue());
+            /*String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", (int)zoomSlider.getValue(),(int)zoomSlider.getValue());
+            trackPane.setStyle(style);*/
         });
 
+        zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", new_val.intValue(), new_val.intValue());
+                trackPane.setStyle(style);
+            }
+        });
+
+        trackPane.setStyle("-fx-background-color: linear-gradient(to right, -fx-primary-color 0%, #ffffff 0%);");
 
         //TODO add event listeners for the two new images (print and share)
 

@@ -129,6 +129,7 @@
 .primaryButton{
     -fx-border-width: 2 2 2 2;
     -fx-border-color: -fx-primary-color;
+    -fx-border-style: solid;
     -fx-background-color: #ffffff;
     -fx-text-fill: -fx-primary-color;
     -fx-font-size: 14px;
@@ -144,6 +145,10 @@
 .primaryButton:selected{
     -fx-background-color: -fx-primary-color;
     -fx-text-fill: #ffffff;
+}
+
+.primaryButton:focused{
+    -fx-focus-color: transparent;
 }
 
 #runwayComboBox{
