@@ -182,13 +182,12 @@ public class GUI extends Application {
         });
 
         zoomSlider.valueProperty().addListener((ov, old_val, new_val) -> {
-            System.out.println(old_val + " -> " + new_val);
             double currentVal = (double) new_val;
-            double percentage = currentVal/(RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
+            double percentage = (currentVal - RunwayRenderer.MIN_ZOOM)/(RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
             int roundedPercentage = (int) (percentage*100);
             int leftPercentage = roundedPercentage;
             int rightPercentage = 100 - leftPercentage;
-            String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb, #ffffff %d%%);", leftPercentage);
+            String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", leftPercentage, leftPercentage);
             trackPane.setStyle(style);
         });
 
