@@ -37,6 +37,7 @@ import java.awt.*;
 import java.io.File;
 import java.util.List;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
@@ -76,6 +77,9 @@ public class GUI extends Application {
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
+    private enum ExportPopupStates {MENU, AIRPORTS, OBSTACLES};
+    private ExportPopupStates currentExportPopupState;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -100,6 +104,10 @@ public class GUI extends Application {
         airportDB = new AirportDatabase();
 
         airportConfigs = new HashMap<>();
+
+        airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
+
+
 
         // Setting the texts for each tooltip
         centrelineDistTooltip = new Tooltip();
@@ -969,40 +977,26 @@ public class GUI extends Application {
         startBtn = (Button) primaryStage.getScene().lookup("#startBtn");
         /*startBtn.getStyleClass().add("loadBtn");
         startBtn.getStylesheets().add("styles/fileTab.css");*/
-        startBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Tab Switched!");
-                takeOffTransition.play();
-                //tabPane.getSelectionModel().select(1);
+        startBtn.setOnMouseClicked(event -> {
+            System.out.println("Tab Switched!");
+            takeOffTransition.play();
+            //tabPane.getSelectionModel().select(1);
+        });
+
+        planePane.hoverProperty().addListener((observable, oldValue, rotate) -> {
+            //Ignore the hover property when the plane is taking off or landing
+            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
+                return;
+            }
+
+            //Rotate on mouse over, return to original state on mouse leave
+            if (rotate){
+                rotateTransition.play();
+            } else {
+                reverseRotateTransition.play();
             }
         });
 
-        planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
-                //Ignore the hover property when the plane is taking off or landing
-                if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
-                    return;
-                }
-
-                //Rotate on mouse over, return to original state on mouse leave
-                if (rotate){
-                    rotateTransition.play();
-                } else {
-                    reverseRotateTransition.play();
-                }
-            }
-        });
-
-        /*airportSelect.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println("Heeere");
-            }
-        });*/
-        Map<String, AirportConfig> airportConfigsDB = fileIO.readRunwayDB("runways.csv");
-        airportConfigs.putAll(airportConfigsDB);
         updateAirportSelects();
 
         printer = new Printer(primaryStage);
@@ -1202,22 +1196,25 @@ public class GUI extends Application {
     public Stage createExportPopup(){
 
         GridPane rootPane = new GridPane();
-        RadioButton airports = new RadioButton("Airports");
+        RadioButton airportsRadio = new RadioButton("Airports");
+        RadioButton obstaclesRadio = new RadioButton("Obstacles");
+        ToggleGroup toggleGroup = new ToggleGroup();
+        airportsRadio.setToggleGroup(toggleGroup);
+        obstaclesRadio.setToggleGroup(toggleGroup);
 
         Stage stage = new Stage();
         stage.setTitle("Export Data");
 
+        currentExportPopupState = ExportPopupStates.MENU;
+
         //Components for the popup
-        Button confirmButton = new Button("Export");
+        Button confirmButton = new Button("Next");
         Button cancelButton = new Button("Cancel");
 
-        cancelButton.setOnMouseClicked(event -> {
-            stage.hide();
-        });
-
-        rootPane.add(airports, 0, 0, 2, 1);
-        rootPane.add(confirmButton, 0, 1);
-        rootPane.add(cancelButton, 1, 1);
+        rootPane.add(airportsRadio, 0, 0, 2, 1);
+        rootPane.add(obstaclesRadio, 0, 1, 2, 1);
+        rootPane.add(confirmButton, 0, 2);
+        rootPane.add(cancelButton, 1, 2);
 
         //Add some spacing around and in between the cells
         rootPane.setHgap(10);
@@ -1236,6 +1233,55 @@ public class GUI extends Application {
         stage.setScene(scene);
         /*stage.setWidth(500);
         stage.setHeight(300);*/
+
+        //Above is the initial menu, which then leads to one of 2 menus : Airport export, or Obstacle export
+
+        //Airports first, they're cooler
+        ComboBox airportsCombo = new ComboBox();
+        airportsCombo.getItems().addAll(airportConfigs.keySet().stream().sorted().collect(Collectors.toList()));
+        System.out.println(airportConfigs.keySet());
+
+        //Obstacles second, they're just an inconvenience
+        ComboBox obstaclesCombo = new ComboBox();
+        obstaclesCombo.getItems().addAll(userDefinedObstacles.keySet().stream().sorted().collect(Collectors.toList()));
+
+        confirmButton.setOnMouseClicked(event -> {
+            switch (currentExportPopupState){
+                case MENU:
+                    rootPane.getChildren().removeAll(obstaclesRadio, airportsRadio);
+                    confirmButton.setText("Export");
+                    if (airportsRadio.selectedProperty().get()){
+                        currentExportPopupState = ExportPopupStates.AIRPORTS;
+                        rootPane.add(airportsCombo, 0, 1, 2, 1);
+                    } else if (obstaclesRadio.selectedProperty().get()){
+                        currentExportPopupState = ExportPopupStates.OBSTACLES;
+                        rootPane.add(obstaclesCombo, 0, 1, 2, 1);
+                    }
+                    break;
+                case AIRPORTS:
+                    //TODO export airports
+                    String selectedAirportName = (String) airportsCombo.getSelectionModel().getSelectedItem();
+                    if (selectedAirportName != null){
+                        System.out.println("Exporting airport " + selectedAirportName);
+                        File outFile = fileChooser.showSaveDialog(primaryStage);
+                        System.out.println("Exporting airport " + selectedAirportName + " to " + outFile.getName());
+                        fileIO.write(airportConfigs.get(selectedAirportName), outFile.getPath());
+                    } else {
+                        //TODO show some kind of error message to user - could you do that please Jasmine? like what you did so well with the create runway and airport forms
+                        System.err.println("No airport currently selected");
+                    }
+
+                    break;
+                case OBSTACLES:
+                    //TODO export obstacle
+                    System.out.println("Exporting obstacle " + obstaclesCombo.getSelectionModel().getSelectedItem());
+                    break;
+            }
+        });
+
+        cancelButton.setOnMouseClicked(event -> {
+            stage.hide();
+        });
 
         return stage;
     }
