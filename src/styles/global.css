@@ -164,3 +164,7 @@
     -fx-pref-height: 30px;
     -fx-pref-width: 230px;
 }
+
+.tooltip{
+    -fx-font-size: 10px;
+}
