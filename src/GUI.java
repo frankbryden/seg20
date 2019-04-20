@@ -35,6 +35,8 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import java.util.*;
@@ -46,18 +48,18 @@ public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
             editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     private Pane calculationsPane;
-    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
-            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl;
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, selectedObstacleHeightLbl;
     private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
-    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox;
+    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
@@ -421,14 +423,24 @@ public class GUI extends Application {
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         calculationsPane.getStylesheets().add("styles/global.css");
         calculationsPane.getStylesheets().add("styles/calculations.css");
+
         obstacleSelect = new ComboBox();
-
-
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
+
+        obstacleSelect.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+                    if (obstacleSelect.getSelectionModel().isEmpty()) {
+                        selectedObstacleHeightTF.clear();
+                    } else {
+                        String selectedObstacleName = (String) newValue;
+                        selectedObstacleHeightTF.setText(allObstaclesSorted.get(selectedObstacleName).getHeight() + "m");
+                    }
+
+                }
+        );
+
+
         thresholdSelect = new ComboBox();
-
-
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
         centrelineDistanceLbl = new Label("Distance from runway centreline");
@@ -436,10 +448,13 @@ public class GUI extends Application {
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
 
-        // Setting tool tips for the text fields in the Calculations tab
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
 
+        // Components for the selected obstacle's height in Redeclaration tab
+        selectedObstacleHeightLbl = new Label ("Height of the obstacle");
+        selectedObstacleHeightTF = new TextField();
+        selectedObstacleHeightTF.setEditable(false);
 
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
@@ -472,6 +487,14 @@ public class GUI extends Application {
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
 
+        heightHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(heightHBox, calculationsInsets);
+        Region heightHBoxRegion = getHGrowingRegion();
+        heightHBox.getChildren().add(selectedObstacleHeightLbl);
+        heightHBox.getChildren().add(heightHBoxRegion);
+        heightHBox.getChildren().add(selectedObstacleHeightTF);
+
+
         VBox.setMargin(thresholdHBox, calculationsInsets);
         Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
@@ -487,6 +510,7 @@ public class GUI extends Application {
         //calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
         calculationsRootBox.setMinWidth(calculationsPane.getWidth());
         calculationsRootBox.getChildren().add(obstacleSelectHBox);
+        calculationsRootBox.getChildren().add(heightHBox);
         calculationsRootBox.getChildren().add(centerlineHBox);
         calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
