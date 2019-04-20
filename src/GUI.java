@@ -22,6 +22,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -177,12 +178,14 @@ public class GUI extends Application {
         zoomSlider.setMax(RunwayRenderer.MAX_ZOOM);
         zoomSlider.setBlockIncrement(RunwayRenderer.ZOOM_STEP);
 
-        trackPane = (StackPane) zoomSlider.lookup(".track");
         zoomSlider.valueProperty().addListener(event -> {
             runwayRenderer.setZoom(zoomSlider.getValue());
             /*String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", (int)zoomSlider.getValue(),(int)zoomSlider.getValue());
             trackPane.setStyle(style);*/
+            notifyUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
         });
+
+        trackPane = (StackPane) zoomSlider.lookup(".track");
 
         zoomSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             double currentVal = (double) new_val;
@@ -1460,6 +1463,9 @@ public class GUI extends Application {
         airportCode.setOnKeyReleased(event -> {
             airportSuggestions.getItems().clear();
             System.out.println("text is " + airportCode.getText());
+            if (event.getCode() == KeyCode.BACK_SPACE){
+                return;
+            }
             if (airportCode.getText().length() > 0){
                 airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
                 if (airportSuggestions.getItems().size() == 1){
@@ -1495,6 +1501,7 @@ public class GUI extends Application {
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
 
+        gridPane.getStylesheets().add("styles/global.css");
 
         gridPane.add(airportNameLbl, 0, 0);
         gridPane.add(airportName, 1, 0);
@@ -1509,26 +1516,21 @@ public class GUI extends Application {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(5, 5, 5, 5));
 
+        confirmButton.getStyleClass().add("primaryButton");
+        cancelButton.getStyleClass().add("primaryButton");
+
         //On confirm button, add the airport to the list of known airports
-        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
-                AirportConfig airportConfig = new AirportConfig(airportName.getText());
-                airportConfigs.put(airportConfig.getName(), airportConfig);
-                updateAirportSelects();
-                addAirportPopup.hide();
-                addRunwayPopup.show();
-            }
+        confirmButton.setOnMouseClicked(event -> {
+            System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+            AirportConfig airportConfig = new AirportConfig(airportName.getText());
+            airportConfigs.put(airportConfig.getName(), airportConfig);
+            updateAirportSelects();
+            addAirportPopup.hide();
+            addRunwayPopup.show();
         });
 
         //Simply close the popup, discarding the data
-        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                addAirportPopup.hide();
-            }
-        });
+        cancelButton.setOnMouseClicked(event -> addAirportPopup.hide());
 
         stage.setScene(scene);
         return stage;
