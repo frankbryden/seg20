@@ -44,9 +44,9 @@ import java.util.stream.Collectors;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
-            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn;
+            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     private Pane calculationsPane;
-    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
@@ -350,9 +350,22 @@ public class GUI extends Application {
 
             }
         });
-        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
-        highlightTodaBtn.setTooltip(todaButtonTooltip);
 
+        // Button in Settings tab for enabling/disabling tooltips
+        manageTooltipsBtn = (Button) primaryStage.getScene().lookup("#manageTooltipsBtn");
+        manageTooltipsBtn.setOnMouseClicked(event -> {
+            if (manageTooltipsBtn.getText().equals("Disable tooltips")) {
+                manageTooltipsBtn.setText("Enable tooltips");
+                disableTooltips();
+            } else {
+                manageTooltipsBtn.setText("Disable tooltips");
+                enableTooltips();
+            }
+        });
+
+
+
+        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
         highlightTodaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
 
@@ -360,7 +373,6 @@ public class GUI extends Application {
         });
 
         highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
-        highlightToraBtn.setTooltip(toraButtonTooltip);
         highlightToraBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
 
@@ -368,7 +380,6 @@ public class GUI extends Application {
         });
 
         highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
-        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
         highlightAsdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
 
@@ -376,7 +387,6 @@ public class GUI extends Application {
         });
 
         highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
-        highlightLdaBtn.setTooltip(ldaButtonTooltip);
         highlightLdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
 
@@ -428,9 +438,8 @@ public class GUI extends Application {
 
         // Setting tool tips for the text fields in the Calculations tab
         centrelineTF = new TextField();
-        centrelineTF.setTooltip(centrelineDistTooltip);
         distanceFromThresholdTF = new TextField();
-        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+
 
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
@@ -1018,6 +1027,7 @@ public class GUI extends Application {
         printer.setRunway(canvas);
         printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
 
+        enableTooltips();
     }
 
     private Region getHGrowingRegion(){
@@ -1077,7 +1087,7 @@ public class GUI extends Application {
 
         addObstacleNameTF = new TextField();
         addObstacleHeightTF = new TextField();
-        addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
+
 
         addObstacleNameTF.getStyleClass().add("redErrorPromptText");
         addObstacleNameTF.getStylesheets().add("styles/obstacles.css");
@@ -1445,7 +1455,7 @@ public class GUI extends Application {
         //Components for the popups
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        TextField airportName, airportCode;
+        TextField airportName;
         Label airportNameLbl, airportCodeLbl;
         ListView airportSuggestions;
         airportNameLbl = new Label("Airport Name");
@@ -1912,6 +1922,25 @@ public class GUI extends Application {
         new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
     }
 
+    private void disableTooltips() {
+        highlightTodaBtn.setTooltip(null);
+        highlightToraBtn.setTooltip(null);
+        highlightAsdaBtn.setTooltip(null);
+        highlightLdaBtn.setTooltip(null);
+        addObstacleHeightTF.setTooltip(null);
+        centrelineTF.setTooltip(null);
+        distanceFromThresholdTF.setTooltip(null);
+    }
+
+    private void enableTooltips() {
+        highlightTodaBtn.setTooltip(todaButtonTooltip);
+        highlightToraBtn.setTooltip(toraButtonTooltip);
+        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
+        highlightLdaBtn.setTooltip(ldaButtonTooltip);
+        addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
+        centrelineTF.setTooltip(centrelineDistTooltip);
+        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -26,7 +26,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -371,6 +371,8 @@
                               <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
                               <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
                               <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
+                              <Label layoutX="15.0" layoutY="160.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
+                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="155.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
                            </children>
                         </AnchorPane>
                   </content>
