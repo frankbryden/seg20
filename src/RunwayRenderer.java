@@ -632,10 +632,6 @@ public void renderSideview(){
         return currentZoom;
     }
 
-    public int getZoomPercentage(){
-        return (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
-    }
-
     public void setMouseLocation(int x, int y) {
         this.mouseLoc.x = x;
         this.mouseLoc.y = y;

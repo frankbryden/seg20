@@ -26,7 +26,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -311,14 +311,14 @@
                                                 </AnchorPane>
                                              </content>
                                           </Tab>
-                                          <Tab text="Redeclaration">
+                                          <Tab text="Calculations">
                                              <content>
                                                 <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css">
                                                    <children>
-                                                      <Label fx:id="centreLineRequiredLabel" layoutX="372.0" layoutY="135.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
-                                                      <Label fx:id="thresholdDistanceRequiredLabel" layoutX="370.0" layoutY="255.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
-                                                      <Label fx:id="thresholdRequiredLabel" layoutX="370.0" layoutY="197.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
-                                                      <Label fx:id="obstacleRequiredLabel" layoutX="371.0" layoutY="17.0" prefHeight="32.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="centreLineRequiredLabel" layoutX="373.0" layoutY="75.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdDistanceRequiredLabel" layoutX="371.0" layoutY="194.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdRequiredLabel" layoutX="371.0" layoutY="134.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="obstacleRequiredLabel" layoutX="372.0" layoutY="14.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
                                                    </children></AnchorPane>
                                              </content>
                                           </Tab>
@@ -352,7 +352,6 @@
                                        <children>
                                           <Canvas fx:id="canvas" height="444.0" width="770.0" />
                                           <Canvas fx:id="canvasSideView" height="204.0" width="770.0" GridPane.rowIndex="1" />
-                                          <Canvas fx:id="canvas1" height="444.0" layoutX="10.0" layoutY="12.0" width="770.0" />
                                        </children>
                                     </GridPane>
                                  </center>
@@ -372,8 +371,6 @@
                               <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
                               <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
                               <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
-                              <Label layoutX="15.0" layoutY="160.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
-                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="155.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
                            </children>
                         </AnchorPane>
                   </content>
