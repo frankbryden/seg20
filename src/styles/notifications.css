@@ -1,9 +1,12 @@
 #mainPane{
-    -fx-background-color: -fx-secondary-color;
+    -fx-background-color:#1b88bb;
+    -fx-effect: dropshadow(three-pass-box,rgba(0,0,0,0.8),5, 0.0,0,1);
     -fx-min-height: 100px;
     -fx-min-width: 200px;
     -fx-border-radius: 20px;
     -fx-background-radius: 20px;
+    -fx-border-color: #103b52;
+    -fx-border-width: 2px;
 }
 
 .label{

@@ -1441,7 +1441,9 @@ public class GUI extends Application {
 
         //Components for the popups
         Button confirmButton = new Button("Add");
+        confirmButton.getStyleClass().add("primaryButton");
         Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add("primaryButton");
         TextField airportName, airportCode;
         Label airportNameLbl, airportCodeLbl;
         ListView airportSuggestions;
@@ -1494,12 +1496,13 @@ public class GUI extends Application {
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
+        gridPane.getStylesheets().add("styles/global.css");
 
 
-        gridPane.add(airportNameLbl, 0, 0);
-        gridPane.add(airportName, 1, 0);
-        gridPane.add(airportCodeLbl, 0, 1);
-        gridPane.add(airportCode, 1, 1);
+        gridPane.add(airportCodeLbl, 0, 0);
+        gridPane.add(airportCode, 1, 0);
+        gridPane.add(airportNameLbl, 0, 1);
+        gridPane.add(airportName, 1, 1);
         gridPane.add(airportSuggestions, 1, 2, 2, 1);
         gridPane.add(hbox, 1, 3);
         Scene scene = new Scene(gridPane);
@@ -1542,7 +1545,9 @@ public class GUI extends Application {
         //Components for the popups
         Label selectAirportLbl = new Label("Select airport");
         Button confirmButton = new Button("Add");
+        confirmButton.getStyleClass().add("primaryButton");
         Button cancelButton = new Button("Cancel");
+        cancelButton.getStyleClass().add("primaryButton");
         TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2, displacementThresholdTF2;
         Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, displacementThresholdLbl;
         runwayDesignatorLbl = new Label("Runway Designator");
@@ -1552,7 +1557,7 @@ public class GUI extends Application {
         ldaLbl = new Label("LDA");
         displacementThresholdLbl = new Label("Displacement Threshold");
         addRunwayAirportSelect = new ComboBox();
-        addRunwayAirportSelect.setId("runwayComboBox");
+        addRunwayAirportSelect.setId("airportComboBox");
         addRunwayAirportSelect.setVisibleRowCount(10);
 
         runwayDesignatorTF = new TextField();
@@ -1576,6 +1581,7 @@ public class GUI extends Application {
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
+
 
         //Left column
         gridPane.add(runwayDesignatorLbl, 0, 0);
@@ -1611,8 +1617,8 @@ public class GUI extends Application {
         VBox addRunwayRoot = new VBox(20);
 
 
-        addRunwayRoot.getStyleClass().add("addRunwayAirportSelection");
-        addRunwayRoot.getStylesheets().add("styles/layoutStyles.css");
+
+        addRunwayRoot.getStylesheets().add("styles/global.css");
 
         addRunwayRoot.getChildren().add(airportSelection);
         addRunwayRoot.getChildren().add(gridPane);
@@ -1673,12 +1679,15 @@ public class GUI extends Application {
         confirmationLabel.setWrapText(true);
         confirmationLabel.setTextAlignment(TextAlignment.CENTER);
         Button cancelDeletion = new Button ("Cancel");
+        cancelDeletion.getStyleClass().add("primaryButton");
         Button confirmDeletion = new Button ("Delete");
+        confirmDeletion.getStyleClass().add("primaryButton");
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
         buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
         VBox windowLayout = new VBox(10);
+        windowLayout.getStylesheets().add("styles/global.css");
         windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
         windowLayout.setAlignment(Pos.CENTER);
 
@@ -1718,7 +1727,7 @@ public class GUI extends Application {
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(confirmOverwrite, cancelOverwrite);
+        buttonsBox.getChildren().addAll(cancelOverwrite, confirmOverwrite);
         VBox windowLayout = new VBox(10);
         windowLayout.getChildren().addAll(overwriteLabel, buttonsBox);
         windowLayout.setAlignment(Pos.CENTER);
