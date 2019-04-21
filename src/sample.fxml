@@ -121,10 +121,10 @@
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0" stylesheets="@styles/viewTab.css">
                                                    <children>
-                                                      <Button fx:id="highlightTodaBtn" layoutX="299.0" layoutY="427.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="299.0" AnchorPane.topAnchor="427.0" />
-                                                      <Button fx:id="highlightAsdaBtn" layoutX="118.0" layoutY="511.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="118.0" AnchorPane.topAnchor="511.0" />
-                                                      <Button fx:id="highlightToraBtn" layoutX="118.0" layoutY="428.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="118.0" AnchorPane.topAnchor="428.0" />
-                                                      <Button fx:id="highlightLdaBtn" layoutX="299.0" layoutY="511.0" mnemonicParsing="false" prefHeight="75.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="299.0" AnchorPane.topAnchor="511.0" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="309.0" layoutY="427.0" mnemonicParsing="false" prefHeight="88.0" prefWidth="203.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="309.0" AnchorPane.topAnchor="427.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="94.0" AnchorPane.topAnchor="529.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="95.0" layoutY="428.0" mnemonicParsing="false" prefHeight="86.0" prefWidth="201.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="95.0" AnchorPane.topAnchor="428.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="310.0" AnchorPane.topAnchor="529.0" />
                                                       <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="314.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="314.0">
                                                          <font>
                                                             <Font size="16.0" />
@@ -311,7 +311,7 @@
                                                 </AnchorPane>
                                              </content>
                                           </Tab>
-                                          <Tab text="Redeclaration">
+                                          <Tab text="Calculations">
                                              <content>
                                                 <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css">
                                                    <children>

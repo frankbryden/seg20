@@ -16,4 +16,8 @@
 .popUpText{
     -fx-text-fill: #000000;
 }
+.addRunwayAirportSelection{
+    -fx-text-alignment: center;
+    -fx-font-size: 18px;
+}
 

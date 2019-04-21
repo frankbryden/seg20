@@ -1,18 +1,17 @@
 .designator-tabs{
-    -fx-background-color: linear-gradient(#075170 0%, #0F475F 40%, #103B52 100%);
+    -fx-background-color: #0f5875;
     -fx-text-fill: #ffffff;
     /*-fx-font-family: "Verdana";*/
-    -fx-font-size: 22px;
-    -fx-font-weight: bold;
+    -fx-font-size: 24px;
     -fx-effect: dropshadow(three-pass-box,rgba(0,0,0,0.7),5, 0.0,0,1);
 }
 
 .designator-tabs:hover{
-    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #2A99CE, #0F5875);
+    -fx-background-color: #0f475f;
 }
 
 .designator-tabs:focused{
-    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #2A99CE, #0F5875);
+    -fx-background-color: -fx-secondary-color;
 }
 
 .color-picker{
