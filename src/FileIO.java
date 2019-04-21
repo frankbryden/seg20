@@ -271,6 +271,7 @@ public class FileIO {
         InputStreamReader isr;
         boolean modeJAR = false;
         System.out.println("Current directory : \n" + System.getProperty("user.dir"));
+        System.out.println("Reading file " + filePath);
         if (!modeJAR){
             File file = new File(filePath);
             FileInputStream fis = null;
