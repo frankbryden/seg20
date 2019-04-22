@@ -67,7 +67,7 @@ public class AirportConfig {
         RunwayConfig initialRunwayScenario12 = new RunwayConfig(runwayDesignatorScenario12, 3884, 3962, 3884, 3884, 0);
         Calculations calculationsScenario12 = new Calculations(initialRunwayScenario12);
         Obstacle obstacleScenario12 = new Obstacle("testObstacle", 12);
-        CalculationResults recalculatedRunwayScenario12 = calculationsScenario12.recalculateParams(obstacleScenario12, 3646, 0, Calculations.Direction.TOWARDS);
+        CalculationResults recalculatedRunwayScenario12 = calculationsScenario12.recalculateParams(obstacleScenario12, 3646, 0, "TOWARDS", 3884);
         System.out.println(recalculatedRunwayScenario12.getCalculationDetails());
 
     }

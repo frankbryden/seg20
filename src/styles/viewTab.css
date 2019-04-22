@@ -1,0 +1,59 @@
+.designator-tabs{
+    -fx-background-color: #0f5875;
+    -fx-text-fill: #ffffff;
+    /*-fx-font-family: "Verdana";*/
+    -fx-font-size: 24px;
+    -fx-effect: dropshadow(three-pass-box,rgba(0,0,0,0.7),5, 0.0,0,1);
+}
+
+.designator-tabs:hover{
+    -fx-background-color: #0f475f;
+}
+
+.designator-tabs:focused{
+    -fx-background-color: -fx-secondary-color;
+}
+
+.color-picker{
+    -fx-background-color: #ffffff;
+    -fx-border-color: -fx-primary-color;
+    -fx-pref-width: 37.5px;
+    -fx-border-radius: 0px;
+}
+
+.color-picker .arrow-button{
+    /*-fx-background-color: -fx-primary-color;
+    -fx-alignment: center;
+    -fx-border-radius: 0px;*/
+    visibility: false;
+}
+
+.color-picker .arrow{
+    -fx-background-color: #ffffff;
+}
+
+.check-box .box{
+    -fx-background-color: #ffffff;
+    -fx-border-radius: 3px;
+    -fx-border-color: -fx-secondary-color;
+}
+
+.check-box:selected .mark{
+    -fx-background-color: #ffffff;
+}
+
+.check-box:selected .box{
+    -fx-background-color: -fx-secondary-color;
+}
+
+.color-picker .label .text{
+    visibility: false;
+}
+
+.track{
+    -fx-background-color: transparent;
+}
+
+.slider .thumb{
+    -fx-background-color: #ffffff;
+}

@@ -4,12 +4,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -20,9 +23,10 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -75,15 +79,27 @@
                                           <RowConstraints maxHeight="174.0" minHeight="0.0" prefHeight="157.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
                                        <children>
-                                          <Button id="loadAirportBtn" fx:id="loadAirportBtn" mnemonicParsing="false" prefHeight="96.0" prefWidth="322.0" stylesheets="@styles/fileTab.css" text="Load Airport Config" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="24.0" />
-                                             </font>
-                                          </Button>
                                           <Label prefHeight="73.0" prefWidth="258.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RUNWAY" />
                                           <Label prefHeight="73.0" prefWidth="510.0" styleClass="head-label" stylesheets="@styles/fileTab.css" text="RE-DECLARATION" GridPane.rowIndex="1" />
                                           <Label styleClass="head-label" stylesheets="@styles/fileTab.css" text="TOOL" GridPane.rowIndex="2" />
                                           <Line endX="410.5" startX="-100.0" stroke="#616369" strokeWidth="3.0" GridPane.rowIndex="3" />
+                                          <GridPane GridPane.rowIndex="4">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="268.0" minWidth="10.0" prefWidth="177.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="464.0" minWidth="10.0" prefWidth="418.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <Button fx:id="startBtn" mnemonicParsing="false" styleClass="loadBtn" stylesheets="@styles/fileTab.css" text="Start" />
+                                                <Button fx:id="loadAirportBtn" maxHeight="-Infinity" mnemonicParsing="false" prefHeight="96.0" prefWidth="322.0" styleClass="loadBtn" stylesheets="@styles/fileTab.css" text="Load Custom Config" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="24.0" />
+                                                   </font>
+                                                </Button>
+                                             </children>
+                                          </GridPane>
                                        </children>
                                     </GridPane>
                                  </children>
@@ -94,30 +110,58 @@
                   </Tab>
                 <Tab text="Application">
                   <content>
-                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1363.0">
+                        <BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="722.0" prefWidth="1363.0" stylesheets="@styles/global.css">
                            <right>
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="589.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
                                     <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
-                                        <Tab text="Airport">
+                                        <Tab text="View">
                                           <content>
-                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0">
+                                            <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0" stylesheets="@styles/viewTab.css">
                                                    <children>
-                                                      <Button fx:id="addAirportBtn" layoutX="467.0" layoutY="23.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="309.0" layoutY="427.0" mnemonicParsing="false" prefHeight="88.0" prefWidth="203.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="309.0" AnchorPane.topAnchor="427.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="94.0" AnchorPane.topAnchor="529.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="95.0" layoutY="428.0" mnemonicParsing="false" prefHeight="86.0" prefWidth="201.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="95.0" AnchorPane.topAnchor="428.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="310.0" AnchorPane.topAnchor="529.0" />
+                                                      <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="314.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="314.0">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                      <CheckBox fx:id="renderRunwayRotatedChkbx" layoutX="33.0" layoutY="262.0" mnemonicParsing="false" text="Rotate runway to match compass heading" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="262.0">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                      <ColorPicker fx:id="sideOnColorPicker" layoutX="390.0" layoutY="192.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="192.0" />
+                                                      <Label layoutX="33.0" layoutY="198.0" text="Change side-on view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="198.0" />
+                                                      <Label layoutX="33.0" layoutY="148.0" text="Change top-down view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="148.0" />
+                                                      <ColorPicker fx:id="topDownColorPicker" layoutX="390.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="142.0" />
+                                                      <Label layoutX="36.0" layoutY="58.0" prefHeight="21.0" prefWidth="231.0" text="Adjust top-down view zoom" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="58.0" />
+                                                      <Slider fx:id="zoomSlider" layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
+                                                      <Button layoutX="505.0" layoutY="55.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Reset" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="55.0" />
+                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoom %" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
+                                                      <Button layoutX="505.0" layoutY="95.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
+                                                      <CheckBox fx:id="renderWindCompass" layoutX="33.0" layoutY="367.0" mnemonicParsing="false" text="Render Wind Direction Compass" textFill="#103b52">
+                                                         <font>
+                                                            <Font size="16.0" />
+                                                         </font>
+                                                      </CheckBox>
                                                    </children>
                                                 </AnchorPane>
                                           </content>
                                         </Tab>
                                         <Tab text="Runway">
                                           <content>
-                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="609.0" stylesheets="@styles/runway.css">
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="609.0" stylesheets="@styles/runwayTable.css">
                                                    <children>
                                                       <GridPane id="runwayGrid" fx:id="runwayGrid" layoutX="1.0" prefHeight="505.0" prefWidth="577.0">
                                                         <columnConstraints>
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                           <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                                         </columnConstraints>
                                                         <rowConstraints>
                                                             <RowConstraints maxHeight="113.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
@@ -130,7 +174,7 @@
                                                          <children>
                                                             <Pane GridPane.rowIndex="1">
                                                                <children>
-                                                                  <Label fx:id="runwayDesignatorLbl" prefHeight="23.0" prefWidth="267.0" text="Runway Designator" />
+                                                                  <Label fx:id="runwayDesignatorLbl" prefHeight="86.0" prefWidth="197.0" text="Runway Designator" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="dark" />
@@ -139,7 +183,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="2">
                                                                <children>
-                                                                  <Label fx:id="toraLbl" text="TORA" />
+                                                                  <Label fx:id="toraLbl" prefHeight="86.0" prefWidth="197.0" text="TORA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -148,7 +192,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="3">
                                                                <children>
-                                                                  <Label fx:id="todaLbl" text="TODA" />
+                                                                  <Label fx:id="todaLbl" prefHeight="84.0" prefWidth="194.0" text="TODA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -157,7 +201,7 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="4">
                                                                <children>
-                                                                  <Label fx:id="asdaLbl" text="ASDA" />
+                                                                  <Label fx:id="asdaLbl" prefHeight="86.0" prefWidth="197.0" text="ASDA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -166,26 +210,28 @@
                                                             </Pane>
                                                             <Pane GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaLbl" text="LDA" />
+                                                                  <Label fx:id="ldaLbl" prefHeight="84.0" prefWidth="195.0" text="LDA" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
                                                                   <String fx:value="leftCol" />
                                                                </styleClass>
                                                             </Pane>
-                                                            <Button fx:id="addRunwayBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="111.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Runway" GridPane.columnIndex="1" GridPane.halignment="RIGHT" />
+                                                            <Button fx:id="addRunwayBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="122.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Runway" GridPane.columnIndex="2" GridPane.halignment="RIGHT" />
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="1">
                                                                <children>
-                                                                  <Label fx:id="runwayDesignatorCntLbl" prefHeight="23.0" prefWidth="267.0" />
+                                                                  <Label fx:id="runwayDesignatorCntLbl" layoutX="5.0" prefHeight="85.0" prefWidth="187.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0f475f" height="83.0" layoutX="178.0" layoutY="1.0" stroke="#0f475f" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="dark" />
                                                                   <String fx:value="rightCol" />
                                                                </styleClass>
                                                             </Pane>
-                                                            <Pane GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                            <Pane prefHeight="86.0" prefWidth="177.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                                <children>
-                                                                  <Label fx:id="toraCntLbl" />
+                                                                  <Label fx:id="toraCntLbl" layoutX="1.0" prefHeight="85.0" prefWidth="193.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#20b9f9" height="84.0" layoutX="179.0" layoutY="2.0" stroke="#20b9f9" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -194,7 +240,8 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="3">
                                                                <children>
-                                                                  <Label fx:id="todaCntLbl" />
+                                                                  <Label fx:id="todaCntLbl" prefHeight="86.0" prefWidth="192.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1b88bb" height="86.0" layoutX="178.0" layoutY="1.0" stroke="#1b88bb" strokeType="INSIDE" width="28.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
@@ -203,7 +250,8 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="4">
                                                                <children>
-                                                                  <Label fx:id="asdaCntLbl" />
+                                                                  <Label fx:id="asdaCntLbl" prefHeight="85.0" prefWidth="193.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#20b9f9" height="86.0" layoutX="176.0" stroke="#20b9f9" strokeType="INSIDE" width="29.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="lighter" />
@@ -212,13 +260,35 @@
                                                             </Pane>
                                                             <Pane GridPane.columnIndex="1" GridPane.rowIndex="5">
                                                                <children>
-                                                                  <Label fx:id="ldaCntLbl" />
+                                                                  <Label fx:id="ldaCntLbl" prefHeight="84.0" prefWidth="190.0" />
+                                                                  <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1b88bb" height="83.0" layoutX="176.0" layoutY="1.0" stroke="#1b88bb" strokeType="INSIDE" width="28.0" />
                                                                </children>
                                                                <styleClass>
                                                                   <String fx:value="light" />
                                                                   <String fx:value="rightCol" />
                                                                </styleClass>
                                                             </Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #0f475f;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                               <children>
+                                                                  <Label fx:id="runwayDesignatorLbl2" layoutX="5.0" prefHeight="85.0" prefWidth="188.0" style="-fx-text-fill: #FFFFFF;" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #20b9f9;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                               <children>
+                                                                  <Label fx:id="toraCntLbl2" layoutX="1.0" layoutY="3.0" prefHeight="80.0" prefWidth="188.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #1b88bb;" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                               <children>
+                                                                  <Label fx:id="todaCntLbl2" layoutX="1.0" layoutY="3.0" prefHeight="80.0" prefWidth="187.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #20b9f9;" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                               <children>
+                                                                  <Label fx:id="asdaCntLbl2" layoutY="3.0" prefHeight="80.0" prefWidth="188.0" />
+                                                               </children></Pane>
+                                                            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #1b88bb;" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                               <children>
+                                                                  <Label fx:id="ldaCntLbl2" layoutY="3.0" prefHeight="55.0" prefWidth="185.0" />
+                                                               </children></Pane>
+                                                            <Button fx:id="addAirportBtn" mnemonicParsing="false" prefHeight="39.0" prefWidth="122.0" styleClass="primaryButton" stylesheets="@styles/global.css" text="Add Airport" />
                                                          </children>
                                                       </GridPane>
                                                    </children>
@@ -229,29 +299,31 @@
                                              <content>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0" stylesheets="@styles/obstacles.css">
                                                    <children>
-                                                      <Label layoutX="6.0" layoutY="20.0" prefHeight="22.0" prefWidth="333.0" text="Predefined obstacles " />
-                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="43.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="580.0" />
-                                                      <Label layoutX="6.0" layoutY="268.0" prefHeight="29.0" prefWidth="258.0" text="User-defined obstacles" />
-                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="297.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="201.0" prefWidth="580.0" />
-                                                      <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="265.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Label layoutX="6.0" layoutY="24.0" prefHeight="30.0" prefWidth="333.0" text="Predefined obstacles " />
+                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="54.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
+                                                      <Label layoutX="6.0" layoutY="308.0" prefHeight="30.0" prefWidth="333.0" text="User-defined obstacles" />
+                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="338.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
+                                                      <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
                                           </Tab>
-                                          <Tab text="Calculations">
+                                          <Tab text="Redeclaration">
                                              <content>
-                                                <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css" />
+                                                <AnchorPane fx:id="calculationsPane" minHeight="0.0" minWidth="0.0" prefHeight="614.0" prefWidth="620.0" styleClass="backColor" stylesheets="@styles/calculations.css">
+                                                   <children>
+                                                      <Label fx:id="centreLineRequiredLabel" layoutX="372.0" layoutY="135.0" prefHeight="35.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdDistanceRequiredLabel" layoutX="370.0" layoutY="255.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="thresholdRequiredLabel" layoutX="370.0" layoutY="197.0" prefHeight="35.0" prefWidth="221.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                      <Label fx:id="obstacleRequiredLabel" layoutX="371.0" layoutY="17.0" prefHeight="32.0" prefWidth="218.0" styleClass="fieldRequiredLabel" stylesheets="@styles/calculations.css" />
+                                                   </children></AnchorPane>
                                              </content>
                                           </Tab>
                                       </tabs>
                                     </TabPane>
-                                    <Button fx:id="highlightTodaBtn" layoutX="314.0" layoutY="587.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TODA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="121.0" />
-                                    <Button fx:id="highlightAsdaBtn" layoutX="156.0" layoutY="587.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="ASDA" AnchorPane.bottomAnchor="83.0" AnchorPane.rightAnchor="279.0" />
-                                    <Button fx:id="highlightToraBtn" layoutX="157.0" layoutY="645.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="TORA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="278.0" />
-                                    <Button fx:id="highlightLdaBtn" layoutX="314.0" layoutY="645.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="154.0" styleClass="designator-tabs" stylesheets="@styles/global.css" text="LDA" AnchorPane.bottomAnchor="25.0" AnchorPane.rightAnchor="121.0" />
                                  </children>
                               </AnchorPane>
                            </right>
@@ -260,11 +332,11 @@
                                  <top>
                                 <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="61.0" prefWidth="686.0" BorderPane.alignment="CENTER">
                                        <children>
-                                          <Label layoutX="9.0" layoutY="26.0" prefHeight="23.0" prefWidth="96.0" text="Airport" />
-                                          <Label layoutX="381.0" layoutY="26.0" text="Runway" />
-                                          <ComboBox fx:id="airportSelect" layoutX="105.0" layoutY="22.0" prefHeight="30.0" prefWidth="230.0" stylesheets="@styles/calculations.css" />
-                                          <ComboBox fx:id="runwaySelect" layoutX="477.0" layoutY="22.0" prefHeight="31.0" prefWidth="142.0" stylesheets="@styles/calculations.css" />
-                                          <Label fx:id="windLbl" layoutX="634.0" layoutY="20.0" prefHeight="34.0" prefWidth="134.0" text="Wind " textAlignment="CENTER" />
+                                          <Label layoutX="14.0" layoutY="23.0" prefHeight="23.0" prefWidth="96.0" text="Airport" />
+                                          <Label layoutX="337.0" layoutY="25.0" text="Runway" />
+                                          <ComboBox fx:id="airportSelect" layoutX="79.0" layoutY="20.0" prefHeight="30.0" prefWidth="230.0" stylesheets="@styles/calculations.css" />
+                                          <ComboBox fx:id="runwaySelect" layoutX="409.0" layoutY="19.0" prefHeight="31.0" prefWidth="142.0" stylesheets="@styles/calculations.css" />
+                                          <Label fx:id="windLbl" layoutX="574.0" layoutY="18.0" prefHeight="34.0" prefWidth="198.0" text="Wind speed:" textAlignment="CENTER" />
                                        </children>
                                     </AnchorPane>
                                  </top>
@@ -280,6 +352,7 @@
                                        <children>
                                           <Canvas fx:id="canvas" height="444.0" width="770.0" />
                                           <Canvas fx:id="canvasSideView" height="204.0" width="770.0" GridPane.rowIndex="1" />
+                                          <Canvas fx:id="canvas1" height="444.0" layoutX="10.0" layoutY="12.0" width="770.0" />
                                        </children>
                                     </GridPane>
                                  </center>
@@ -290,34 +363,49 @@
                 </Tab>
                 <Tab text="Settings">
                   <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@styles/global.css">
                            <children>
                               <Label layoutX="16.0" layoutY="33.0" text="Colour scheme" />
-                              <ChoiceBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
+                              <ComboBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
                               <Button layoutX="383.0" layoutY="25.0" mnemonicParsing="false" styleClass="primaryButton" text="Apply" />
                               <Label layoutX="16.0" layoutY="74.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
-                              <Button layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
+                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
                               <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
                               <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
+                              <Label layoutX="15.0" layoutY="160.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
+                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="155.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
                            </children>
                         </AnchorPane>
                   </content>
                 </Tab>
+                  <Tab text="Help">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                     </content>
+                  </Tab>
               </tabs>
                <opaqueInsets>
                   <Insets />
                </opaqueInsets>
             </TabPane>
-             <ImageView fx:id="printerBtn" fitHeight="32" fitWidth="32" layoutX="1316.0" layoutY="3.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8">
-                 <image>
-                     <Image url="@rec/printerWhite.png" />
-                 </image>
-             </ImageView>
-             <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32" layoutX="1385.0" layoutY="3.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8">
-                 <image>
-                     <Image url="@rec/outArrowWhite.png" />
-                 </image>
-             </ImageView>
+            <Pane fx:id="printBtnPane" layoutX="1256.0" layoutY="9.0" AnchorPane.rightAnchor="77.0" AnchorPane.topAnchor="8.0">
+               <children>
+                   <ImageView fx:id="printerBtn" fitHeight="32" fitWidth="32">
+                       <image>
+                           <Image url="@rec/printerWhite.png" />
+                       </image>
+                   </ImageView>
+               </children>
+            </Pane>
+            <Pane fx:id="exportBtnPane" layoutX="1325.0" layoutY="9.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+               <children>
+                   <ImageView fx:id="outArrowBtn" fitHeight="32" fitWidth="32">
+                       <image>
+                           <Image url="@rec/outArrow.png" />
+                       </image>
+                   </ImageView>
+               </children>
+            </Pane>
          </children>
       </AnchorPane>
    </center>

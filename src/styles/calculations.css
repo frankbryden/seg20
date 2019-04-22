@@ -1,14 +1,28 @@
+@font-face {
+    src: url("fonts/cour.ttf");
+}
+
+/*@font-face {
+    src: url("fonts/moolbor_0.ttf");
+}*/
+
 .label {
     -fx-label-padding: 5 5 5 5;
     -fx-font-size: 18px;
-    -fx-text-fill: #4a5366;
 }
 
 #thresholdComboBox {
-    -fx-pref-width: 200px;
-    -fx-pref-height: 35px;
+    -fx-pref-width: 120px;
+    -fx-pref-height: 30px;
     -fx-text-alignment: center;
-    -fx-font-size: 18px;
+    -fx-font-size: 14px;
+}
+
+#directionComboBox {
+    -fx-pref-width: 290px;
+    -fx-pref-height: 30px;
+    -fx-text-alignment: center;
+    -fx-font-size: 14px;
 }
 
 .choice-box .label{
@@ -17,25 +31,10 @@
 }
 
 #obstacleComboBox{
-    -fx-pref-width: 200px;
-    -fx-pref-height: 35px;
-    -fx-text-alignment: center;
-    -fx-font-size: 18px;
-}
-
-#airportComboBox{
-    -fx-text-alignment: center;
-    -fx-font-size: 14px;
-    -fx-pref-height: 30px;
     -fx-pref-width: 230px;
-}
-
-
-#runwayComboBox{
+    -fx-pref-height: 30px;
     -fx-text-alignment: center;
     -fx-font-size: 14px;
-    -fx-pref-height: 30px;
-    -fx-pref-width: 120px;
 }
 
 .text-field{
@@ -52,6 +51,12 @@
 
 #calcBreakdown{
     -fx-font-family: "Courier New";
+    /*-fx-font-family: "MoolBoran";*/
     -fx-pref-width: 575;
     -fx-pref-height: 275;
+}
+
+.fieldRequiredLabel{
+    -fx-text-fill: -fx-error-color;
+    -fx-font-size: 14px;
 }

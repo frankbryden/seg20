@@ -3,11 +3,11 @@
 }
 
 .dark > .label{
-    -fx-text-fill: white;
+    -fx-text-fill: #ffffff;
 }
 
 .light {
-    -fx-background-color: #1b88bb;
+    -fx-background-color: -fx-primary-color;
 }
 
 .lighter {
@@ -30,4 +30,12 @@
     -fx-font-weight: bold;
     -fx-text-alignment: center;
     -fx-padding: 30 10;
+}
+
+/*.paintMe {
+    -fx-background-color: -fx-error-color;
+}*/
+
+#smallRunwayGrid > .label{
+    -fx-font-weight: bold;
 }

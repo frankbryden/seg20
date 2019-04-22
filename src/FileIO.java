@@ -1,3 +1,5 @@
+import javafx.print.PageLayout;
+import javafx.stage.FileChooser;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -11,10 +13,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FileIO {
 
@@ -23,7 +22,14 @@ public class FileIO {
     private Document document;
     private Element root;
 
+    //This file chooser will be used by the GUI and ExportPopup classes. Basically anyone that needs a file chooser dialog.
+    public FileChooser fileChooser;
+
     public FileIO(){
+        fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
+        fileChooser.setInitialDirectory(new File("."));
+
         documentBuilderFactory = DocumentBuilderFactory.newInstance();
         try {
             documentBuilder = documentBuilderFactory.newDocumentBuilder();
@@ -156,7 +162,7 @@ public class FileIO {
             physicalRunway.appendChild(createRunwayConfigData(r2conf));
         }
 
-        write(airportRoot, filePath);
+        write(airportRoot, sanitiseOutFilename(filePath));
 
     }
 
@@ -170,6 +176,10 @@ public class FileIO {
         }
 
         write(obstaclesRoot, filePath);
+    }
+
+    public void write(Obstacle obstacle, String filePath){
+        write(Arrays.asList(obstacle), filePath);
     }
 
     public void write(Element root, String filePath){
@@ -189,16 +199,7 @@ public class FileIO {
     }
 
     public Map<String, AirportConfig> readRunwayDB(String filePath){
-        File file = new File(filePath);
-        FileInputStream fis = null;
-        try {
-            fis = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
-        InputStreamReader isr = new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
-        BufferedReader bufferedReader = new BufferedReader(isr);
+        BufferedReader bufferedReader = readRecFile(filePath);
         Map<String, AirportConfig> airportConfigs = new HashMap<>();
         String line;
         RunwayPair runwayPair = new RunwayPair();
@@ -239,8 +240,53 @@ public class FileIO {
         return airportConfigs;
     }
 
-    public void write(String data){
+    public Map<AirportCode, String> readAirportDB(String filePath){
+        BufferedReader bufferedReader = readRecFile(filePath);
+        Map<AirportCode, String> airportDB = new HashMap<>();
 
+        String line;
+        try {
+
+            while ((line = bufferedReader.readLine()) != null){
+                String[] parts = line.split(",");
+                String airportName = stripQuotes(parts[1]);
+                AirportCode airportCode = new AirportCode(stripQuotes(parts[4]));
+                if (!airportCode.isValid()){
+                    continue;
+                }
+                airportDB.put(airportCode, airportName);
+            }
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+        System.out.println("Read " + airportDB.size() + " airports");
+        return airportDB;
+    }
+
+    public void write(String filePath){
+
+    }
+
+    private BufferedReader readRecFile(String filePath){
+        InputStreamReader isr;
+        boolean modeJAR = false;
+        System.out.println("Current directory : \n" + System.getProperty("user.dir"));
+        System.out.println("Reading file " + filePath);
+        if (!modeJAR){
+            File file = new File(filePath);
+            FileInputStream fis = null;
+            try {
+                fis = new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                return null;
+            }
+            isr = new InputStreamReader(fis);
+        } else {
+            isr = new InputStreamReader(getClass().getResourceAsStream(filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
+        }
+
+        return new BufferedReader(isr);
     }
 
     private Element getObstacleElement(Obstacle obstacle, Document documentToAddTo) {
@@ -286,5 +332,18 @@ public class FileIO {
         parent.appendChild(lda);
 
         return parent;
+    }
+
+    private String stripQuotes(String in){
+        return in.substring(1, in.length() - 1);
+    }
+
+    //When the user enters heathrow as the out file name, the file heathrow will be created, without the extension. This just adds that.
+    private String sanitiseOutFilename(String filename){
+        if (!filename.endsWith(".xml")){
+            return filename + ".xml";
+        } else {
+            return filename;
+        }
     }
 }

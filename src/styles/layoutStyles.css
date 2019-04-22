@@ -1,19 +1,22 @@
 .popup{
-    -fx-background-color: rgb(121, 121, 121);
+    -fx-background-color: #ffffff;
     -fx-padding: 15;
     -fx-spacing: 10;
-    -fx-border-color: black;
-    -fx-border-width:3px;
+    -fx-border-color: #000000;
+    -fx-border-width:1.5px;
     -fx-font-family: "Verdana";
-    -fx-font-size: 1.2em;
+    -fx-font-size: 14px;
 }
 
-.popup .label{
-    -fx-text-fill: white;
+.popUpTitles{
+    -fx-font-weight: BOLD;
+    -fx-text-fill: #000000;
+}
+
+.popUpText{
+    -fx-text-fill: #000000;
 }
 .addRunwayAirportSelection{
-    /*-fx-pref-width: 200px;
-    -fx-pref-height: 35px;*/
     -fx-text-alignment: center;
     -fx-font-size: 18px;
 }

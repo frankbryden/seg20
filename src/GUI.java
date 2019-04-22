@@ -2,65 +2,69 @@ import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
-import javafx.stage.FileChooser;
+import javafx.scene.paint.Color;
+import javafx.scene.text.TextAlignment;
+import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.util.Pair;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.util.List;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javafx.scene.image.Image;
-import javafx.util.Duration;
+import java.util.stream.Collectors;
 
 public class GUI extends Application {
-    //TODO set currently selected obstacle in the ComboBox in the calculations tab
-    //TODO add airport database
-    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn, editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn;
+    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
+            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     private Pane calculationsPane;
-    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
-    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect, directionSelect;
-    private FileChooser fileChooser;
+    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
-    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, toraCntLbl, todaCntLbl, asdaCntLbl, ldaCntLbl,
-            runwayThresholdLbl, originalValuesLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
-            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, directionSelectLbl;
+    private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
+            runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, selectedObstacleHeightLbl;
+    private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
-    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, directionSelectHBox;
+    private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
+    private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
     private TabPane tabPane;
@@ -71,6 +75,14 @@ public class GUI extends Application {
     private BorderPane canvasBorderPane;
     private ComboBox obstacleSelect;
     private Boolean editingObstacle;
+    private Stage primaryStage;
+    private Printer printer;
+    private AirportDatabase airportDB;
+    private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx, renderWindCompass;
+    private ColorPicker topDownColorPicker, sideOnColorPicker;
+    private Slider zoomSlider;
+    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
+    private StackPane trackPane;
 
 
     @Override
@@ -82,20 +94,112 @@ public class GUI extends Application {
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
-        fileChooser = new FileChooser();
-        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("XML", "*.xml"));
-        fileChooser.setInitialDirectory(new File("."));
+        this.primaryStage = primaryStage;
+
 
         fileIO = new FileIO();
         userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
         allObstaclesSorted = new TreeMap<>();
 
+        airportDB = new AirportDatabase();
+
         airportConfigs = new HashMap<>();
 
-        addAirportPopup = createAddAirportPopup(primaryStage);
-        addRunwayPopup = createAddRunwayPopup(primaryStage);
+        airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
+
+
+
+        // Setting the texts for each tooltip
+        centrelineDistTooltip = new Tooltip();
+        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
+        thresholdDistTooltip = new Tooltip();
+        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
+        obstacleHeightTooltip = new Tooltip();
+        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+        airportCodeTooltip = new Tooltip();
+        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
+        toraButtonTooltip = new Tooltip();
+        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
+        todaButtonTooltip = new Tooltip();
+        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
+        asdaButtonTooltip = new Tooltip();
+        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
+        ldaButtonTooltip = new Tooltip();
+        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
+
+        addAirportPopup = createAddAirportPopup();
+        addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
+        exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
+
+        //Set up color pickers in the view tab
+        topDownColorPicker = (ColorPicker) primaryStage.getScene().lookup("#topDownColorPicker");
+        sideOnColorPicker = (ColorPicker) primaryStage.getScene().lookup("#sideOnColorPicker");
+
+        topDownColorPicker.setValue(Color.GOLD);
+        sideOnColorPicker.setValue(Color.SKYBLUE);
+
+        topDownColorPicker.setOnAction(event -> {
+            if (runwayRenderer != null){
+                runwayRenderer.setTopDownBackgroundColor(topDownColorPicker.getValue());
+            }
+        });
+
+
+        sideOnColorPicker.setOnAction(event -> {
+            if (runwayRendererSideView != null){
+                runwayRendererSideView.setSideOnBackgroundColor(sideOnColorPicker.getValue());
+            }
+        });
+
+        //Set up checkboxes in the View tab
+        renderRunwayLabelLinesChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayLabelLinesChkbx");
+        renderRunwayRotatedChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayRotatedChkbx");
+        renderWindCompass = (CheckBox) primaryStage.getScene().lookup("#renderWindCompass");
+
+        renderRunwayLabelLinesChkbx.setSelected(true);
+        renderRunwayLabelLinesChkbx.setSelected(true);
+        renderWindCompass.setSelected(true);
+
+        renderRunwayLabelLinesChkbx.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
+        });
+
+        renderRunwayRotatedChkbx.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        });
+
+        renderWindCompass.selectedProperty().addListener(state -> {
+            runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
+        });
+
+        //Set up the slider controlling the zoom in the View tab
+        zoomSlider = (Slider) primaryStage.getScene().lookup("#zoomSlider");
+        zoomSlider.setMin(RunwayRenderer.MIN_ZOOM);
+        zoomSlider.setMax(RunwayRenderer.MAX_ZOOM);
+        zoomSlider.setBlockIncrement(RunwayRenderer.ZOOM_STEP);
+
+        zoomSlider.valueProperty().addListener(event -> {
+            runwayRenderer.setZoom(zoomSlider.getValue());
+            /*String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", (int)zoomSlider.getValue(),(int)zoomSlider.getValue());
+            trackPane.setStyle(style);*/
+            notifyUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
+        });
+
+        trackPane = (StackPane) zoomSlider.lookup(".track");
+
+        zoomSlider.valueProperty().addListener((ov, old_val, new_val) -> {
+            double currentVal = (double) new_val;
+            double percentage = (currentVal - RunwayRenderer.MIN_ZOOM)/(RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
+            int roundedPercentage = (int) (percentage*100);
+            int leftPercentage = roundedPercentage;
+            int rightPercentage = 100 - leftPercentage;
+            String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", leftPercentage, leftPercentage);
+            trackPane.setStyle(style);
+        });
+
+        trackPane.setStyle("-fx-background-color: linear-gradient(to right, -fx-primary-color 0%, #ffffff 0%);");
 
         //TODO add event listeners for the two new images (print and share)
 
@@ -119,44 +223,16 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
-                        Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                System.out.println("we're just gonna get some data here");
-                                String apiKey = "473ade203bfbbf2d4346749e61a37a95";
-                                String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + ac.getLatitude() + "&lon=" + ac.getLongitude() + "&appid=" + apiKey;
-                                try {
-                                    URL url = new URL(urlString);
-                                    URLConnection urlConnection = url.openConnection();
-                                    InputStreamReader is = new InputStreamReader(urlConnection.getInputStream());
-                                    StringBuilder data = new StringBuilder();
-                                    while (is.ready()){
-                                        data.append((char) is.read());
-                                    }
-                                    System.out.println(data.toString());
-                                    Pattern p = Pattern.compile("\"wind\":\\{\"speed\":([0-9]+\\.[0-9]*),\"deg\":([0-9]+).*?\\}");
-                                    System.out.println(p.toString());
-                                    Matcher m = p.matcher(data.toString());
-                                    m.find();
-                                    System.out.println("Speed extracted from response : " + m.group(1));
-                                    System.out.println("Angle extracted from response : " + m.group(2));
-
-                                    double speed = Double.valueOf(m.group(1));
-                                    int angleDeg = Integer.valueOf(m.group(2));
-                                    //Convert angle to radians
-                                    double angleRad = angleDeg * Math.PI/180;
-                                    //Add PI/2 as the 0 in the meteorological is north, whereas it is east in the trigonometry world
-                                    angleRad += Math.PI/2;
-                                    windlLbl.setText(String.valueOf(speed) + "km/h, ang : " + angleDeg + "/" + angleRad);
-                                    runwayRenderer.setWindAngle(angleRad);
-
-
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        };
-                        Platform.runLater(runnable);
+                        LiveWindService liveWindService = new LiveWindService();
+                        liveWindService.setLatitude(ac.getLatitude());
+                        liveWindService.setLongitude(ac.getLongitude());
+                        liveWindService.setOnSucceeded(t -> {
+                            Map<String, Double> result = (HashMap<String, Double>) t.getSource().getValue();
+                            System.out.println("We have a result!");
+                            windlLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
+                            runwayRenderer.setWindAngle(result.get("direction"));
+                        });
+                        liveWindService.start();
                         break;
                     }
                 }
@@ -166,28 +242,22 @@ public class GUI extends Application {
 
         airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.setId("airportComboBox");
-        airportSelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                System.out.println("Here");
-                System.out.println((String) newValue);
-                if (newValue == null){
-                    System.out.println("Selection cleared");
-                    return;
-                }
-                updateRunwaySelect((String) newValue);
+        airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Here");
+            System.out.println((String) newValue);
+            if (newValue == null){
+                System.out.println("Selection cleared");
+                return;
             }
+            updateRunwaySelect((String) newValue);
         });
 
         addObstacleBtn = new Button("Add Button");
-        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Add obstacle");
-                if (validateObstaclesForm()){
-                    addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
-                    updateObstaclesList();
-                }
+        addObstacleBtn.setOnMouseClicked(event -> {
+            System.out.println("Add obstacle");
+            if (validateObstaclesForm()){
+                addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
+                updateObstaclesList();
             }
         });
 
@@ -203,6 +273,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                //TODO - position the add obstacle popup according to window size
                 Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
                 addObstaclePopup.show(primaryStage);
                 addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth()/2);
@@ -211,7 +282,7 @@ public class GUI extends Application {
         });
 
         editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
-        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/edit.png")));
+        ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/load.png")));
         editObstacleImgView.setFitWidth(iconSize);
         editObstacleImgView.setFitHeight(iconSize);
         editObstacleBtn.setGraphic(editObstacleImgView);
@@ -219,7 +290,7 @@ public class GUI extends Application {
         editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                File file = fileChooser.showOpenDialog(primaryStage);
+                File file = fileIO.fileChooser.showOpenDialog(primaryStage);
                 if (file == null){
                     return;
                 }
@@ -228,6 +299,8 @@ public class GUI extends Application {
                     addObstacle(obstacle);
                 });
                 updateObstaclesList();
+
+                notifyUpdate("Obstacles loaded");
             }
         });
 
@@ -241,8 +314,10 @@ public class GUI extends Application {
         deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                removeUserObstacle();
-                updateObstaclesList();
+                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                        String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
+                        displayDeletePrompt(obstacleName);
+                }
             }
         });
 
@@ -265,9 +340,10 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
-                File file = fileChooser.showSaveDialog(primaryStage);
+                File file = fileIO.fileChooser.showSaveDialog(primaryStage);
                 if (file != null){
                     fileIO.write(userDefinedObstacles.values(), file.getPath());
+                    notifyUpdate("Obstacles saved");
                 }
 
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
@@ -276,55 +352,68 @@ public class GUI extends Application {
 
             }
         });
-        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
-        highlightTodaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
+
+        // Button in Settings tab for enabling/disabling tooltips
+        manageTooltipsBtn = (Button) primaryStage.getScene().lookup("#manageTooltipsBtn");
+        manageTooltipsBtn.setOnMouseClicked(event -> {
+            if (manageTooltipsBtn.getText().equals("Disable tooltips")) {
+                manageTooltipsBtn.setText("Enable tooltips");
+                disableTooltips();
+            } else {
+                manageTooltipsBtn.setText("Disable tooltips");
+                enableTooltips();
             }
+        });
+
+
+
+        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
+        highlightTodaBtn.setOnMouseClicked(event -> {
+            runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
+
+            notifyUpdate("TODA Highlighted");
         });
 
         highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
-        highlightToraBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
-            }
+        highlightToraBtn.setOnMouseClicked(event -> {
+            runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
+
+            notifyUpdate("TORA Highlighted");
         });
 
         highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
-        highlightAsdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
-            }
+        highlightAsdaBtn.setOnMouseClicked(event -> {
+            runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
+
+            notifyUpdate("ASDA Highlighted");
         });
 
         highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
-        highlightLdaBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
-            }
+        highlightLdaBtn.setOnMouseClicked(event -> {
+            runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
+
+            notifyUpdate("LDA Highlighted");
         });
 
 
         addAirportBtn = (Button) primaryStage.getScene().lookup("#addAirportBtn");
-        addAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Add airport");
-                addAirportPopup.show();
-            }
+        addAirportBtn.setOnMouseClicked(event -> {
+            System.out.println("Add airport");
+            addAirportPopup.show();
         });
 
         addRunwayBtn = (Button) primaryStage.getScene().lookup("#addRunwayBtn");
-        addRunwayBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Add airport");
-                addRunwayPopup.show();
-            }
+        addRunwayBtn.setOnMouseClicked(event -> {
+            System.out.println("Add runway");
+            addRunwayPopup.show();
+        });
+
+        //Settings tab
+        saveSettingsBtn = (Button) primaryStage.getScene().lookup("#saveSettingsBtn");
+        saveSettingsBtn.setOnMouseClicked(value -> {
+            System.out.println("Clicked on save settings");
+            //new Notification("hey").show(primaryStage, 10, 10);
+
         });
 
 
@@ -332,37 +421,47 @@ public class GUI extends Application {
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
+        calculationsPane.getStylesheets().add("styles/global.css");
+        calculationsPane.getStylesheets().add("styles/calculations.css");
+
         obstacleSelect = new ComboBox();
-
-
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
+
+        obstacleSelect.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+                    if (obstacleSelect.getSelectionModel().isEmpty()) {
+                        selectedObstacleHeightTF.clear();
+                    } else {
+                        String selectedObstacleName = (String) newValue;
+                        selectedObstacleHeightTF.setText(allObstaclesSorted.get(selectedObstacleName).getHeight() + "m");
+                    }
+
+                }
+        );
+
+
         thresholdSelect = new ComboBox();
-
-
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
-        centrelineDistanceLbl = new Label("Distance from runway centreline (m)");
-        runwayThresholdLbl = new Label("Distance from runway threshold (m)");
+        centrelineDistanceLbl = new Label("Distance from runway centreline");
+        runwayThresholdLbl = new Label("Distance from runway threshold");
         obstacleSelectLbl = new Label("Select obstacle");
         thresholdSelectLbl = new Label("Select threshold");
-        directionSelectLbl  = new Label ("Select Runway Direction");
+
         centrelineTF = new TextField();
         distanceFromThresholdTF = new TextField();
+
+        // Components for the selected obstacle's height in Redeclaration tab
+        selectedObstacleHeightLbl = new Label ("Height of the obstacle");
+        selectedObstacleHeightTF = new TextField();
+        selectedObstacleHeightTF.setEditable(false);
+
         calculateBtn = new Button("Calculate");
         calculateBtn.setId("calcButton");
         calculateBtn.getStyleClass().add("primaryButton");
 
-        directionSelect = new ComboBox();
-        directionSelect.setVisibleRowCount(2);
-        directionSelect.setId("directionComboBox");
-        for(Calculations.Direction direction : Calculations.Direction.values())
-        {
-            directionSelect.getItems().add(Calculations.directionSpecifier.get(direction));
-        }
-
         calculationsRootBox = new VBox(20);
-        calculationsRootBox.setPadding(new Insets(10, 10, 10, 10));
+        calculationsRootBox.setPadding(new Insets(40, 10, 10, 10));
         obstacleSelectHBox = new HBox(HBOX_SPACING);
 
         VBox.setMargin(obstacleSelectHBox, calculationsInsets);
@@ -388,18 +487,19 @@ public class GUI extends Application {
         centerlineHBox.getChildren().add(centrelineTF);
         thresholdHBox = new HBox(HBOX_SPACING);
 
+        heightHBox = new HBox(HBOX_SPACING);
+        VBox.setMargin(heightHBox, calculationsInsets);
+        Region heightHBoxRegion = getHGrowingRegion();
+        heightHBox.getChildren().add(selectedObstacleHeightLbl);
+        heightHBox.getChildren().add(heightHBoxRegion);
+        heightHBox.getChildren().add(selectedObstacleHeightTF);
+
+
         VBox.setMargin(thresholdHBox, calculationsInsets);
         Region thresholdHBoxRegion = getHGrowingRegion();
         thresholdHBox.getChildren().add(runwayThresholdLbl);
         thresholdHBox.getChildren().add(thresholdHBoxRegion);
         thresholdHBox.getChildren().add(distanceFromThresholdTF);
-
-        directionSelectHBox = new HBox(HBOX_SPACING);
-        VBox.setMargin(directionSelectHBox, calculationsInsets);
-        Region directionSelectHBoxRegion = getHGrowingRegion();
-        directionSelectHBox.getChildren().add(directionSelectLbl);
-        directionSelectHBox.getChildren().add(directionSelectHBoxRegion);
-        directionSelectHBox.getChildren().add(directionSelect);
 
 
         HBox calculateBtnVBox = new HBox();
@@ -410,125 +510,161 @@ public class GUI extends Application {
         //calculateBtnVBox.setPadding(new Insets(0, 20, 0, 0));
         calculationsRootBox.setMinWidth(calculationsPane.getWidth());
         calculationsRootBox.getChildren().add(obstacleSelectHBox);
+        calculationsRootBox.getChildren().add(heightHBox);
         calculationsRootBox.getChildren().add(centerlineHBox);
         calculationsRootBox.getChildren().add(thresholdSelectHBox);
         calculationsRootBox.getChildren().add(thresholdHBox);
-        calculationsRootBox.getChildren().add(directionSelectHBox);
+
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
-        calculateBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                //Get currently selected obstacle
-//HERE  can't change the textfield's width or the airport box width
-                if (centrelineTF.getText().isEmpty() && distanceFromThresholdTF.getText().isEmpty()) {
-                    centrelineTF.setPromptText("Invalid centreline distance!");
-                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-                } else if (distanceFromThresholdTF.getText().isEmpty()) {
-                    distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-                } else if (centrelineTF.getText().isEmpty()) {
-                    centrelineTF.setPromptText("Invalid centreline distance!");
-                } else if (thresholdSelect.getSelectionModel().isEmpty()) {
-                    System.out.println("No threshold selected");
-                } else if (obstacleSelect.getSelectionModel().isEmpty()){
-                    System.out.println("No obstacle selected");
-                } else if (directionSelect.getSelectionModel().isEmpty()){
-                    System.out.println("No direction chosen");
+
+        centreLineRequiredLabel = (Label) primaryStage.getScene().lookup("#centreLineRequiredLabel");
+        thresholdDistanceRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdDistanceRequiredLabel");
+        thresholdRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdRequiredLabel");
+        obstacleRequiredLabel = (Label) primaryStage.getScene().lookup("#obstacleRequiredLabel");
+
+        calculateBtn.setOnMouseClicked(event -> {
+
+            if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
+                    thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
+                    ) {
+
+                if (centrelineTF.getText().isEmpty()) {
+                    centreLineRequiredLabel.setText("            This field is required");
+                } else {
+                    centreLineRequiredLabel.setText("");
                 }
-                else {
-                    String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
-                    Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
+                if (distanceFromThresholdTF.getText().isEmpty()) {
+                    thresholdDistanceRequiredLabel.setText("            This field is required");
+                } else {
+                    thresholdDistanceRequiredLabel.setText("");
+                }
+                if (thresholdSelect.getSelectionModel().isEmpty()) {
+                    thresholdRequiredLabel.setText("      Please select a threshold");
+                } else {
+                    thresholdRequiredLabel.setText("");
+                }
+                if (obstacleSelect.getSelectionModel().isEmpty()) {
+                    obstacleRequiredLabel.setText("     Please select an obstacle");
+                } else {
+                    obstacleRequiredLabel.setText("");
+                }
+
+            } else {
 
 
+                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
+                Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
-                    String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
-                    RunwayConfig runwayConfig, otherConfig;
-                    RunwayPair.Side selectedSide;
-                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
-                        runwayConfig = currentlySelectedRunway.getR1();
-                        otherConfig = currentlySelectedRunway.getR2();
-                        selectedSide = RunwayPair.Side.R1;
-                    } else {
-                        runwayConfig = currentlySelectedRunway.getR2();
-                        otherConfig = currentlySelectedRunway.getR1();
-                        selectedSide = RunwayPair.Side.R2;
-                    }
+                String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
 
+                RunwayConfig runwayConfig, otherConfig;
+                RunwayPair.Side selectedSide;
 
-
-                    //Perform recalculations
-                    Calculations calculations = new Calculations(runwayConfig);
-                    int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
-                    int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
-                    Calculations.Direction runwayDirection = Calculations.getKey(directionSelect.getSelectionModel().getSelectedItem().toString());
-
-                    Calculations.Direction otherDirection;
-                    if(runwayDirection == Calculations.Direction.TOWARDS){
-                        otherDirection = Calculations.Direction.AWAY;
-                    }
-                    else
-                        otherDirection = Calculations.Direction.TOWARDS;
-
-                    CalculationResults results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, runwayDirection);
-                    RunwayConfig recalculatedParams = results.getRecalculatedParams();
-
-
-
-                    //Fix ? perform recalculation on the other runway config
-                    Calculations calculations2 = new Calculations(otherConfig);
-                    CalculationResults results2 = calculations2.recalculateParams(currentlySelectedObstacle, otherConfig.getLDA()-distanceFromThreshold, distanceFromCenterline, otherDirection);
-                    RunwayConfig recalculatedParams2 = results2.getRecalculatedParams();
-
-                    System.out.println("calculation details");
-                    System.out.println(results.getCalculationDetails());
-                    System.out.println(results2.getCalculationDetails());
-
-
-                    calculationDetails.setText(results.getCalculationDetails() + "\n" + results2.getCalculationDetails());
-                    System.out.println(recalculatedParams.toString());
-                    updateCalculationResultsView(runwayConfig, recalculatedParams);
-                    //updateCalculationResultsView(otherConfig, recalculatedParams2);
-                    switchCalculationsTabToView();
-
-                    if (selectedSide == RunwayPair.Side.R1){
-                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams, recalculatedParams2), canvas.getGraphicsContext2D());
-                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(runwayConfig.getTORA());
-                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(otherConfig.getTORA());
-                    } else {
-                        runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams2, recalculatedParams), canvas.getGraphicsContext2D());
-                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(runwayConfig.getTORA());
-                        runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
-                    }
-
-                    runwayRenderer.refreshLines();
-                    runwayRenderer.render();
-
-                    String unselectedThreshold;
-                    if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)){
-                        unselectedThreshold = currentlySelectedRunway.getR2().toString();
-                    } else {
-                        unselectedThreshold = currentlySelectedRunway.getR1().toString();
-                    }
-
-                    runwayRendererSideView.renderSideview();
-                    runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold );
-
+                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)) {
+                    runwayConfig = currentlySelectedRunway.getR1();
+                    otherConfig = currentlySelectedRunway.getR2();
+                    selectedSide = RunwayPair.Side.R1;
+                } else {
+                    runwayConfig = currentlySelectedRunway.getR2();
+                    otherConfig = currentlySelectedRunway.getR1();
+                    selectedSide = RunwayPair.Side.R2;
                 }
 
 
+                //Perform recalculations
+                Calculations calculations = new Calculations(runwayConfig);
+                Calculations calculations2 = new Calculations(otherConfig);
+                int distanceFromThreshold = Integer.valueOf(distanceFromThresholdTF.getText());
+                int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
+
+                // We take the greater TORA to be the length of the runway
+                int runwayLength = 0;
+                if (runwayConfig.getTORA() > otherConfig.getTORA()) {
+                    runwayLength = runwayConfig.getTORA();
+                } else {
+                    runwayLength = otherConfig.getTORA();
+                }
+
+                int distanceFromOtherThreshold = runwayLength - runwayConfig.getDisplacementThreshold() - distanceFromThreshold - otherConfig.getDisplacementThreshold();
+
+
+                // I compare the distances from each threshold. Whichever threshold the obstacle is closer to, that logical runway is used for taking off away
+                CalculationResults results = null;
+                CalculationResults results2 = null;
+                RunwayConfig recalculatedParams = null;
+                RunwayConfig recalculatedParams2 = null;
+                if (distanceFromThreshold < distanceFromOtherThreshold) {
+                    // Closer to runwayConfig so runwayConfig is used for taking off away
+                    results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, "AWAY", runwayLength);
+                    recalculatedParams = results.getRecalculatedParams();
+                    results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromOtherThreshold, distanceFromCenterline, "TOWARDS", runwayLength);
+                    recalculatedParams2 = results2.getRecalculatedParams();
+                } else {
+                    // Closer to otherConfig so otherConfig is used for taking off away
+                    results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, "TOWARDS", runwayLength);
+                    recalculatedParams = results.getRecalculatedParams();
+                    results2 = calculations2.recalculateParams(currentlySelectedObstacle, distanceFromOtherThreshold, distanceFromCenterline, "AWAY", runwayLength);
+                    recalculatedParams2 = results2.getRecalculatedParams();
+                }
+
+                System.out.println("calculation details");
+                System.out.println(results.getCalculationDetails());
+                System.out.println(results2.getCalculationDetails());
+
+                //Generate summary string which designates the calculations (eg. A320 50m from 27R threshold)
+                String summary = obstacleName + " " + distanceFromThreshold + "m from " + thresholdName + " threshold";
+                System.out.println("Just performed calculations on the following situation :");
+                System.out.println(summary);
+
+                // Printing results into the breakdown of calculations text box
+                String resultsDetails = results.getCalculationDetails() + "\n" + results2.getCalculationDetails();
+                calculationDetails.setText(resultsDetails);
+                printer.setCalculations(resultsDetails);
+                printer.setCalculationsHeading(summary);
+
+                System.out.println(recalculatedParams.toString());
+                updateCalculationResultsView(runwayConfig, recalculatedParams);
+                //updateCalculationResultsView(otherConfig, recalculatedParams2);
+                switchCalculationsTabToView();
+
+                if (selectedSide == RunwayPair.Side.R1) {
+                    runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams, recalculatedParams2), canvas.getGraphicsContext2D());
+                    runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(runwayConfig.getTORA());
+                    runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(otherConfig.getTORA());
+                } else {
+                    runwayRenderer = new RunwayRenderer(new RunwayPair(recalculatedParams2, recalculatedParams), canvas.getGraphicsContext2D());
+                    runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR2(runwayConfig.getTORA());
+                    runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
+                }
+
+                runwayRenderer.refreshLines();
+                runwayRenderer.render();
+
+                String unselectedThreshold;
+                if (currentlySelectedRunway.getR1().getRunwayDesignator().toString().equals(thresholdName)) {
+                    unselectedThreshold = currentlySelectedRunway.getR2().toString();
+                } else {
+                    unselectedThreshold = currentlySelectedRunway.getR1().toString();
+                }
+
+                runwayRendererSideView.renderSideview();
+                runwayRendererSideView.drawObstacle(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, thresholdName, unselectedThreshold);
 
             }
+
+
         });
 
         //Calculations Pane - calculation results view
-        originalValuesLbl = new Label("Breakdown of the calculations");
-        originalValuesLbl.setId("calcBreakdownLabel");
-        originalValuesLbl.setId("breakdownTitle");
+        breakdownCalcLbl = new Label("Breakdown of the calculations");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
         calculationDetails.setId("calcBreakdown");
         calculationResultsGrid = new GridPane();
+        calculationResultsGrid.getStylesheets().add("styles/runwayTable.css");
+        calculationResultsGrid.getStyleClass().add("paintMe");
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
         originalValuesGridLbl = new Label("Original\nValues");
         recalculatedlValuesGridLbl = new Label("Recalculated\nValues");
@@ -545,6 +681,9 @@ public class GUI extends Application {
         recalculatedAsda = new Label();
         recalculatedLda = new Label();
         calculationsBackBtn = new Button("Back");
+        calculationsBackBtn.getStyleClass().add("primaryButton");
+        calculationsBackBtn.getStylesheets().add("styles/global.css");
+
         VBox calculateBackBtnVBox = new VBox();
         calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
@@ -556,7 +695,13 @@ public class GUI extends Application {
             @Override
             public void handle(ScrollEvent event) {
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
-                runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
+                if (event.getDeltaY() > 0){
+                    runwayRenderer.incZoom();
+                } else if (event.getDeltaY() < 0){
+                    runwayRenderer.decZoom();
+                }
+                zoomSlider.setValue(runwayRenderer.getZoom());
+                //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
             }
         });
 
@@ -564,11 +709,11 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
-                double currentAngle = runwayRenderer.getWindAngle();
+                /*double currentAngle = runwayRenderer.getWindAngle();
                 System.out.println("Current angle = " + currentAngle);
                 currentAngle += Math.PI/4;
                 System.out.println("After addition = " + currentAngle);
-                runwayRenderer.setWindAngle(currentAngle);
+                runwayRenderer.setWindAngle(currentAngle);*/
             }
         });
 
@@ -590,35 +735,94 @@ public class GUI extends Application {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 double newVal = (double) newValue;
                 canvas.setWidth(newVal/2);
-            }
+            }Font.font("Verdana", FontWeight.BOLD, 14)
         });
         canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
 
-        calculationResultsGrid.setHgap(20);
+        //calculationResultsGrid.setHgap(20);
         //Add all the labels, col by col,  to create a table
+        calculationResultsGrid.setId("smallRunwayGrid");
 
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
-        calculationResultsGrid.add(todaRowLbl, 0, 1);
-        calculationResultsGrid.add(toraRowLbl, 0, 2);
+        calculationResultsGrid.add(new Label(), 0, 0);
+        calculationResultsGrid.add(toraRowLbl, 0, 1);
+        calculationResultsGrid.add(todaRowLbl, 0, 2);
         calculationResultsGrid.add(asdaRowLbl, 0, 3);
         calculationResultsGrid.add(ldaRowLbl, 0, 4);
 
         //Col 1 : the original values
         calculationResultsGrid.add(originalValuesGridLbl, 1, 0);
-        calculationResultsGrid.add(originalToda, 1, 1);
-        calculationResultsGrid.add(originalTora, 1, 2);
+        calculationResultsGrid.add(originalTora, 1, 1);
+        calculationResultsGrid.add(originalToda, 1, 2);
         calculationResultsGrid.add(originalAsda, 1, 3);
         calculationResultsGrid.add(originalLda, 1, 4);
 
         //Col 2 : the recalculated values
         calculationResultsGrid.add(recalculatedlValuesGridLbl, 2, 0);
-        calculationResultsGrid.add(recalculatedToda, 2, 1);
-        calculationResultsGrid.add(recalculatedTora, 2, 2);
+        calculationResultsGrid.add(recalculatedTora, 2, 1);
+        calculationResultsGrid.add(recalculatedToda, 2, 2);
         calculationResultsGrid.add(recalculatedAsda, 2, 3);
         calculationResultsGrid.add(recalculatedLda, 2, 4);
 
+/*
+        //Col 0 : the value names (TODA, TORA, ASDA, LDA)
+        calculationResultsGrid.add(new Pane(toraRowLbl), 0, 1);
+        calculationResultsGrid.add(new Pane(todaRowLbl), 0, 2);
+        calculationResultsGrid.add(asdaRowLbl, 0, 3);
+        calculationResultsGrid.add(ldaRowLbl, 0, 4);
+
+        //Col 1 : the original values
+        calculationResultsGrid.add(new Pane(originalValuesGridLbl), 1, 0);
+        calculationResultsGrid.add(new Pane(originalTora), 1, 1);
+        calculationResultsGrid.add(new Pane(originalToda), 1, 2);
+        calculationResultsGrid.add(originalAsda, 1, 3);
+        calculationResultsGrid.add(originalLda, 1, 4);
+
+        //Col 2 : the recalculated values
+        calculationResultsGrid.add(new Pane(recalculatedlValuesGridLbl), 2, 0);
+        calculationResultsGrid.add(new Pane(recalculatedTora), 2, 1);
+        calculationResultsGrid.add(new Pane(recalculatedToda), 2, 2);
+        calculationResultsGrid.add(recalculatedAsda, 2, 3);
+        calculationResultsGrid.add(recalculatedLda, 2, 4);
+
+*/
+        //Style the newly created and populated table
+        ArrayList<Pair<Node, Point>> wrappedUpNodes = new ArrayList<>();
+        ObservableList<Node> nodesObservable = calculationResultsGrid.getChildrenUnmodifiable();
+        List<Node> nodes = nodesObservable.subList(0, nodesObservable.size());
+        for (Node node : nodes){
+            int rowIndex = GridPane.getRowIndex(node);
+
+
+            wrappedUpNodes.add(new Pair<>(node, new Point(GridPane.getColumnIndex(node), GridPane.getRowIndex(node))));
+
+            if (rowIndex == 0){
+                node.getStyleClass().add("dark");
+            } else if (rowIndex % 2 == 0){
+                node.getStyleClass().add("lighter");
+            } else {
+                node.getStyleClass().add("light");
+            }
+        }
+
+
+        for (Pair<Node, Point> wrappedUpNodeToAdd : wrappedUpNodes){
+            //Remove this simple labels and wrap them in expanding panes
+            Pane wrapper = new Pane(wrappedUpNodeToAdd.getKey());
+
+            //style wrapper using the node's style
+            wrapper.getStyleClass().addAll(wrappedUpNodeToAdd.getKey().getStyleClass());
+
+            //Grow the panes to eliminate gaps between cells of the gridpane
+            GridPane.setHgrow(wrapper, Priority.ALWAYS);
+
+            calculationResultsGrid.add(wrapper, wrappedUpNodeToAdd.getValue().x, wrappedUpNodeToAdd.getValue().y);
+        }
+
         viewCalculationResultsVBox = new VBox();
-        viewCalculationResultsVBox.getChildren().add(originalValuesLbl);
+        viewCalculationResultsVBox.setPadding(new Insets(8, 0, 0, 0));
+        breakdownCalcLbl.setPadding(new Insets(0, 0, 0, -5));
+        viewCalculationResultsVBox.getChildren().add(breakdownCalcLbl);
         viewCalculationResultsVBox.getChildren().add(calculationDetails);
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
         viewCalculationResultsVBox.getChildren().add(calculateBackBtnVBox);
@@ -634,17 +838,26 @@ public class GUI extends Application {
         resetCalculationsTab();
 
         predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
-        predefinedObstaclesLV.setId("predefinedList");
+        predefinedObstaclesLV.getStyleClass().add("obstacleList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
         userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
-        userDefinedObstaclesLV.setId("userList");
+        userDefinedObstaclesLV.getStyleClass().add("obstacleList");
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent click) {
+
+                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                    int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                    userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                    System.out.println("Obstacle in user-defined list was selected, has now been deselected");
+                }
+
+                obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem());
+
                 if (click.getClickCount() == 2) {
-                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage);
+                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
                 }
            }
         });
@@ -654,8 +867,16 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent click) {
 
+                if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                    int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                    predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                    System.out.println("Obstacle in predefined list was selected, has now been deselected");
+                }
+
+                obstacleSelect.setValue(userDefinedObstaclesLV.getSelectionModel().getSelectedItem());
+
                 if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage);
+                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
 
                 }
             }
@@ -677,10 +898,15 @@ public class GUI extends Application {
         ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
 
         runwayDesignatorCntLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorCntLbl");
+        runwayDesignatorLbl2 = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl2");
         toraCntLbl = (Label) primaryStage.getScene().lookup("#toraCntLbl");
         todaCntLbl = (Label) primaryStage.getScene().lookup("#todaCntLbl");
         asdaCntLbl = (Label) primaryStage.getScene().lookup("#asdaCntLbl");
         ldaCntLbl = (Label) primaryStage.getScene().lookup("#ldaCntLbl");
+        toraCntLbl2 = (Label) primaryStage.getScene().lookup("#toraCntLbl2");
+        todaCntLbl2 = (Label) primaryStage.getScene().lookup("#todaCntLbl2");
+        asdaCntLbl2 = (Label) primaryStage.getScene().lookup("#asdaCntLbl2");
+        ldaCntLbl2 = (Label) primaryStage.getScene().lookup("#ldaCntLbl2");
 
 
         windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
@@ -752,13 +978,34 @@ public class GUI extends Application {
         });
 
 
+        //Listeners for the print and export button on the top right side of the GUI
+        Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
+        Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
+
+        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is, look the same under xfce ubuntu
+        printBtnPane.setCursor(Cursor.HAND);
+        exportBtnPane.setCursor(Cursor.OPEN_HAND);
+
+        printBtnPane.setOnMouseClicked(event -> {
+            System.out.println("Print report");
+            printer.print();
+        });
+
+        exportBtnPane.setOnMouseClicked(event -> {
+            //TODO implement exporting, and link back to here when done
+            System.out.println("Export data");
+            exportPopup.show();
+        });
+
 
         loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
+        /*loadAirportButton.getStyleClass().add("loadBtn");
+        loadAirportButton.getStylesheets().add("styles/fileTab.css");*/
         loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Click !");
-                File xmlFileToLoad = fileChooser.showOpenDialog(primaryStage);
+                File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
                 if (xmlFileToLoad == null){
                     System.err.println("User did not select a file");
                     return;
@@ -770,37 +1017,41 @@ public class GUI extends Application {
                 airportConfigs.put(ac.getName(), ac);
                 updateAirportSelects();
 
+                notifyUpdate("Airport config loaded");
                 //tabPane.getSelectionModel().select(1);
             }
         });
 
-        planePane.hoverProperty().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean rotate) {
-                //Ignore the hover property when the plane is taking off or landing
-                if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
-                    return;
-                }
+        startBtn = (Button) primaryStage.getScene().lookup("#startBtn");
+        /*startBtn.getStyleClass().add("loadBtn");
+        startBtn.getStylesheets().add("styles/fileTab.css");*/
+        startBtn.setOnMouseClicked(event -> {
+            System.out.println("Tab Switched!");
+            takeOffTransition.play();
+            //tabPane.getSelectionModel().select(1);
+        });
 
-                //Rotate on mouse over, return to original state on mouse leave
-                if (rotate){
-                    rotateTransition.play();
-                } else {
-                    reverseRotateTransition.play();
-                }
+        planePane.hoverProperty().addListener((observable, oldValue, rotate) -> {
+            //Ignore the hover property when the plane is taking off or landing
+            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
+                return;
+            }
+
+            //Rotate on mouse over, return to original state on mouse leave
+            if (rotate){
+                rotateTransition.play();
+            } else {
+                reverseRotateTransition.play();
             }
         });
 
-        /*airportSelect.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                System.out.println("Heeere");
-            }
-        });*/
-        Map<String, AirportConfig> airportConfigsDB = fileIO.readRunwayDB("runways.csv");
-        airportConfigs.putAll(airportConfigsDB);
         updateAirportSelects();
 
+        printer = new Printer(primaryStage);
+        printer.setRunway(canvas);
+        printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
+
+        enableTooltips();
     }
 
     private Region getHGrowingRegion(){
@@ -832,49 +1083,75 @@ public class GUI extends Application {
         }
     }
 
-
-
     public Popup createAddObstaclePopup(){
         Popup popup = new Popup();
 
         VBox rootBox = new VBox(20);
+        rootBox.getStylesheets().add("styles/global.css");
+        rootBox.getStylesheets().add("styles/layoutStyles.css");
+        rootBox.getStylesheets().add("styles/obstacles.css");
+        HBox emptyNameBox = new HBox();
+        HBox emptyHeightBox = new HBox();
         HBox nameBox = new HBox(20);
         HBox heightBox = new HBox(20);
         HBox buttonsBox = new HBox();
         Region nameRegion = new Region();
         Region heightRegion = new Region();
         Region buttonsRegion = new Region();
-        Label nameLbl, heightLbl;
-        TextField nameTF, heightTF;
+        Label nameLbl, heightLbl, nameRequiredLbl, heightRequiredLbl;
         Button addObstacleBtn, cancelBtn;
 
         nameLbl = new Label("Name");
-        heightLbl = new Label("Height (m)");
+        nameLbl.getStyleClass().add("popUpTitles");
+        nameLbl.getStylesheets().add("styles/layoutStyles.css");
 
-        nameTF = new TextField();
-        nameTF.setPromptText("Enter obstacle name");
-        heightTF = new TextField();
+        heightLbl = new Label("Height");
+        heightLbl.getStyleClass().add("popUpTitles");
+        heightLbl.getStylesheets().add("styles/layoutStyles.css");
 
-        heightTF.setPromptText("Enter obstacle height");
+        addObstacleNameTF = new TextField();
+        addObstacleHeightTF = new TextField();
+
+
+        addObstacleNameTF.getStyleClass().add("redErrorPromptText");
+        addObstacleNameTF.getStylesheets().add("styles/obstacles.css");
+        addObstacleHeightTF.getStyleClass().add("redErrorPromptText");
+        addObstacleHeightTF.getStylesheets().add("styles/obstacles.css");
+
+        nameRequiredLbl = new Label("");
+        heightRequiredLbl = new Label("");
+
+        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
+        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
 
         addObstacleBtn = new Button("Add");
+        addObstacleBtn.getStyleClass().add("primaryButton");
+        addObstacleBtn.getStylesheets().add("styles/global.css");
         cancelBtn = new Button("Cancel");
+        cancelBtn.getStyleClass().add("primaryButton");
+        cancelBtn.getStylesheets().add("styles/global.css");
 
         HBox.setHgrow(nameRegion, Priority.ALWAYS);
         HBox.setHgrow(heightRegion, Priority.ALWAYS);
         HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
 
+        emptyNameBox.getChildren().add(nameRequiredLbl);
+        emptyHeightBox.getChildren().add(heightRequiredLbl);
+
         nameBox.getChildren().add(nameLbl);
         nameBox.getChildren().add(nameRegion);
-        nameBox.getChildren().add(nameTF);
+        nameBox.getChildren().add(addObstacleNameTF);
 
         heightBox.getChildren().add(heightLbl);
         heightBox.getChildren().add(heightRegion);
-        heightBox.getChildren().add(heightTF);
+        heightBox.getChildren().add(addObstacleHeightTF);
 
         buttonsBox.getChildren().add(addObstacleBtn);
         buttonsBox.getChildren().add(buttonsRegion);
         buttonsBox.getChildren().add(cancelBtn);
+
 
         rootBox.getChildren().add(nameBox);
         rootBox.getChildren().add(heightBox);
@@ -883,21 +1160,69 @@ public class GUI extends Application {
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
 
-        //HERE - can't change from red to grey easily
         addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText()))) && validateStrForm(new ArrayList<>(Arrays.asList(nameTF.getText())))){
-                    System.out.println("Add obstacle");
-                    addObstacle(nameTF.getText(), Double.parseDouble(heightTF.getText()));
-                    nameTF.clear();
-                    heightTF.clear();
-                    heightTF.setPromptText("Enter obstacle height");
-                    updateObstaclesList();
-                    addObstaclePopup.hide();
-                } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(heightTF.getText())))) {
-                    heightTF.clear();
-                    heightTF.setPromptText("Invalid obstacle height!");
+                // Checking for empty name and height fields
+                if (addObstacleNameTF.getText().isEmpty()) {
+                    nameRequiredLbl.setText("                                             This field is required");
+                    if (!rootBox.getChildren().contains(emptyNameBox)) {
+                        rootBox.getChildren().add(0, emptyNameBox);
+                    }
+                    addObstacleNameTF.setPromptText("");
+                } else {
+                    if (rootBox.getChildren().contains(emptyNameBox)) {
+                        rootBox.getChildren().remove(emptyNameBox);
+                    }
+                    nameRequiredLbl.setText("");
+                }
+                if (addObstacleHeightTF.getText().isEmpty()) {
+                    heightRequiredLbl.setText("                                             This field is required");
+                    if (rootBox.getChildren().contains(emptyNameBox)) {
+                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                            rootBox.getChildren().add(2, emptyHeightBox);
+                        }
+                    } else {
+                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                            rootBox.getChildren().add(1, emptyHeightBox);
+                        }
+                    }
+                    addObstacleHeightTF.setPromptText("");
+                } else {
+                    if (rootBox.getChildren().contains(emptyHeightBox)) {
+                        rootBox.getChildren().remove(emptyHeightBox);
+                    }
+                    heightRequiredLbl.setText("");
+                }
+
+                // Checking for valid obstacle name and valid obstacle height
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(addObstacleHeightTF.getText()))) && !addObstacleNameTF.getText().isEmpty()) {
+                    boolean matchFound = false;
+                    for (String obstacleName : allObstaclesSorted.keySet()) {
+                        if (addObstacleNameTF.getText().equals(obstacleName)) {
+                            displayOverwritePrompt(obstacleName, allObstaclesSorted.get(obstacleName).getHeight(), Double.parseDouble(addObstacleHeightTF.getText()));
+                            matchFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!matchFound) {
+                        System.out.println("Add obstacle");
+                        addObstacle(addObstacleNameTF.getText(), Double.parseDouble(addObstacleHeightTF.getText()));
+                        addObstacleNameTF.clear();
+                        addObstacleHeightTF.clear();
+                        addObstacleNameTF.setPromptText("");
+                        addObstacleHeightTF.setPromptText("");
+                        updateObstaclesList();
+                        addObstaclePopup.hide();
+
+                        //notify user obstacle was added
+                        notifyUpdate("Obstacle added");
+                    }
+
+                } else if (!addObstacleHeightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(addObstacleHeightTF.getText())))) {
+                    addObstacleHeightTF.clear();
+                    addObstacleHeightTF.setPromptText("Invalid obstacle height!");
                 }
 
             }
@@ -906,9 +1231,18 @@ public class GUI extends Application {
         cancelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                nameTF.clear();
-                heightTF.clear();
-                heightTF.setPromptText("Enter obstacle height");
+                if (rootBox.getChildren().contains(emptyNameBox)) {
+                    rootBox.getChildren().remove(emptyNameBox);
+                }
+                if (rootBox.getChildren().contains(emptyHeightBox)) {
+                    rootBox.getChildren().remove(emptyHeightBox);
+                }
+                nameRequiredLbl.setText("");
+                heightRequiredLbl.setText("");
+                addObstacleNameTF.clear();
+                addObstacleNameTF.setPromptText("");
+                addObstacleHeightTF.clear();
+                addObstacleHeightTF.setPromptText("");
                 addObstaclePopup.hide();
             }
         });
@@ -919,9 +1253,9 @@ public class GUI extends Application {
         return popup;
     }
 
-    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage) {
 
-        //TODO the edit button should toggle editing of the current obstacle
+    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
+
         editingObstacle = false;
 
         String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
@@ -939,23 +1273,80 @@ public class GUI extends Application {
         Label nameLabel = new Label ("Name:");
         Label nameContentLabel = new Label(selectedObstacle.getName());
         TextField nameEditTF = new TextField();
+        nameEditTF.setPrefWidth(240);
         Label heightLabel = new Label ("Height:");
-        Label heightContentLabel = new Label(String.valueOf(selectedObstacle.getHeight()) + "m");
+        Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
-        Button returnButton = new Button("Go back");
-        Button editButton = new Button("Edit");
+        heightEditTF.setPrefWidth(240);
 
-        detailsLabel.setStyle("-fx-font-size: 18px");
-        nameLabel.setStyle("-fx-font-weight: BOLD");
-        heightLabel.setStyle("-fx-font-weight: BOLD");
+        // Styling of name and height text fields to show red prompt text
+        nameEditTF.getStyleClass().add("redErrorPromptText");
+        nameEditTF.getStylesheets().add("styles/obstacles.css");
+        heightEditTF.getStyleClass().add("redErrorPromptText");
+        heightEditTF.getStylesheets().add("styles/obstacles.css");
+
+        // Content for error messages
+        Label nameRequiredLbl = new Label("");
+        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyNameBox = new HBox();
+        emptyNameBox.getChildren().add(nameRequiredLbl);
+        Label heightRequiredLbl = new Label("");
+        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyHeightBox = new HBox();
+        emptyHeightBox.getChildren().add(heightRequiredLbl);
+
+        // Styling of labels in the obstacle details popup
+        detailsLabel.getStyleClass().add("popUpTitles");
+        detailsLabel.getStylesheets().add("styles/layoutStyles.css");
+        detailsLabel.setStyle("-fx-font-size: 16px");
+        nameLabel.getStyleClass().add("popUpTitles");
+        nameLabel.getStylesheets().add("styles/layoutStyles.css");
+        nameContentLabel.getStyleClass().add("popUpText");
+        nameContentLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightLabel.getStyleClass().add("popUpTitles");
+        heightLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightContentLabel.getStyleClass().add("popUpText");
+        heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
+
+        Button returnButton = new Button("Go back");
+        Button editButton = new Button("Edit details");
+        Button saveButton = new Button("Save changes");
+
+        // Styling of buttons in the obstacle details popup
+        returnButton.getStyleClass().add("primaryButton");
+        returnButton.getStylesheets().add("styles/global.css");
+        editButton.getStyleClass().add("primaryButton");
+        editButton.getStylesheets().add("styles/global.css");
+        saveButton.getStyleClass().add("primaryButton");
+        saveButton.getStylesheets().add("styles/global.css");
 
         HBox nameHBox = new HBox(20);
         nameHBox.getChildren().add(nameLabel);
         nameHBox.getChildren().add(nameContentLabel);
 
-        HBox heightHBox = new HBox(15);
+        HBox heightHBox = new HBox(13.5);
         heightHBox.getChildren().add(heightLabel);
         heightHBox.getChildren().add(heightContentLabel);
+
+        subBox.getChildren().add(editButton);
+        subBox.getChildren().add(returnButton);
+        box.getChildren().add(detailsLabel);
+        box.getChildren().add(nameHBox);
+        box.getChildren().add(heightHBox);
+        box.getChildren().add(subBox);
+
+        detailsPopUp.getContent().add(box);
+
+        //TODO - position the show obstacle details popup according to window size
+        //TODO ask Jasmine if she wants to center it - also, seems that getWidth get Height is correct. Also, what's the point? looks good the way it is.
+        Node eventSource = (Node) event.getSource();
+        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
+        detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
+        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
+        System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
+        detailsPopUp.show(primaryStage);
 
         returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -964,13 +1355,98 @@ public class GUI extends Application {
             }
         });
 
-        editButton.setPadding(new Insets(2, 10, 2, 10));
+
+        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                // Checking for empty name and height fields
+                if (nameEditTF.getText().isEmpty()) {
+                    nameRequiredLbl.setText("                                       This field is required");
+                    if (!box.getChildren().contains(emptyNameBox)) {
+                        box.getChildren().add(1, emptyNameBox);
+                    }
+                    nameEditTF.setPromptText("");
+                } else {
+                    if (box.getChildren().contains(emptyNameBox)) {
+                        box.getChildren().remove(emptyNameBox);
+                    }
+                    nameRequiredLbl.setText("");
+                }
+                if (heightEditTF.getText().isEmpty()) {
+                    heightRequiredLbl.setText("                                       This field is required");
+                    if (box.getChildren().contains(emptyNameBox)) {
+                        if (!box.getChildren().contains(emptyHeightBox)) {
+                            box.getChildren().add(3, emptyHeightBox);
+                        }
+                    } else {
+                        if (!box.getChildren().contains(emptyHeightBox)) {
+                            box.getChildren().add(2, emptyHeightBox);
+                        }
+                    }
+                    heightEditTF.setPromptText("");
+                } else {
+                    if (box.getChildren().contains(emptyHeightBox)) {
+                        box.getChildren().remove(emptyHeightBox);
+                    }
+                    heightRequiredLbl.setText("");
+                }
+                // Checking for valid obstacle name and valid obstacle height
+                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
+                    System.out.println("Add -edited- obstacle");
+                    if (typeOfList.equals("predefined")) {
+                        predefinedObstaclesSorted.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        predefinedObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+
+                        updateObstaclesList();
+                        detailsPopUp.hide();
+                    } else if (typeOfList.equals("userDefined")) {
+                        userDefinedObstacles.remove(selectedObstacle.getName());
+                        allObstaclesSorted.remove(selectedObstacle.getName());
+                        selectedObstacle.setName(nameEditTF.getText());
+                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
+                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+
+                        nameContentLabel.setText(selectedObstacle.getName());
+                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+
+                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+
+                        updateObstaclesList();
+                        detailsPopUp.hide();
+                    }
+
+                } else if (!heightEditTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText())))) {
+                    heightEditTF.clear();
+                    heightEditTF.setPromptText("Invalid obstacle height!");
+                }
+            }
+        });
+
         editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 editingObstacle = !editingObstacle;
                 if (editingObstacle){
                     //Edit mode
+
+                    nameLabel.setText("Name");
+                    heightLabel.setText("Height (m)");
+
+                    nameHBox.setSpacing(55);
+                    subBox.setSpacing(132);
+
                     nameHBox.getChildren().remove(nameContentLabel);
                     nameHBox.getChildren().add(nameEditTF);
 
@@ -980,68 +1456,75 @@ public class GUI extends Application {
                     nameEditTF.setText(selectedObstacle.getName());
                     heightEditTF.setText(Double.toString(selectedObstacle.getHeight()));
 
+                    detailsLabel.setText("Edit obstacle details");
 
-                    editButton.setText("Save");
-                } else {
-                    //Save mode
-                    nameHBox.getChildren().add(nameContentLabel);
-                    nameHBox.getChildren().remove(nameEditTF);
+                    subBox.getChildren().remove(returnButton);
+                    subBox.getChildren().remove(editButton);
+                    subBox.getChildren().add(saveButton);
+                    subBox.getChildren().add(returnButton);
 
-                    heightHBox.getChildren().add(heightContentLabel);
-                    heightHBox.getChildren().remove(heightEditTF);
-
-                    userDefinedObstacles.remove(selectedObstacle.getName());
-                    selectedObstacle.setName(nameEditTF.getText());
-                    selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                    userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
-
-                    nameContentLabel.setText(selectedObstacle.getName());
-                    heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
-
-                    updateObstaclesList();
-
-                    editButton.setText("Edit");
+                    returnButton.setText("Cancel");
                 }
             }
         });
 
 
-
-
-
-        subBox.setAlignment(Pos.CENTER);
-        subBox.getChildren().add(editButton);
-        subBox.getChildren().add(returnButton);
-        box.getChildren().add(detailsLabel);
-        box.getChildren().add(nameHBox);
-        box.getChildren().add(heightHBox);
-        box.getChildren().add(subBox);
-
-
-        detailsPopUp.getContent().add(box);
-
-        Node eventSource = (Node) event.getSource();
-        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-        detailsPopUp.setX(sourceNodeBounds.getMinX() - 260.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 190.0);
-
-        detailsPopUp.show(primaryStage);
-
     }
 
-    public Stage createAddAirportPopup(Stage primaryStage){
+
+    public Stage createAddAirportPopup(){
         Stage stage = new Stage();
         stage.setTitle("Add Airport");
 
         //Components for the popups
         Button confirmButton = new Button("Add");
         Button cancelButton = new Button("Cancel");
-        TextField airportName, airportCode;
+        TextField airportName;
         Label airportNameLbl, airportCodeLbl;
+        ListView airportSuggestions;
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
+
+        //Setting the tooltip
         airportCode = new TextField();
+        airportCode.setTooltip(airportCodeTooltip);
+
+        airportSuggestions = new ListView();
+        airportSuggestions.setMaxHeight(100);
+
+        //Add auto-completion to the airport code
+        airportCode.setOnKeyReleased(event -> {
+            airportSuggestions.getItems().clear();
+            System.out.println("text is " + airportCode.getText());
+            if (event.getCode() == KeyCode.BACK_SPACE){
+                return;
+            }
+            if (airportCode.getText().length() > 0){
+                airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
+                if (airportSuggestions.getItems().size() == 1){
+                    String suggestedAirportName = (String) airportSuggestions.getItems().get(0);
+                    airportName.setText((String) airportSuggestions.getItems().get(0));
+                    airportCode.setText(airportDB.getEntryReversed(suggestedAirportName));
+                    airportCode.positionCaret(airportCode.getText().length());
+                }
+            } else {
+                airportSuggestions.getItems().clear();
+            }
+        });
+
+        //On double click in the suggestions, add to the
+        //TODO we can also do on single click - what do you guys think?
+        airportSuggestions.setOnMouseClicked(event -> {
+            if (event.getClickCount() == 2){
+                String selectedAirportName = (String) airportSuggestions.getSelectionModel().getSelectedItem();
+                System.out.println(selectedAirportName);
+                airportName.setText(selectedAirportName);
+                airportCode.setText(airportDB.getEntryReversed(selectedAirportName));
+            } else {
+                System.out.println("Not a double click");
+            }
+        });
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox();
@@ -1052,12 +1535,14 @@ public class GUI extends Application {
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
 
+        gridPane.getStylesheets().add("styles/global.css");
 
         gridPane.add(airportNameLbl, 0, 0);
         gridPane.add(airportName, 1, 0);
         gridPane.add(airportCodeLbl, 0, 1);
         gridPane.add(airportCode, 1, 1);
-        gridPane.add(hbox, 1, 2);
+        gridPane.add(airportSuggestions, 1, 2, 2, 1);
+        gridPane.add(hbox, 1, 3);
         Scene scene = new Scene(gridPane);
 
         //Add some spacing around and in between the cells
@@ -1065,33 +1550,28 @@ public class GUI extends Application {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(5, 5, 5, 5));
 
+        confirmButton.getStyleClass().add("primaryButton");
+        cancelButton.getStyleClass().add("primaryButton");
+
         //On confirm button, add the airport to the list of known airports
-        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
-                AirportConfig airportConfig = new AirportConfig(airportName.getText());
-                airportConfigs.put(airportConfig.getName(), airportConfig);
-                updateAirportSelects();
-                addAirportPopup.hide();
-                addRunwayPopup.show();
-            }
+        confirmButton.setOnMouseClicked(event -> {
+            System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+            AirportConfig airportConfig = new AirportConfig(airportName.getText());
+            airportConfigs.put(airportConfig.getName(), airportConfig);
+            updateAirportSelects();
+            addAirportPopup.hide();
+            addRunwayPopup.show();
         });
 
         //Simply close the popup, discarding the data
-        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                addAirportPopup.hide();
-            }
-        });
+        cancelButton.setOnMouseClicked(event -> addAirportPopup.hide());
 
         stage.setScene(scene);
         return stage;
     }
 
 
-    public Stage createAddRunwayPopup(Stage primaryStage){
+    public Stage createAddRunwayPopup(){
         Stage stage = new Stage();
         stage.setTitle("Add Runway");
 
@@ -1217,6 +1697,97 @@ public class GUI extends Application {
         return stage;
     }
 
+    //TODO - position according to window size
+    private void displayDeletePrompt(String obstacleName) {
+        Stage deleteWindow = new Stage();
+        deleteWindow.initModality(Modality.APPLICATION_MODAL);
+        deleteWindow.setTitle("Delete Obstacle");
+
+        // Components for the delete obstacle window
+
+        Label confirmationLabel = new Label("Are you sure you want to delete " + obstacleName + "?");
+        confirmationLabel.setWrapText(true);
+        confirmationLabel.setTextAlignment(TextAlignment.CENTER);
+        Button cancelDeletion = new Button ("Cancel");
+        Button confirmDeletion = new Button ("Delete");
+
+        HBox buttonsBox = new HBox(20);
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
+        VBox windowLayout = new VBox(10);
+        windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
+        windowLayout.setAlignment(Pos.CENTER);
+
+        cancelDeletion.setOnAction(e -> deleteWindow.close());
+        confirmDeletion.setOnAction(e -> {
+            removeUserObstacle();
+            updateObstaclesList();
+            deleteWindow.close();
+        } );
+
+        Scene scene = new Scene(windowLayout, 300, 100);
+        deleteWindow.setScene(scene);
+        deleteWindow.showAndWait();
+    }
+
+    //TODO - position according to window size
+    private void displayOverwritePrompt(String obstacleName, double currentHeight, double newHeight) {
+        Stage overwriteWindow = new Stage();
+        overwriteWindow.initModality(Modality.APPLICATION_MODAL);
+        overwriteWindow.setTitle("Overwrite Obstacle");
+
+        // Components for the overwrite obstacle details window
+        Label overwriteLabel = new Label("");
+        overwriteLabel.setWrapText(true);
+        overwriteLabel.setTextAlignment(TextAlignment.CENTER);
+
+        if (predefinedObstaclesSorted.containsKey(obstacleName)) {
+            overwriteLabel.setText(obstacleName + " already exists in the list of predefined obstacles. Do you wish to overwrite " +
+                    "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
+        } else {
+            overwriteLabel.setText(obstacleName + " already exists in the list of user-defined obstacles. Do you wish to overwrite " +
+                    "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
+        }
+
+        Button cancelOverwrite = new Button ("Cancel");
+        Button confirmOverwrite= new Button ("Overwrite");
+
+        HBox buttonsBox = new HBox(20);
+        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.getChildren().addAll(confirmOverwrite, cancelOverwrite);
+        VBox windowLayout = new VBox(10);
+        windowLayout.getChildren().addAll(overwriteLabel, buttonsBox);
+        windowLayout.setAlignment(Pos.CENTER);
+
+        cancelOverwrite.setOnAction(e -> overwriteWindow.close());
+
+        confirmOverwrite.setOnAction(e -> {
+
+            allObstaclesSorted.remove(obstacleName);
+            Obstacle modifiedObstacle = new Obstacle(obstacleName, newHeight);
+            allObstaclesSorted.put(obstacleName, modifiedObstacle);
+
+            if (predefinedObstaclesSorted.containsKey(obstacleName)) {
+                predefinedObstaclesSorted.remove(obstacleName);
+                predefinedObstaclesSorted.put(obstacleName, modifiedObstacle);
+            }
+            else {
+                userDefinedObstacles.remove(obstacleName);
+                userDefinedObstacles.put(obstacleName, modifiedObstacle);
+            }
+
+            updateObstaclesList();
+            addObstacleNameTF.clear();
+            addObstacleHeightTF.clear();
+            addObstaclePopup.hide();
+            notifyUpdate("Obstacle overwritten");
+            overwriteWindow.close();
+        } );
+
+        Scene scene = new Scene(windowLayout, 400, 100);
+        overwriteWindow.setScene(scene);
+        overwriteWindow.showAndWait();
+    }
     private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
@@ -1224,16 +1795,25 @@ public class GUI extends Application {
 
 
     private void switchCalculationsTabToView(){
+        centreLineRequiredLabel.setText("");
+        thresholdDistanceRequiredLabel.setText("");
+        thresholdRequiredLabel.setText("");
+        obstacleRequiredLabel.setText("");
         calculationsPane.getChildren().remove(calculationsRootBox);
         calculationsPane.getChildren().add(viewCalculationResultsVBox);
     }
 
     private void updateRunwayInfoLabels(RunwayPair runwayPair){
-        runwayDesignatorCntLbl.setText(runwayPair.getName());
-        toraCntLbl.setText(runwayPair.getR1().getTORA() + " / " + runwayPair.getR2().getTORA());
-        todaCntLbl.setText(runwayPair.getR1().getTODA() + " / " + runwayPair.getR2().getTODA());
-        asdaCntLbl.setText(runwayPair.getR1().getASDA() + " / " + runwayPair.getR2().getASDA());
-        ldaCntLbl.setText(runwayPair.getR1().getLDA() + " / " + runwayPair.getR2().getLDA());
+        runwayDesignatorCntLbl.setText(" " + runwayPair.getR1().getRunwayDesignator().toString());
+        runwayDesignatorLbl2.setText(" " + runwayPair.getR2().getRunwayDesignator().toString());
+        toraCntLbl.setText(" " + runwayPair.getR1().getTORA());
+        todaCntLbl.setText(" " + runwayPair.getR1().getTODA());
+        asdaCntLbl.setText(" " + runwayPair.getR1().getASDA());
+        ldaCntLbl.setText(" " + runwayPair.getR1().getLDA());
+        toraCntLbl2.setText(" " + runwayPair.getR2().getTORA());
+        todaCntLbl2.setText(" " + runwayPair.getR2().getTODA());
+        asdaCntLbl2.setText(" " + runwayPair.getR2().getASDA());
+        ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
     }
 
     public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated){
@@ -1269,17 +1849,16 @@ public class GUI extends Application {
             userDefinedObstacles.remove(obstacleName);
             allObstaclesSorted.remove(obstacleName);
 
+            notifyUpdate("Obstacle removed");
         }
-
-
-
-
     }
 
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.keySet());
+        predefinedObstaclesLV.getItems().clear();
+        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
         obstacleSelect.getItems().clear();
         obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
     }
@@ -1335,7 +1914,7 @@ public class GUI extends Application {
             } catch (NumberFormatException e){
                 return false;
             }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 100) {
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
                 return false;
             }
         }
@@ -1353,25 +1932,39 @@ public class GUI extends Application {
         return true;
     }
 
-    private Boolean validateStrForm(ArrayList<String> strVals){
-        for (String s : strVals){
-            if (s.length() < 1){
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void addObstacle(String name, double height){
+    public void addObstacle(String name, double height) {
         Obstacle obstacle = new Obstacle(name, height);
         addObstacle(obstacle);
     }
 
-    private void addObstacle(Obstacle obstacle){
+    private void addObstacle(Obstacle obstacle) {
         this.userDefinedObstacles.put(obstacle.getName(), obstacle);
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
+    private void notifyUpdate(String message){
+        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
+    }
+
+    private void disableTooltips() {
+        highlightTodaBtn.setTooltip(null);
+        highlightToraBtn.setTooltip(null);
+        highlightAsdaBtn.setTooltip(null);
+        highlightLdaBtn.setTooltip(null);
+        addObstacleHeightTF.setTooltip(null);
+        centrelineTF.setTooltip(null);
+        distanceFromThresholdTF.setTooltip(null);
+    }
+
+    private void enableTooltips() {
+        highlightTodaBtn.setTooltip(todaButtonTooltip);
+        highlightToraBtn.setTooltip(toraButtonTooltip);
+        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
+        highlightLdaBtn.setTooltip(ldaButtonTooltip);
+        addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
+        centrelineTF.setTooltip(centrelineDistTooltip);
+        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+    }
 
     public static void main(String[] args) {
         launch(args);

@@ -1,0 +1,21 @@
+#mainPane{
+    -fx-background-color: -fx-secondary-color;
+    -fx-min-height: 100px;
+    -fx-min-width: 200px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}
+
+.label{
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.root.popup{
+    -fx-background-color: -fx-error-color;
+    -fx-min-height: 100px;
+    -fx-min-width: 200px;
+    -fx-border-radius: 20px;
+    -fx-background-radius: 20px;
+}

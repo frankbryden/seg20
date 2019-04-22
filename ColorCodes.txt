@@ -1,0 +1,21 @@
+Contains the codes of all the colours used in the software.
+
+Blues:
+#20B9F9 - runway table lighest
+#1B88BB - primary
+#0F5875 - designator button
+#075170 - header
+#0F475F - designator button hover
+#103B52 - secondary (all labels text)
+
+Red:
+#DE4646 - errors
+
+Canvas:
+#FFD700 - Top-down view
+#3c434f - runway
+#FF0000 - obstacle
+#008000 - clearway
+#FFC0CB - stopway
+#87CEEB - side-on view (top)
+#FDF5E6 - side-on view (bottom)

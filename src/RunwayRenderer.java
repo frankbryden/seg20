@@ -1,10 +1,12 @@
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.transform.*;
+import javafx.stage.Window;
 import javafx.util.Pair;
 
 import java.awt.*;
@@ -23,7 +25,11 @@ public class RunwayRenderer {
 
     //Tranform properties
     private int rotation;
-    private int zoom;
+    private int zoomDelta;
+    private double currentZoom;
+    public static final double MIN_ZOOM = 0.2;
+    public static final double MAX_ZOOM = 2.2;
+    public static final double ZOOM_STEP = (MAX_ZOOM - MIN_ZOOM)/30;
 
     //Tranforms
     private Affine scaleAffine;
@@ -41,6 +47,13 @@ public class RunwayRenderer {
     //used to create a gap in the lines to display a textual label
     private double lableWidth = 25;
 
+    //Dynamic rendering properties
+    private boolean renderLabelLines = true;
+    private boolean renderRunwayRotated = false;
+    private boolean renderWindCompass = true;
+    private Color topDownBackgroundColor = Color.GOLD;
+    private Color sideOnBackgroundColor = Color.SKYBLUE;
+
     private List<Pair<Line, String>> labelLines;
     private RunwayParams currentlyHighlightedParam = RunwayParams.NONE;
 
@@ -51,13 +64,15 @@ public class RunwayRenderer {
         this.scaleAffine = new Affine(new Scale(1, 1, getCenterX(), getCenterY()));
         this.translateAffine = new Affine(new Translate(0, 0));
         this.mouseLoc = new Point(0, 0);
-        this.zoom = 1;
+        this.zoomDelta = 1;
+        this.currentZoom = 0;
         this.translateX = 0;
         this.translateY = 0;
         this.windAngle = -1;
         this.red = 50;
         this.initParams();
         this.runwayRenderParams.init();
+        this.setZoom(MIN_ZOOM + (MAX_ZOOM-MIN_ZOOM)/3);
     }
 
 
@@ -79,6 +94,7 @@ public class RunwayRenderer {
 
     public void drawObstacle(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String selectedTresholdName, String unselectedTresholdName){
 
+        Image planeImage;
         int selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
         int unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
         System.out.println("Draw obstacle, runways are : " + selected + unSelected);
@@ -92,16 +108,37 @@ public class RunwayRenderer {
             System.out.println(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR2()*1.0);
             System.out.println("Shifting the obstacle by " + obstacleShift + "m");
 
+            planeImage = new Image("/rec/object-airplaneLeft.png");
+
         } else {
+            planeImage = new Image("/rec/object-airplaneRight.png");
             System.out.println("using runway instead " + runwayPair.getR1().getRunwayDesignator().toString());
             objectStartX = runwayRenderParams.getRunwayStartX() + (int)(distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR1()*1.0 * runwayRenderParams.getRunwayLength());
         }
         // Not too happy with this following line ._.
         //Rectangle obstacle = new Rectangle(objectStartPosition,this.graphicsContext.getCanvas().getHeight()/2 - 25,this.graphicsContext.getCanvas().getWidth() / 30 ,height * this.graphicsContext.getCanvas().getHeight() / 200);
 
-        Rectangle obstacleRect = new Rectangle(objectStartX,runwayRenderParams.getRunwayCenterlineY(),10 ,20);
+        int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
+        double maxHeight = this.graphicsContext.getCanvas().getHeight();
+        // 100 height scaled to the length of the runway
+        int obstacleHeight = (int) (obstacle.getHeight() * maxHeight) / 100;
+        // 80 m length of airplane
+        int obstacleWidth = (int) ( maxWidth) * 80 / 1000;
+        runwayRenderParams.setObstacleHeight(obstacleHeight);
+        runwayRenderParams.setObastacleWidth(obstacleWidth);
 
-        drawRect(obstacleRect, Color.RED);
+        if(obstacle.getName().contains("Airbus") || obstacle.getName().contains("Boeing")){
+
+            this.graphicsContext.drawImage(planeImage,objectStartX,runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth, obstacleHeight);
+        }else{
+            Rectangle obstacleRect = new Rectangle(objectStartX, runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth/4, obstacleHeight);
+            drawRect(obstacleRect, Color.RED);
+        }
+
+        //obstacle will not cover the take off message
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
+
+
     }
 
     public void initParams(){
@@ -168,17 +205,43 @@ public class RunwayRenderer {
         }
         rotationAngle -= 9;
         Affine rotate = new Affine(new Rotate(rotationAngle*10, getCenterX(), getCenterY()));
-        Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
-        if (zoom > 0){
+//        Scale myScale = new Scale(1.04, 1.04, getCenterX(), getCenterY());
+        Scale myScale = new Scale(currentZoom, currentZoom, getCenterX(), getCenterY());
+        scaleAffine.setToTransform(new Scale(currentZoom, currentZoom, getCenterX(), getCenterY()));
+        //we can zoomDelta, just decide whether user wants to zoomDelta in or zoomDelta out
+        if (zoomDelta > 0){
             scaleAffine.append(myScale);
-        } else if (zoom < 0){
+        } else if (zoomDelta < 0){
             try {
                 scaleAffine.append(myScale.createInverse());
             } catch (NonInvertibleTransformException e) {
                 e.printStackTrace();
             }
         }
-        zoom = 0;
+
+        //Clamp zoomDelta to boundary levels, as Jasmine wanted
+        if (scaleAffine.getMxx() > MAX_ZOOM){
+            scaleAffine.setMxx(MAX_ZOOM);
+            scaleAffine.setMyy(MAX_ZOOM);
+            scaleAffine.setToTransform(new Scale(MAX_ZOOM, MAX_ZOOM, getCenterX(), getCenterY()));
+        } else if (scaleAffine.getMxx() < MIN_ZOOM) {
+            scaleAffine.setMxx(MIN_ZOOM);
+            scaleAffine.setMyy(MIN_ZOOM);
+            scaleAffine.setToTransform(new Scale(MIN_ZOOM, MIN_ZOOM, getCenterX(), getCenterY()));
+        }
+
+        //System.out.println(scaleAffine.toString());
+
+
+        //Did a zoomDelta happen? if one did happen, we need to notify user along with resetting the delta
+        if (zoomDelta != 0){
+            int zoomLevel = (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
+            Window window = graphicsContext.getCanvas().getScene().getWindow();
+            new Notification("Zoom level : " + zoomLevel + "%").show(window, window.getX() + graphicsContext.getCanvas().getLayoutX(), window.getY() + graphicsContext.getCanvas().getLayoutY());
+            zoomDelta = 0;
+        }
+
+
 
         Translate myTranslate = new Translate(translateX, translateY);
         translateX = 0;
@@ -186,7 +249,7 @@ public class RunwayRenderer {
         translateAffine.append(myTranslate);
 
         //Draw background
-        graphicsContext.setFill(Color.GOLD);
+        graphicsContext.setFill(topDownBackgroundColor);
         //graphicsContext.setFill(Color.rgb(red, 0, 0));
         red += 5;
         if (red > 255){
@@ -197,7 +260,9 @@ public class RunwayRenderer {
         //Rotate runway as per orientation of it
         graphicsContext.save();
         graphicsContext.transform(translateAffine);
-        graphicsContext.transform(rotate);
+        if (renderRunwayRotated){
+            graphicsContext.transform(rotate);
+        }
         graphicsContext.transform(scaleAffine);
 
 
@@ -265,14 +330,17 @@ public class RunwayRenderer {
         //this.graphicsContext.fillText("SEG BAFFI", 20, 20);
 
         //And the labels identifying the runway params
-        for (Pair<Line, String> line : labelLines){
-            graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
-            graphicsContext.setStroke(Color.BLACK);
-            renderParamLine(line);
+        if (renderLabelLines){
+            for (Pair<Line, String> line : labelLines){
+                graphicsContext.setFont(new Font(runwayRenderParams.getLabelFontSize()));
+                graphicsContext.setStroke(Color.BLACK);
+                renderParamLine(line);
+            }
         }
+
         graphicsContext.restore();
 
-        if (this.windAngle != -1){
+        if (windAngle != -1 && renderWindCompass){
             Pair<Line, Line> lines = getWindLinePair();
             drawLine(lines.getKey(), Color.BLUE);
             drawLine(lines.getValue(), Color.RED);
@@ -289,30 +357,12 @@ public void renderSideview(){
 
         graphicsContext.clearRect(0,0,maxWidth,maxHeight);
         //set environment color
-        graphicsContext.setFill(Color.SKYBLUE);
+        graphicsContext.setFill(sideOnBackgroundColor);
         graphicsContext.fillRect(0, 0, maxWidth, maxHeight/2);
         graphicsContext.setFill(Color.OLDLACE);
         graphicsContext.fillRect(0, maxHeight/2, maxWidth, maxHeight);
 
-        Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
-        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
-        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setStroke(Color.BLACK);
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
-
-        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
-        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
-        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
-        this.graphicsContext.stroke();
-        this.graphicsContext.setFill(Color.BLACK);
-        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
-        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+        renderTakeOfMessages(maxWidth, (int) maxHeight);
 
         Rectangle runwayRect = new Rectangle(runwayRenderParams.getRunwayStartX(),runwayRenderParams.getSideOnRunwayStartY() , runwayRenderParams.getRunwayLength(), runwayRenderParams.getSideOnRunwayHeight());
         Rectangle stopAreaLeft = new Rectangle(0, maxHeight /2, runwayRenderParams.getRunwayStartX(), 7);
@@ -349,6 +399,28 @@ public void renderSideview(){
         this.graphicsContext.setFill(Color.BLACK);
         this.graphicsContext.fillText(runwayPair.getR1().getRunwayDesignator().toString(),70 , maxHeight /2 + 20);
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
+    }
+
+    public void renderTakeOfMessages(int maxWidth, int maxHeight){
+        Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
+        this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
+        this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+
+        Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
+        this.graphicsContext.moveTo(directionRight.getStartX(), directionRight.getStartY());
+        this.graphicsContext.lineTo(directionRight.getEndX(), directionRight.getEndY());
+        this.graphicsContext.stroke();
+        this.graphicsContext.setStroke(Color.BLACK);
+        this.graphicsContext.setFill(Color.BLACK);
+        renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
+        this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
+        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
     }
 
     public void renderParamLine(Pair<Line, String> labelLine){
@@ -530,8 +602,38 @@ public void renderSideview(){
     }
 
     public void updateZoom(int zoom) {
-        this.zoom = zoom;
+        this.zoomDelta = zoom;
+        System.out.println("current zoomDelta is " + zoom);
         this.render();
+    }
+
+    public void setZoom(double zoom){
+        this.currentZoom = zoom;
+        this.render();
+    }
+
+    public void incZoom(){
+        this.currentZoom += ZOOM_STEP;
+        if (this.currentZoom > MAX_ZOOM) {
+            this.currentZoom = MAX_ZOOM;
+        }
+        this.render();
+    }
+
+    public void decZoom(){
+        this.currentZoom -= ZOOM_STEP;
+        if (this.currentZoom < MIN_ZOOM){
+            this.currentZoom = MIN_ZOOM;
+        }
+        this.render();
+    }
+
+    public double getZoom(){
+        return currentZoom;
+    }
+
+    public int getZoomPercentage(){
+        return (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
     }
 
     public void setMouseLocation(int x, int y) {
@@ -556,5 +658,31 @@ public void renderSideview(){
 
     public RunwayRenderParams getRunwayRenderParams() {
         return runwayRenderParams;
+    }
+
+    public void setRenderLabelLines(boolean renderLabelLines) {
+        this.renderLabelLines = renderLabelLines;
+        this.render();
+    }
+
+    public void setRenderRunwayRotated(boolean renderRunwayRotated) {
+        this.renderRunwayRotated = renderRunwayRotated;
+        this.render();
+    }
+
+    public void setRenderWindCompass(boolean renderWindCompass) {
+        this.renderWindCompass = renderWindCompass;
+        this.render();
+    }
+
+    public void setTopDownBackgroundColor(Color topDownBackgroundColor) {
+        this.topDownBackgroundColor = topDownBackgroundColor;
+        this.render();
+    }
+
+    public void setSideOnBackgroundColor(Color sideOnBackgroundColor) {
+        System.out.println("Change ");
+        this.sideOnBackgroundColor = sideOnBackgroundColor;
+        this.renderSideview();
     }
 }
