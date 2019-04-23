@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -201,7 +202,6 @@ public class GUI extends Application {
 
         trackPane.setStyle("-fx-background-color: linear-gradient(to right, -fx-primary-color 0%, #ffffff 0%);");
 
-        //TODO add event listeners for the two new images (print and share)
 
         runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
         runwaySelect.setId("runwayComboBox");
@@ -222,6 +222,8 @@ public class GUI extends Application {
 
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
+
+                        zoomSlider.setValue(runwayRenderer.getZoom());
 
                         LiveWindService liveWindService = new LiveWindService();
                         liveWindService.setLatitude(ac.getLatitude());
@@ -328,6 +330,7 @@ public class GUI extends Application {
         saveObstacleImgView.setFitWidth(iconSize);
         saveObstacleBtn.setGraphic(saveObstacleImgView);
 
+        //TODO only save if there are obstacles to save - also show error message or notif or something
         saveObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -556,6 +559,7 @@ public class GUI extends Application {
 
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                 Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
+                Obstacle selectedObstacle = (Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem();
 
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
 
@@ -844,41 +848,46 @@ public class GUI extends Application {
         userDefinedObstaclesLV.getStyleClass().add("obstacleList");
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
-        predefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent click) {
+        predefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(predefinedObstaclesLV));
+        userDefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(userDefinedObstaclesLV));
 
-                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                    int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                    userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                    System.out.println("Obstacle in user-defined list was selected, has now been deselected");
-                }
-
-                obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem());
-
-                if (click.getClickCount() == 2) {
-                    showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
-                }
-           }
+        predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
+            System.out.println("List view got a delete for obstacle " + event.getObstacleName());
+            displayDeletePrompt(event.getObstacleName());
         });
 
-        userDefinedObstaclesLV.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
 
-            @Override
-            public void handle(MouseEvent click) {
+        });
 
-                if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                    int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                    predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                    System.out.println("Obstacle in predefined list was selected, has now been deselected");
-                }
+        predefinedObstaclesLV.setOnMouseClicked(click -> {
 
-                obstacleSelect.setValue(userDefinedObstaclesLV.getSelectionModel().getSelectedItem());
+            if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                System.out.println("Obstacle in user-defined list was selected, has now been deselected");
+            }
 
-                if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                    showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
+            obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
-                }
+            if (click.getClickCount() == 2) {
+                showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
+            }
+       });
+
+        userDefinedObstaclesLV.setOnMouseClicked(click -> {
+
+            if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                System.out.println("Obstacle in predefined list was selected, has now been deselected");
+            }
+
+            obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
+
+            if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
+                showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
+
             }
         });
 
@@ -1258,13 +1267,15 @@ public class GUI extends Application {
 
         editingObstacle = false;
 
+        //TODO rework sorting of the obstacles
         String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
-        Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
+        Obstacle selectedObstacle = (Obstacle) listView.getSelectionModel().getSelectedItem();//allObstaclesSorted.get(obstacleName);
 
         Popup detailsPopUp = new Popup();
 
         VBox box = new VBox(100);
         box.getStyleClass().add("popup");
+        box.getStylesheets().add("styles/global.css");
         box.getStylesheets().add("styles/layoutStyles.css");
 
         HBox subBox = new HBox(100);
@@ -1405,7 +1416,7 @@ public class GUI extends Application {
                         heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
 
                         int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+                        listView.getItems().set(selectedIndex, selectedObstacle);
 
                         updateObstaclesList();
                         detailsPopUp.hide();
@@ -1421,7 +1432,7 @@ public class GUI extends Application {
                         heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
 
                         int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle.getName());
+                        listView.getItems().set(selectedIndex, selectedObstacle);
 
                         updateObstaclesList();
                         detailsPopUp.hide();
@@ -1856,11 +1867,11 @@ public class GUI extends Application {
 
     private void updateObstaclesList(){
         userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.keySet());
+        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
         predefinedObstaclesLV.getItems().clear();
-        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
+        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.values());
         obstacleSelect.getItems().clear();
-        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
+        obstacleSelect.getItems().addAll(allObstaclesSorted.values());
     }
 
     private void populatePredefinedList() {
@@ -1881,7 +1892,8 @@ public class GUI extends Application {
             allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
 
-        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
+        //predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
+        predefinedObstaclesLV.getItems().addAll(obstacles);
 
         obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
 

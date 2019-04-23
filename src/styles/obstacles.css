@@ -21,6 +21,13 @@
     -fx-text-fill: #ffffff;
 }
 
+/* this next one is needed to make label text white on hover in the custom list view */
+.obstacleCell:hover .label {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: #ffffff;
+}
+
+
 .obstacleList .list-cell:filled:selected{
     -fx-background-color: -fx-primary-color;
     -fx-text-fill: #ffffff;
