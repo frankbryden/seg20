@@ -26,7 +26,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -115,16 +115,16 @@
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="589.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
-                                    <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                                    <TabPane fx:id="rootTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
                                         <Tab text="View">
                                           <content>
                                             <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="675.0" prefWidth="592.0" stylesheets="@styles/viewTab.css">
                                                    <children>
-                                                      <Button fx:id="highlightTodaBtn" layoutX="309.0" layoutY="427.0" mnemonicParsing="false" prefHeight="88.0" prefWidth="203.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="309.0" AnchorPane.topAnchor="427.0" />
-                                                      <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="94.0" AnchorPane.topAnchor="529.0" />
-                                                      <Button fx:id="highlightToraBtn" layoutX="95.0" layoutY="428.0" mnemonicParsing="false" prefHeight="86.0" prefWidth="201.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="95.0" AnchorPane.topAnchor="428.0" />
-                                                      <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="87.0" prefWidth="202.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="310.0" AnchorPane.topAnchor="529.0" />
+                                                      <Button fx:id="highlightTodaBtn" layoutX="301.0" layoutY="427.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TODA" AnchorPane.leftAnchor="301.0" AnchorPane.topAnchor="427.0" />
+                                                      <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="512.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="517.0" />
+                                                      <Button fx:id="highlightToraBtn" layoutX="116.0" layoutY="427.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="427.0" />
+                                                      <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="301.0" AnchorPane.topAnchor="517.0" />
                                                       <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="314.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="314.0">
                                                          <font>
                                                             <Font size="16.0" />

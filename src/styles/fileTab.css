@@ -1,25 +1,12 @@
-/*.loadBtn{
-    -fx-effect: dropshadow(three-pass-box,rgba(0,0,0,0.7),5, 0.0,0,1);
-    -fx-background-color: #0f475f;
-    -fx-border-radius: 5px;
-    -fx-min-width: 150px;
-    -fx-min-height: 96px;
-    -fx-text-fill: #ffffff;
-    -fx-font-size: 28px;
-}*/
-
-/*.loadBtn:hover, .loadBtn:focused{
-    -fx-background-color: -fx-secondary-color;
-}*/
 .loadBtn {
     -fx-padding: 8 15 15 15;
     -fx-background-insets: 0,0 0 5 0, 0 0 6 0, 0 0 7 0;
     -fx-background-radius: 8;
     -fx-background-color:
-            linear-gradient(from 0% 93% to 0% 100%, #075170 0%, #0F475F 100%),
+            linear-gradient(from 0% 93% to 0% 100%, -fx-header-color 0%, #0F475F 100%),
             #103B52,
             #1b88bb,
-            radial-gradient(center 50% 50%, radius 100%, #1b88bb, #0F5875);
+            radial-gradient(center 50% 50%, radius 100%, -fx-primary-color, #0F5875);
     -fx-effect: dropshadow( gaussian , rgba(0,0,0,0.75) , 4,0,0,1 );
     -fx-font-weight: bold;
     -fx-font-size: 28px;
@@ -33,7 +20,7 @@
             linear-gradient(from 0% 93% to 0% 100%, #a34313 0%, #903b12 100%),
             #9d4024,
             #d86e3a,
-            radial-gradient(center 50% 50%, radius 100%, #ea7f4b, #c54e2c);
+            radial-gradient(center 50% 50%, radius 100%, #d86e3a, #c54e2c);
 }
 
 /*.loadBtn:hover {
