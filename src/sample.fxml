@@ -115,7 +115,7 @@
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="589.0" BorderPane.alignment="CENTER">
                                  <children>
                                     <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
-                                    <TabPane fx:id="miniTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
+                                    <TabPane fx:id="rootTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
                                         <Tab text="View">
                                           <content>

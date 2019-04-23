@@ -83,6 +83,7 @@ public class GUI extends Application {
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
     private StackPane trackPane;
+    private TabPane rootTabPane;
 
 
     @Override
@@ -132,6 +133,10 @@ public class GUI extends Application {
         addRunwayPopup = createAddRunwayPopup();
         addObstaclePopup = createAddObstaclePopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
+
+
+        rootTabPane = (TabPane) primaryStage.getScene().lookup("#rootTabPane");
+        rootTabPane.setVisible(false);
 
         //Set up color pickers in the view tab
         topDownColorPicker = (ColorPicker) primaryStage.getScene().lookup("#topDownColorPicker");
@@ -223,6 +228,8 @@ public class GUI extends Application {
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
+                        rootTabPane.setVisible(true);
+
                         LiveWindService liveWindService = new LiveWindService();
                         liveWindService.setLatitude(ac.getLatitude());
                         liveWindService.setLongitude(ac.getLongitude());
@@ -251,6 +258,9 @@ public class GUI extends Application {
             }
             updateRunwaySelect((String) newValue);
         });
+
+
+
 
         addObstacleBtn = new Button("Add Button");
         addObstacleBtn.setOnMouseClicked(event -> {
@@ -1577,33 +1587,31 @@ public class GUI extends Application {
 
         //Components for the popups
         Label selectAirportLbl = new Label("Select airport");
-        Button confirmButton = new Button("Add");
+        Button confirmButton = new Button("Continue");
         confirmButton.getStyleClass().add("primaryButton");
         Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add("primaryButton");
-        TextField runwayDesignatorTF, toraTF, todaTF, asdaTF, ldaTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, todaTF2, asdaTF2, ldaTF2, displacementThresholdTF2;
-        Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, displacementThresholdLbl;
+        TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
+        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl;
+
         runwayDesignatorLbl = new Label("Runway Designator");
         toraLbl = new Label("TORA");
-        todaLbl = new Label("TODA");
-        asdaLbl = new Label("ASDA");
-        ldaLbl = new Label("LDA");
-        displacementThresholdLbl = new Label("Displacement Threshold");
+        clearwayLbl = new Label("Clearway");
+        stopwayLbl = new Label("Stopway");
+        displacementThresholdLbl = new Label("Displaced Threshold");
         addRunwayAirportSelect = new ComboBox();
         addRunwayAirportSelect.setId("airportComboBox");
         addRunwayAirportSelect.setVisibleRowCount(10);
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
-        todaTF = new TextField();
-        asdaTF = new TextField();
-        ldaTF = new TextField();
+        clearwayTF = new TextField();
+        stopwayTF = new TextField();
         displacementThresholdTF = new TextField();
         runwayDesignatorTF2 = new TextField();
         toraTF2 = new TextField();
-        todaTF2 = new TextField();
-        asdaTF2 = new TextField();
-        ldaTF2 = new TextField();
+        clearwayTF2 = new TextField();
+        stopwayTF2 = new TextField();
         displacementThresholdTF2 = new TextField();
 
         //VBox containing confirm and cancel button
@@ -1620,22 +1628,19 @@ public class GUI extends Application {
         gridPane.add(runwayDesignatorTF, 1, 0);
         gridPane.add(toraLbl, 0, 1);
         gridPane.add(toraTF, 1, 1);
-        gridPane.add(todaLbl, 0, 2);
-        gridPane.add(todaTF, 1, 2);
-        gridPane.add(asdaLbl, 0, 3);
-        gridPane.add(asdaTF, 1, 3);
-        gridPane.add(ldaLbl, 0, 4);
-        gridPane.add(ldaTF, 1, 4);
-        gridPane.add(displacementThresholdLbl, 0, 5);
-        gridPane.add(displacementThresholdTF, 1, 5);
+        gridPane.add(clearwayLbl, 0, 2);
+        gridPane.add(clearwayTF, 1, 2);
+        gridPane.add(stopwayLbl, 0, 3);
+        gridPane.add(stopwayTF, 1, 3);
+        gridPane.add(displacementThresholdLbl, 0, 4);
+        gridPane.add(displacementThresholdTF, 1, 4);
 
         //Right Column
         gridPane.add(runwayDesignatorTF2, 2, 0);
         gridPane.add(toraTF2, 2, 1);
-        gridPane.add(todaTF2, 2, 2);
-        gridPane.add(asdaTF2, 2, 3);
-        gridPane.add(ldaTF2, 2, 4);
-        gridPane.add(displacementThresholdTF2, 2, 5);
+        gridPane.add(clearwayTF2, 2, 2);
+        gridPane.add(stopwayTF2, 2, 3);
+        gridPane.add(displacementThresholdTF2, 2, 4);
 
         gridPane.add(hbox, 3, 6);
 
@@ -1667,12 +1672,29 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-                if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), todaTF.getText(), asdaTF.getText(), ldaTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), todaTF2.getText(), asdaTF2.getText(), ldaTF2.getText(), displacementThresholdTF2.getText())))){
+                if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))){
                     System.out.println("valid form");
+
+                    // Working out TODA, ASDA, LDA from the user's input of Tora, Clearway, Stopway, Displaced Threshold
+                    int TORA = Integer.parseInt(toraTF.getText());
+                    int TODA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(clearwayTF.getText());
+                    int ASDA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(stopwayTF.getText());
+                    int LDA = Integer.parseInt(toraTF.getText()) - Integer.parseInt(displacementThresholdTF.getText());
+
+                    int TODA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(clearwayTF2.getText());
+                    int ASDA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(stopwayTF2.getText());
+                    int LDA2 = Integer.parseInt(toraTF2.getText()) - Integer.parseInt(displacementThresholdTF2.getText());
+
+                    displayRunwayParametersPrompt();
+
                     AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
                     System.out.println(selectedAirport.toString());
-                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF.getText()), Integer.parseInt(toraTF.getText()), Integer.parseInt(todaTF.getText()), Integer.parseInt(asdaTF.getText()), Integer.parseInt(ldaTF.getText()), Integer.parseInt(displacementThresholdTF.getText()));
-                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF2.getText()), Integer.parseInt(toraTF2.getText()), Integer.parseInt(todaTF2.getText()), Integer.parseInt(asdaTF2.getText()), Integer.parseInt(ldaTF2.getText()), Integer.parseInt(displacementThresholdTF2.getText()));
+
+
+                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF.getText()), Integer.parseInt(toraTF.getText()), TODA, ASDA, LDA, Integer.parseInt(displacementThresholdTF.getText()));
+                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignatorTF2.getText()), Integer.parseInt(toraTF2.getText()), TODA2, ASDA2, LDA2, Integer.parseInt(displacementThresholdTF2.getText()));
+
+
                     RunwayPair runwayPair = new RunwayPair(r1, r2);
                     selectedAirport.addRunwayPair(runwayPair);
                     airportConfigs.put(selectedAirport.getName(), selectedAirport);
@@ -1794,6 +1816,35 @@ public class GUI extends Application {
         overwriteWindow.setScene(scene);
         overwriteWindow.showAndWait();
     }
+
+    private void displayRunwayParametersPrompt() {
+        Stage runwayWindow = new Stage();
+        runwayWindow.initModality(Modality.APPLICATION_MODAL);
+        runwayWindow.setTitle("Runway Parameters");
+
+        // Components for the runway parameters window
+        Label summaryLbl = new Label ("The following is a summary of the runway parameters:");
+
+        //HERE - TORA,TODA,ASDA,LDA
+
+
+        Button backBtn = new Button ("Back");
+        Button addBtn = new Button ("Add");
+
+        HBox buttonsBox = new HBox(20);
+        buttonsBox.getChildren().addAll(addBtn, backBtn);
+        buttonsBox.setAlignment(Pos.CENTER);
+
+        VBox windowLayout = new VBox(10);
+        windowLayout.getChildren().addAll(summaryLbl, buttonsBox);
+
+        Scene scene = new Scene(windowLayout, 900, 500);
+        runwayWindow.setScene(scene);
+        runwayWindow.showAndWait();
+    }
+
+
+
     private void resetCalculationsTab(){
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
