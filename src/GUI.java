@@ -79,6 +79,7 @@ public class GUI extends Application {
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
     private StackPane trackPane;
     private TabPane rootTabPane;
+    private enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
     @Override
@@ -321,7 +322,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
                         Obstacle obstacle = (Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem();
-                        displayDeletePrompt(obstacle, "user");
+                        displayDeletePrompt(obstacle, ObstacleList.USER_DEFINED);
                 }
             }
         });
@@ -856,12 +857,12 @@ public class GUI extends Application {
 
         predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("List view got a delete for obstacle " + event.getObstacleName());
-            displayDeletePrompt(event.getObstacle(), "predefined");
+            displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
         });
 
         userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
-            displayDeletePrompt(event.getObstacle(), "user");
+            displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
@@ -879,7 +880,7 @@ public class GUI extends Application {
             obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
             if (click.getClickCount() == 2) {
-                showObstacleDetails(predefinedObstaclesLV, click, primaryStage, "predefined");
+                showObstacleDetails(predefinedObstaclesLV, click, primaryStage, ObstacleList.PREDEFINED);
             }
        });
 
@@ -894,7 +895,7 @@ public class GUI extends Application {
             obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
             if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, "userDefined");
+                showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, ObstacleList.USER_DEFINED);
 
             }
         });
@@ -1271,7 +1272,7 @@ public class GUI extends Application {
     }
 
 
-    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, String typeOfList) {
+    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
 
         editingObstacle = false;
 
@@ -1412,7 +1413,7 @@ public class GUI extends Application {
                 // Checking for valid obstacle name and valid obstacle height
                 if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
                     System.out.println("Add -edited- obstacle");
-                    if (typeOfList.equals("predefined")) {
+                    if (sourceList.equals("predefined")) {
                         predefinedObstaclesSorted.remove(selectedObstacle.getName());
                         allObstaclesSorted.remove(selectedObstacle.getName());
                         selectedObstacle.setName(nameEditTF.getText());
@@ -1428,7 +1429,7 @@ public class GUI extends Application {
 
                         updateObstaclesList();
                         detailsPopUp.hide();
-                    } else if (typeOfList.equals("userDefined")) {
+                    } else if (sourceList.equals("userDefined")) {
                         userDefinedObstacles.remove(selectedObstacle.getName());
                         allObstaclesSorted.remove(selectedObstacle.getName());
                         selectedObstacle.setName(nameEditTF.getText());
@@ -1732,7 +1733,7 @@ public class GUI extends Application {
     }
 
     //TODO - position according to window size
-    private void displayDeletePrompt(Obstacle obstacle, String source) {
+    private void displayDeletePrompt(Obstacle obstacle, ObstacleList source) {
         Stage deleteWindow = new Stage();
         deleteWindow.initModality(Modality.APPLICATION_MODAL);
         deleteWindow.setTitle("Delete Obstacle");
@@ -1900,20 +1901,23 @@ public class GUI extends Application {
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
     }
 
-    private void removeObstacle(Obstacle obstacle, String origin) {
+    private void removeObstacle(Obstacle obstacle, ObstacleList listType) {
 
         Map<String, Obstacle> sourceList;
         ListView sourceLV;
 
-        if(origin.equals("predefined")){
-            sourceList = predefinedObstaclesSorted;
-            sourceLV = predefinedObstaclesLV;
-        } else if (origin.equals("user")){
-            sourceList = userDefinedObstacles;
-            sourceLV = userDefinedObstaclesLV;
-        } else {
-            System.err.println("unknown origin '" + origin + "'");
-            return;
+        switch(listType){
+            case PREDEFINED:
+                sourceList = predefinedObstaclesSorted;
+                sourceLV = predefinedObstaclesLV;
+                break;
+            case USER_DEFINED:
+                sourceList = userDefinedObstacles;
+                sourceLV = userDefinedObstaclesLV;
+                break;
+            default:
+                System.err.println("unknown origin '" + listType.toString() + "'");
+                return;
         }
 
         sourceLV.getItems().remove(obstacle);
