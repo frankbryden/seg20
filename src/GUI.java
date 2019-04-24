@@ -6,7 +6,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -36,14 +35,9 @@ import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.List;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
@@ -326,8 +320,8 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                        String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
-                        displayDeletePrompt(obstacleName);
+                        Obstacle obstacle = (Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem();
+                        displayDeletePrompt(obstacle, "user");
                 }
             }
         });
@@ -862,7 +856,12 @@ public class GUI extends Application {
 
         predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("List view got a delete for obstacle " + event.getObstacleName());
-            displayDeletePrompt(event.getObstacleName());
+            displayDeletePrompt(event.getObstacle(), "predefined");
+        });
+
+        userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
+            System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
+            displayDeletePrompt(event.getObstacle(), "user");
         });
 
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
@@ -1733,14 +1732,14 @@ public class GUI extends Application {
     }
 
     //TODO - position according to window size
-    private void displayDeletePrompt(String obstacleName) {
+    private void displayDeletePrompt(Obstacle obstacle, String source) {
         Stage deleteWindow = new Stage();
         deleteWindow.initModality(Modality.APPLICATION_MODAL);
         deleteWindow.setTitle("Delete Obstacle");
 
         // Components for the delete obstacle window
 
-        Label confirmationLabel = new Label("Are you sure you want to delete " + obstacleName + "?");
+        Label confirmationLabel = new Label("Are you sure you want to delete " + obstacle.getName() + "?");
         confirmationLabel.setWrapText(true);
         confirmationLabel.setTextAlignment(TextAlignment.CENTER);
         Button cancelDeletion = new Button ("Cancel");
@@ -1758,7 +1757,7 @@ public class GUI extends Application {
 
         cancelDeletion.setOnAction(e -> deleteWindow.close());
         confirmDeletion.setOnAction(e -> {
-            removeUserObstacle();
+            removeObstacle(obstacle, source);
             updateObstaclesList();
             deleteWindow.close();
         } );
@@ -1901,23 +1900,29 @@ public class GUI extends Application {
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
     }
 
-    private void removeUserObstacle() {
+    private void removeObstacle(Obstacle obstacle, String origin) {
 
-        if (userDefinedObstaclesLV.getItems().isEmpty()) {
-            System.out.println("No obstacles to remove");
+        Map<String, Obstacle> sourceList;
+        ListView sourceLV;
+
+        if(origin.equals("predefined")){
+            sourceList = predefinedObstaclesSorted;
+            sourceLV = predefinedObstaclesLV;
+        } else if (origin.equals("user")){
+            sourceList = userDefinedObstacles;
+            sourceLV = userDefinedObstaclesLV;
+        } else {
+            System.err.println("unknown origin '" + origin + "'");
+            return;
         }
-        else {
-            String obstacleName = userDefinedObstaclesLV.getSelectionModel().getSelectedItem().toString();
-            Obstacle selectedObstacle = allObstaclesSorted.get(obstacleName);
 
-            userDefinedObstaclesLV.getItems().remove(selectedObstacle);
-            obstacleSelect.getItems().remove(selectedObstacle);
+        sourceLV.getItems().remove(obstacle);
+        obstacleSelect.getItems().remove(obstacle);
 
-            userDefinedObstacles.remove(obstacleName);
-            allObstaclesSorted.remove(obstacleName);
+        sourceList.remove(obstacle.getName());
+        allObstaclesSorted.remove(obstacle.getName());
 
-            notifyUpdate("Obstacle removed");
-        }
+        notifyUpdate("Obstacle removed");
     }
 
 

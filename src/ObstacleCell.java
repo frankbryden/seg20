@@ -80,7 +80,6 @@ public class ObstacleCell extends ListCell<Obstacle> {
             setText(null);
             setGraphic(null);
         } else {
-            System.out.println("Called with obstacle " + item.getName());
             this.obstacle = item;
             setGraphic(rootBox);
             contentLbl.setText(item.getName());
