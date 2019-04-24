@@ -47,6 +47,11 @@ public class ObstacleCell extends ListCell<Obstacle> {
             fireEvent(new DeleteEvent(obstacle, DeleteEvent.DELETE_EVENT_TYPE));
         });
 
+        editBtn.setOnMouseClicked(event -> {
+            System.out.println("Info requested for obstacle with name " + obstacle.getName());
+            fireEvent(new ObstacleInfoEvent(obstacle, ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE));
+        });
+
         rootBox.setOnMouseEntered(event -> {
             //System.out.println("Hovering over " + obstacle.getName());
             fireEvent(new CellHoverEvent(obstacle, CellHoverEvent.CELL_HOVER_EVENT_TYPE));

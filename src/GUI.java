@@ -23,6 +23,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -860,9 +861,19 @@ public class GUI extends Application {
             displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
         });
 
+        predefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
+            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
+            showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
+        });
+
         userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
             displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
+        });
+
+        userDefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
+            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
+            showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
@@ -880,7 +891,7 @@ public class GUI extends Application {
             obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
             if (click.getClickCount() == 2) {
-                showObstacleDetails(predefinedObstaclesLV, click, primaryStage, ObstacleList.PREDEFINED);
+                showObstacleDetails((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem(), predefinedObstaclesLV, click, primaryStage, ObstacleList.PREDEFINED);
             }
        });
 
@@ -895,7 +906,7 @@ public class GUI extends Application {
             obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
             if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                showObstacleDetails(userDefinedObstaclesLV, click, primaryStage, ObstacleList.USER_DEFINED);
+                showObstacleDetails((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem(), userDefinedObstaclesLV, click, primaryStage, ObstacleList.USER_DEFINED);
 
             }
         });
@@ -1272,13 +1283,11 @@ public class GUI extends Application {
     }
 
 
-    private void showObstacleDetails (ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
+    private void showObstacleDetails (Obstacle obstacle, ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
 
         editingObstacle = false;
 
         //TODO rework sorting of the obstacles
-        String obstacleName = listView.getSelectionModel().getSelectedItem().toString();
-        Obstacle selectedObstacle = (Obstacle) listView.getSelectionModel().getSelectedItem();//allObstaclesSorted.get(obstacleName);
 
         Popup detailsPopUp = new Popup();
 
@@ -1291,11 +1300,11 @@ public class GUI extends Application {
 
         Label detailsLabel = new Label ("Overview of obstacle details");
         Label nameLabel = new Label ("Name:");
-        Label nameContentLabel = new Label(selectedObstacle.getName());
+        Label nameContentLabel = new Label(obstacle.getName());
         TextField nameEditTF = new TextField();
         nameEditTF.setPrefWidth(240);
         Label heightLabel = new Label ("Height:");
-        Label heightContentLabel = new Label(selectedObstacle.getHeight() + "m");
+        Label heightContentLabel = new Label(obstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
         heightEditTF.setPrefWidth(240);
 
@@ -1361,10 +1370,12 @@ public class GUI extends Application {
 
         //TODO - position the show obstacle details popup according to window size
         //TODO ask Jasmine if she wants to center it - also, seems that getWidth get Height is correct. Also, what's the point? looks good the way it is.
-        Node eventSource = (Node) event.getSource();
-        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());
-        detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);
+        /*Node eventSource = (Node) event.getSource();
+        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());*/
+        /*detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
+        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);*/
+        detailsPopUp.setX(primaryStage.getWidth()/2);
+        detailsPopUp.setY(primaryStage.getHeight()/2);
         System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 
@@ -1414,34 +1425,34 @@ public class GUI extends Application {
                 if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
                     System.out.println("Add -edited- obstacle");
                     if (sourceList.equals("predefined")) {
-                        predefinedObstaclesSorted.remove(selectedObstacle.getName());
-                        allObstaclesSorted.remove(selectedObstacle.getName());
-                        selectedObstacle.setName(nameEditTF.getText());
-                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        predefinedObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
-                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+                        predefinedObstaclesSorted.remove(obstacle.getName());
+                        allObstaclesSorted.remove(obstacle.getName());
+                        obstacle.setName(nameEditTF.getText());
+                        obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
+                        allObstaclesSorted.put(obstacle.getName(), obstacle);
 
-                        nameContentLabel.setText(selectedObstacle.getName());
-                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+                        nameContentLabel.setText(obstacle.getName());
+                        heightContentLabel.setText(Double.toString(obstacle.getHeight()));
 
                         int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle);
+                        listView.getItems().set(selectedIndex, obstacle);
 
                         updateObstaclesList();
                         detailsPopUp.hide();
                     } else if (sourceList.equals("userDefined")) {
-                        userDefinedObstacles.remove(selectedObstacle.getName());
-                        allObstaclesSorted.remove(selectedObstacle.getName());
-                        selectedObstacle.setName(nameEditTF.getText());
-                        selectedObstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        userDefinedObstacles.put(selectedObstacle.getName(), selectedObstacle);
-                        allObstaclesSorted.put(selectedObstacle.getName(), selectedObstacle);
+                        userDefinedObstacles.remove(obstacle.getName());
+                        allObstaclesSorted.remove(obstacle.getName());
+                        obstacle.setName(nameEditTF.getText());
+                        obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+                        userDefinedObstacles.put(obstacle.getName(), obstacle);
+                        allObstaclesSorted.put(obstacle.getName(), obstacle);
 
-                        nameContentLabel.setText(selectedObstacle.getName());
-                        heightContentLabel.setText(Double.toString(selectedObstacle.getHeight()));
+                        nameContentLabel.setText(obstacle.getName());
+                        heightContentLabel.setText(Double.toString(obstacle.getHeight()));
 
                         int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, selectedObstacle);
+                        listView.getItems().set(selectedIndex, obstacle);
 
                         updateObstaclesList();
                         detailsPopUp.hide();
@@ -1473,8 +1484,8 @@ public class GUI extends Application {
                     heightHBox.getChildren().remove(heightContentLabel);
                     heightHBox.getChildren().add(heightEditTF);
 
-                    nameEditTF.setText(selectedObstacle.getName());
-                    heightEditTF.setText(Double.toString(selectedObstacle.getHeight()));
+                    nameEditTF.setText(obstacle.getName());
+                    heightEditTF.setText(Double.toString(obstacle.getHeight()));
 
                     detailsLabel.setText("Edit obstacle details");
 
