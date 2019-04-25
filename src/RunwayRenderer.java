@@ -237,7 +237,6 @@ public class RunwayRenderer {
         if (zoomDelta != 0){
             int zoomLevel = (int) (scaleAffine.getMxx()/(MAX_ZOOM-MIN_ZOOM) * 100);
             Window window = graphicsContext.getCanvas().getScene().getWindow();
-            new Notification("Zoom level : " + zoomLevel + "%").show(window, window.getX() + graphicsContext.getCanvas().getLayoutX(), window.getY() + graphicsContext.getCanvas().getLayoutY());
             zoomDelta = 0;
         }
 
