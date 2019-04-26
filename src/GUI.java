@@ -1706,6 +1706,7 @@ public class GUI extends Application {
             }
         });
 
+        //TODO - on confirm (or actually "Continue") the second Add Runway popup should show
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -1744,7 +1745,7 @@ public class GUI extends Application {
 
                     // Show the prompt that shows the summary of the runway values
                     displayRunwayParametersPrompt(runwayPair);
-
+                    //TODO - only add the runway once user has clicked Confirm in the second Add Runway popup
 
                     AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
                     System.out.println(selectedAirport.toString());
@@ -1870,7 +1871,7 @@ public class GUI extends Application {
         overwriteWindow.showAndWait();
     }
 
-    //TODO Make the buttons work, format table
+    //TODO Make the buttons work
     private void displayRunwayParametersPrompt(RunwayPair runwayPair) {
         Stage runwayWindow = new Stage();
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1886,15 +1887,17 @@ public class GUI extends Application {
 
         // Headers of the table (column 1)
         Label runwayDesignatorHeader = new Label("Runway Designator");
-        Label toraHeader = new Label("TORA");
-        Label todaHeader = new Label("TODA");
-        Label asdaHeader = new Label("ASDA");
-        Label ldaHeader = new Label("LDA");
-        Label displacedThresholdHeader = new Label("Displaced Threshold");
-        Label clearwayHeader = new Label("Clearway");
-        Label stopwayHeader = new Label("Stopway");
+        Label toraHeader = new Label("TORA (m)");
+        Label todaHeader = new Label("TODA (m)");
+        Label asdaHeader = new Label("ASDA (m)");
+        Label ldaHeader = new Label("LDA (m)");
+        Label displacedThresholdHeader = new Label("Displaced Threshold (m)");
+        Label clearwayHeader = new Label("Clearway (m)");
+        Label stopwayHeader = new Label("Stopway (m)");
         VBox headers = new VBox(10);
         headers.getChildren().addAll(runwayDesignatorHeader, toraHeader, todaHeader, asdaHeader, ldaHeader, displacedThresholdHeader, clearwayHeader, stopwayHeader);
+        headers.getStyleClass().add("sideLabel");
+        headers.getStylesheets().add("styles/global.css");
 
         // Values for one side of the runway (column 2)
         Label runwayDesignatorValue = new Label(runwayPair.getR1().getRunwayDesignator().toString());
@@ -1907,6 +1910,8 @@ public class GUI extends Application {
         Label stopwayValue = new Label(Integer.toString(runwayPair.getR1().getStopway()));
         VBox values = new VBox(10);
         values.getChildren().addAll(runwayDesignatorValue, toraValue, todaValue, asdaValue, ldaValue, displacedThresholdValue, clearwayValue, stopwayValue);
+        values.getStyleClass().add("label");
+        values.getStylesheets().add("styles/global.css");
 
         // Values for other side of the runway (column 3)
         Label runwayDesignatorValue2 = new Label(runwayPair.getR2().getRunwayDesignator().toString());
@@ -1919,6 +1924,8 @@ public class GUI extends Application {
         Label stopwayValue2 = new Label(Integer.toString(runwayPair.getR2().getStopway()));
         VBox values2 = new VBox(10);
         values2.getChildren().addAll(runwayDesignatorValue2, toraValue2, todaValue2, asdaValue2, ldaValue2, displacedThresholdValue2, clearwayValue2, stopwayValue2);
+        values2.getStyleClass().add("label");
+        values2.getStylesheets().add("styles/global.css");
 
         // Entire table of values
         HBox summaryTable = new HBox(20);
