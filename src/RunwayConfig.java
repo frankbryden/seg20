@@ -1,3 +1,4 @@
+import javafx.scene.paint.Stop;
 import javafx.scene.shape.Line;
 import javafx.util.Pair;
 
@@ -213,8 +214,16 @@ public class RunwayConfig {
         return CLEARWAY;
     }
 
+    public void setClearway(int Clearway) {
+        this.CLEARWAY = Clearway;
+    }
+
     public int getStopway() {
         return STOPWAY;
+    }
+
+    public void setStopway(int Stopway) {
+        this.STOPWAY = Stopway;
     }
 
     public int getDisplacementThreshold() {

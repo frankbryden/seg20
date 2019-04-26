@@ -1638,10 +1638,9 @@ public class GUI extends Application {
         displacementThresholdTF2 = new TextField();
 
         //VBox containing confirm and cancel button
-        HBox hbox = new HBox();
+        HBox hbox = new HBox(10);
         hbox.getChildren().add(confirmButton);
         hbox.getChildren().add(cancelButton);
-        hbox.setSpacing(10);
 
         //GridPane - root of the popup
         GridPane gridPane = new GridPane();
@@ -1736,38 +1735,21 @@ public class GUI extends Application {
                     int clearway2 = Integer.parseInt(clearwayTF2.getText());
                     int stopway2 = Integer.parseInt(stopwayTF2.getText());
 
-                    // Storing all the runway values in a list for one side of the runway
-                    ArrayList<Integer> runwayParams = new ArrayList<>();
-                    runwayParams.add(TORA);
-                    runwayParams.add(TODA);
-                    runwayParams.add(ASDA);
-                    runwayParams.add(LDA);
-                    runwayParams.add(displacedThreshold);
-                    runwayParams.add(clearway);
-                    runwayParams.add(stopway);
-
-                    // Storing all the runway values in a list but for the other side of the runway
-                    ArrayList<Integer> runwayParams2 = new ArrayList<>();
-                    runwayParams2.add(TORA2);
-                    runwayParams2.add(TODA2);
-                    runwayParams2.add(ASDA2);
-                    runwayParams2.add(LDA2);
-                    runwayParams2.add(displacedThreshold2);
-                    runwayParams2.add(clearway2);
-                    runwayParams2.add(stopway2);
+                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
+                    r1.setClearway(clearway);
+                    r1.setStopway(stopway);
+                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
+                    r1.setClearway(clearway2);
+                    r1.setStopway(stopway2);
+                    RunwayPair runwayPair = new RunwayPair(r1, r2);
 
                     // Show the prompt that shows the summary of the runway values
-                    displayRunwayParametersPrompt(runwayDesignator, runwayDesignator2, runwayParams, runwayParams2);
+                    displayRunwayParametersPrompt(runwayPair);
+
 
                     AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
                     System.out.println(selectedAirport.toString());
 
-
-                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
-                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
-
-
-                    RunwayPair runwayPair = new RunwayPair(r1, r2);
                     selectedAirport.addRunwayPair(runwayPair);
                     airportConfigs.put(selectedAirport.getName(), selectedAirport);
                     System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
@@ -1789,8 +1771,8 @@ public class GUI extends Application {
         });
 
         stage.setScene(scene);
-        stage.setWidth(900);
-        stage.setHeight(500);
+        stage.setWidth(700);
+        stage.setHeight(390);
         return stage;
     }
 
@@ -1889,35 +1871,81 @@ public class GUI extends Application {
         overwriteWindow.showAndWait();
     }
 
-    //TODO Need to display the values in a nicer way and make the buttons work, hide previous popup too
-    private void displayRunwayParametersPrompt(String runwayDesignator, String runwayDesignator2, ArrayList<Integer> runwayParams, ArrayList<Integer> runwayParams2) {
+    //TODO Make the buttons work, format table
+    private void displayRunwayParametersPrompt(RunwayPair runwayPair) {
         Stage runwayWindow = new Stage();
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
         runwayWindow.setTitle("Add Runway");
 
-        // Components for the runway parameters window
-        Label summaryLbl = new Label ("Summary of runway parameters");
+        Label summaryLbl = new Label ("Summary of parameters for the new runway at " + addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString() + " airport:");
+        summaryLbl.getStyleClass().add("label");
+        summaryLbl.getStylesheets().add("styles/global.css");
 
-        Label runwayDesignatorDetails = new Label ("Runway Designator: " + runwayDesignator + " TORA: " + runwayParams.get(0) + " and TORA: " + runwayParams.get(1)
-        + " and ASDA: " + runwayParams.get(2) + " and LDA: " + runwayParams.get(3) + " and Displaced Threshold: " + runwayParams.get(4)
-        + " and Clearway: " + runwayParams.get(5) + " and Stopway: " + runwayParams.get(6));
+        Label confirmDetailsLbl = new Label("Do you wish to confirm these details and add the runway?");
+        confirmDetailsLbl.getStyleClass().add("label");
+        confirmDetailsLbl.getStylesheets().add("styles/global.css");
 
-        Label runwayDesignatorDetails2 = new Label ("Runway Designator: " + runwayDesignator2 + " TORA: " + runwayParams2.get(0) + " and TORA: " + runwayParams2.get(1)
-                + " and ASDA: " + runwayParams2.get(2) + " and LDA: " + runwayParams2.get(3) + " and Displaced Threshold: " + runwayParams2.get(4)
-                + " and Clearway: " + runwayParams2.get(5) + " and Stopway: " + runwayParams2.get(6));
+        // Headers of the table (column 1)
+        Label runwayDesignatorHeader = new Label("Runway Designator");
+        Label toraHeader = new Label("TORA");
+        Label todaHeader = new Label("TODA");
+        Label asdaHeader = new Label("ASDA");
+        Label ldaHeader = new Label("LDA");
+        Label displacedThresholdHeader = new Label("Displaced Threshold");
+        Label clearwayHeader = new Label("Clearway");
+        Label stopwayHeader = new Label("Stopway");
+        VBox headers = new VBox(10);
+        headers.getChildren().addAll(runwayDesignatorHeader, toraHeader, todaHeader, asdaHeader, ldaHeader, displacedThresholdHeader, clearwayHeader, stopwayHeader);
 
+        // Values for one side of the runway (column 2)
+        Label runwayDesignatorValue = new Label(runwayPair.getR1().getRunwayDesignator().toString());
+        Label toraValue = new Label(Integer.toString(runwayPair.getR1().getTORA()));
+        Label todaValue = new Label(Integer.toString(runwayPair.getR1().getTODA()));
+        Label asdaValue = new Label(Integer.toString(runwayPair.getR1().getASDA()));
+        Label ldaValue = new Label(Integer.toString(runwayPair.getR1().getLDA()));
+        Label displacedThresholdValue = new Label(Integer.toString(runwayPair.getR1().getDisplacementThreshold()));
+        Label clearwayValue = new Label(Integer.toString(runwayPair.getR1().getClearway()));
+        Label stopwayValue = new Label(Integer.toString(runwayPair.getR1().getStopway()));
+        VBox values = new VBox(10);
+        values.getChildren().addAll(runwayDesignatorValue, toraValue, todaValue, asdaValue, ldaValue, displacedThresholdValue, clearwayValue, stopwayValue);
+
+        // Values for other side of the runway (column 3)
+        Label runwayDesignatorValue2 = new Label(runwayPair.getR2().getRunwayDesignator().toString());
+        Label toraValue2 = new Label(Integer.toString(runwayPair.getR2().getTORA()));
+        Label todaValue2 = new Label(Integer.toString(runwayPair.getR2().getTODA()));
+        Label asdaValue2 = new Label(Integer.toString(runwayPair.getR2().getASDA()));
+        Label ldaValue2 = new Label(Integer.toString(runwayPair.getR2().getLDA()));
+        Label displacedThresholdValue2 = new Label(Integer.toString(runwayPair.getR2().getDisplacementThreshold()));
+        Label clearwayValue2 = new Label(Integer.toString(runwayPair.getR2().getClearway()));
+        Label stopwayValue2 = new Label(Integer.toString(runwayPair.getR2().getStopway()));
+        VBox values2 = new VBox(10);
+        values2.getChildren().addAll(runwayDesignatorValue2, toraValue2, todaValue2, asdaValue2, ldaValue2, displacedThresholdValue2, clearwayValue2, stopwayValue2);
+
+        // Entire table of values
+        HBox summaryTable = new HBox(20);
+        summaryTable.getChildren().addAll(headers, values, values2);
+        summaryTable.setAlignment(Pos.CENTER);
+
+        // Confirm and Back buttons
         Button backBtn = new Button ("Back");
+        backBtn.getStyleClass().add("primaryButton");
+        backBtn.getStylesheets().add("styles/global.css");
         Button confirmBtn = new Button ("Confirm");
-
-        HBox buttonsBox = new HBox(20);
+        confirmBtn.getStyleClass().add("primaryButton");
+        confirmBtn.getStylesheets().add("styles/global.css");
+        HBox buttonsBox = new HBox(10);
         buttonsBox.getChildren().addAll(confirmBtn, backBtn);
-        buttonsBox.setAlignment(Pos.CENTER);
+        buttonsBox.setAlignment(Pos.BOTTOM_RIGHT);
+        buttonsBox.setPadding(new Insets(0, 15, 10, 0));
 
-        VBox windowLayout = new VBox(10);
-        windowLayout.getChildren().addAll(summaryLbl, runwayDesignatorDetails, runwayDesignatorDetails2, buttonsBox);
+        VBox windowLayout = new VBox(20);
+        windowLayout.setPadding(new Insets(10, 0, 0, 15));
+        windowLayout.getChildren().addAll(summaryLbl, summaryTable, confirmDetailsLbl, buttonsBox);
 
-        Scene scene = new Scene(windowLayout, 900, 500);
+        Scene scene = new Scene(windowLayout);
         runwayWindow.setScene(scene);
+        runwayWindow.setWidth(700);
+        runwayWindow.setHeight(430);
         runwayWindow.showAndWait();
     }
 
