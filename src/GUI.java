@@ -23,7 +23,6 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
@@ -42,7 +41,7 @@ import java.util.*;
 
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
-            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
+            editObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -63,7 +62,7 @@ public class GUI extends Application {
     private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     private Canvas canvas, sideviewCanvas;
-    private TabPane tabPane;
+    private TabPane tabPane, rootTabPane;
     private Pane planePane;
     private ImageView planeImg;
     private RunwayRenderer runwayRenderer;
@@ -79,12 +78,13 @@ public class GUI extends Application {
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
     private StackPane trackPane;
-    private TabPane rootTabPane;
+
+
     private enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(Stage primaryStage) throws Exception {
         // getClass().getResource("sample.fxml") gives me a null pointer exception - caused by the way the IDE loads the resource files
         // temporary fix for now
         Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
@@ -105,7 +105,6 @@ public class GUI extends Application {
         airportConfigs = new HashMap<>();
 
         airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
-
 
 
         // Setting the texts for each tooltip
@@ -193,8 +192,8 @@ public class GUI extends Application {
 
         zoomSlider.valueProperty().addListener((ov, old_val, new_val) -> {
             double currentVal = (double) new_val;
-            double percentage = (currentVal - RunwayRenderer.MIN_ZOOM)/(RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
-            int roundedPercentage = (int) (percentage*100);
+            double percentage = (currentVal - RunwayRenderer.MIN_ZOOM) / (RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
+            int roundedPercentage = (int) (percentage * 100);
             int leftPercentage = roundedPercentage;
             int rightPercentage = 100 - leftPercentage;
             String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", leftPercentage, leftPercentage);
@@ -211,8 +210,8 @@ public class GUI extends Application {
             public void changed(ObservableValue observable, Object oldValue, Object newValue) {
                 System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
                 AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
-                for (String runwayPairName : ac.getRunways().keySet()){
-                    if (runwayPairName.equals(newValue)){
+                for (String runwayPairName : ac.getRunways().keySet()) {
+                    if (runwayPairName.equals(newValue)) {
                         RunwayPair selectedRunwayPair = ac.getRunways().get(runwayPairName);
                         updateRunwayInfoLabels(selectedRunwayPair);
                         updateThresholdList(selectedRunwayPair);
@@ -249,7 +248,7 @@ public class GUI extends Application {
         airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Here");
             System.out.println((String) newValue);
-            if (newValue == null){
+            if (newValue == null) {
                 System.out.println("Selection cleared");
                 return;
             }
@@ -257,12 +256,10 @@ public class GUI extends Application {
         });
 
 
-
-
         addObstacleBtn = new Button("Add Button");
         addObstacleBtn.setOnMouseClicked(event -> {
             System.out.println("Add obstacle");
-            if (validateObstaclesForm()){
+            if (validateObstaclesForm()) {
                 addObstacle(obstacleNameTxt.getText(), Double.parseDouble(obstacleHeightTxt.getText()));
                 updateObstaclesList();
             }
@@ -280,10 +277,9 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                //TODO - position the add obstacle popup according to window size
                 Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
                 addObstaclePopup.show(primaryStage);
-                addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth()/2);
+                addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth() / 2);
                 addObstaclePopup.setAnchorY(bounds.getMinY() - addObstaclePopup.getHeight());
             }
         });
@@ -298,7 +294,7 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 File file = fileIO.fileChooser.showOpenDialog(primaryStage);
-                if (file == null){
+                if (file == null) {
                     return;
                 }
                 Collection<Obstacle> importedObstacles = fileIO.readObstacles(file.getPath());
@@ -308,23 +304,6 @@ public class GUI extends Application {
                 updateObstaclesList();
 
                 notifyUpdate("Obstacles loaded");
-            }
-        });
-
-        deleteObstacleBtn = (Button) primaryStage.getScene().lookup("#deleteObstacleBtn");
-
-        ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
-        deleteObstacleImgView.setFitWidth(iconSize);
-        deleteObstacleImgView.setFitHeight(iconSize);
-        deleteObstacleBtn.setGraphic(deleteObstacleImgView);
-
-        deleteObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                        Obstacle obstacle = (Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem();
-                        displayDeletePrompt(obstacle, ObstacleList.USER_DEFINED);
-                }
             }
         });
 
@@ -349,7 +328,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
                 File file = fileIO.fileChooser.showSaveDialog(primaryStage);
-                if (file != null){
+                if (file != null) {
                     fileIO.write(userDefinedObstacles.values(), file.getPath());
                     notifyUpdate("Obstacles saved");
                 }
@@ -372,7 +351,6 @@ public class GUI extends Application {
                 enableTooltips();
             }
         });
-
 
 
         highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
@@ -436,7 +414,7 @@ public class GUI extends Application {
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
 
-        obstacleSelect.getSelectionModel().selectedItemProperty().addListener( (options, oldValue, newValue) -> {
+        obstacleSelect.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
                     if (obstacleSelect.getSelectionModel().isEmpty()) {
                         selectedObstacleHeightTF.clear();
                     } else {
@@ -460,7 +438,7 @@ public class GUI extends Application {
         distanceFromThresholdTF = new TextField();
 
         // Components for the selected obstacle's height in Redeclaration tab
-        selectedObstacleHeightLbl = new Label ("Height of the obstacle");
+        selectedObstacleHeightLbl = new Label("Height of the obstacle");
         selectedObstacleHeightTF = new TextField();
         selectedObstacleHeightTF.setEditable(false);
 
@@ -536,7 +514,7 @@ public class GUI extends Application {
 
             if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
                     thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
-                    ) {
+            ) {
 
                 if (centrelineTF.getText().isEmpty()) {
                     centreLineRequiredLabel.setText("            This field is required");
@@ -704,9 +682,9 @@ public class GUI extends Application {
             @Override
             public void handle(ScrollEvent event) {
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
-                if (event.getDeltaY() > 0){
+                if (event.getDeltaY() > 0) {
                     runwayRenderer.incZoom();
-                } else if (event.getDeltaY() < 0){
+                } else if (event.getDeltaY() < 0) {
                     runwayRenderer.decZoom();
                 }
                 zoomSlider.setValue(runwayRenderer.getZoom());
@@ -799,15 +777,15 @@ public class GUI extends Application {
         ArrayList<Pair<Node, Point>> wrappedUpNodes = new ArrayList<>();
         ObservableList<Node> nodesObservable = calculationResultsGrid.getChildrenUnmodifiable();
         List<Node> nodes = nodesObservable.subList(0, nodesObservable.size());
-        for (Node node : nodes){
+        for (Node node : nodes) {
             int rowIndex = GridPane.getRowIndex(node);
 
 
             wrappedUpNodes.add(new Pair<>(node, new Point(GridPane.getColumnIndex(node), GridPane.getRowIndex(node))));
 
-            if (rowIndex == 0){
+            if (rowIndex == 0) {
                 node.getStyleClass().add("dark");
-            } else if (rowIndex % 2 == 0){
+            } else if (rowIndex % 2 == 0) {
                 node.getStyleClass().add("lighter");
             } else {
                 node.getStyleClass().add("light");
@@ -815,7 +793,7 @@ public class GUI extends Application {
         }
 
 
-        for (Pair<Node, Point> wrappedUpNodeToAdd : wrappedUpNodes){
+        for (Pair<Node, Point> wrappedUpNodeToAdd : wrappedUpNodes) {
             //Remove this simple labels and wrap them in expanding panes
             Pane wrapper = new Pane(wrappedUpNodeToAdd.getKey());
 
@@ -890,10 +868,7 @@ public class GUI extends Application {
 
             obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
-            if (click.getClickCount() == 2) {
-                showObstacleDetails((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem(), predefinedObstaclesLV, click, primaryStage, ObstacleList.PREDEFINED);
-            }
-       });
+        });
 
         userDefinedObstaclesLV.setOnMouseClicked(click -> {
 
@@ -905,10 +880,6 @@ public class GUI extends Application {
 
             obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
 
-            if (click.getClickCount() == 2 && !userDefinedObstaclesLV.getItems().isEmpty()) {
-                showObstacleDetails((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem(), userDefinedObstaclesLV, click, primaryStage, ObstacleList.USER_DEFINED);
-
-            }
         });
 
 
@@ -971,7 +942,7 @@ public class GUI extends Application {
             @Override
             public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
                 System.out.println("Finished running take off transition");
-                if (newValue == Animation.Status.STOPPED){
+                if (newValue == Animation.Status.STOPPED) {
                     tabPane.getSelectionModel().select(1);
                 }
             }
@@ -980,7 +951,7 @@ public class GUI extends Application {
         tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if ((int) newValue == 0){
+                if ((int) newValue == 0) {
                     landTransition.play();
                 }
             }
@@ -1001,7 +972,7 @@ public class GUI extends Application {
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 double newVal = (double) newValue;
                 System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
-                planeImg.setLayoutY(planePane.getHeight() - 1.4*planeImg.getFitHeight());
+                planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
                 System.out.println(planeImg.getY());
             }
         });
@@ -1035,7 +1006,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 System.out.println("Click !");
                 File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
-                if (xmlFileToLoad == null){
+                if (xmlFileToLoad == null) {
                     System.err.println("User did not select a file");
                     return;
                 }
@@ -1062,12 +1033,12 @@ public class GUI extends Application {
 
         planePane.hoverProperty().addListener((observable, oldValue, rotate) -> {
             //Ignore the hover property when the plane is taking off or landing
-            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)){
+            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)) {
                 return;
             }
 
             //Rotate on mouse over, return to original state on mouse leave
-            if (rotate){
+            if (rotate) {
                 rotateTransition.play();
             } else {
                 reverseRotateTransition.play();
@@ -1083,13 +1054,13 @@ public class GUI extends Application {
         enableTooltips();
     }
 
-    private Region getHGrowingRegion(){
+    private Region getHGrowingRegion() {
         Region region = new Region();
         HBox.setHgrow(region, Priority.ALWAYS);
         return region;
     }
 
-    public void updateAirportSelects(){
+    public void updateAirportSelects() {
         runwaySelect.getItems().clear();
         airportSelect.getItems().clear();
         addRunwayAirportSelect.getItems().clear();
@@ -1097,22 +1068,22 @@ public class GUI extends Application {
         String[] names = airportConfigs.keySet().toArray(new String[0]);
         Arrays.sort(names);
 
-        for (String name : names){
+        for (String name : names) {
             AirportConfig ac = airportConfigs.get(name);
             airportSelect.getItems().add(name);
             addRunwayAirportSelect.getItems().add(name);
         }
     }
 
-    public void updateRunwaySelect(String airportName){
+    public void updateRunwaySelect(String airportName) {
         runwaySelect.getItems().clear();
         AirportConfig ac = airportConfigs.get(airportName);
-        for (String runwayPairName : ac.getRunways().keySet()){
+        for (String runwayPairName : ac.getRunways().keySet()) {
             runwaySelect.getItems().add(runwayPairName);
         }
     }
 
-    public Popup createAddObstaclePopup(){
+    public Popup createAddObstaclePopup() {
         Popup popup = new Popup();
 
         VBox rootBox = new VBox(20);
@@ -1283,7 +1254,7 @@ public class GUI extends Application {
     }
 
 
-    private void showObstacleDetails (Obstacle obstacle, ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
+    private void showObstacleDetails(Obstacle obstacle, ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
 
         editingObstacle = false;
 
@@ -1298,12 +1269,12 @@ public class GUI extends Application {
 
         HBox subBox = new HBox(100);
 
-        Label detailsLabel = new Label ("Overview of obstacle details");
-        Label nameLabel = new Label ("Name:");
+        Label detailsLabel = new Label("Overview of obstacle details");
+        Label nameLabel = new Label("Name:");
         Label nameContentLabel = new Label(obstacle.getName());
         TextField nameEditTF = new TextField();
         nameEditTF.setPrefWidth(240);
-        Label heightLabel = new Label ("Height:");
+        Label heightLabel = new Label("Height:");
         Label heightContentLabel = new Label(obstacle.getHeight() + "m");
         TextField heightEditTF = new TextField();
         heightEditTF.setPrefWidth(240);
@@ -1368,14 +1339,12 @@ public class GUI extends Application {
 
         detailsPopUp.getContent().add(box);
 
-        //TODO - position the show obstacle details popup according to window size
-        //TODO ask Jasmine if she wants to center it - also, seems that getWidth get Height is correct. Also, what's the point? looks good the way it is.
         /*Node eventSource = (Node) event.getSource();
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());*/
         /*detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
         detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);*/
-        detailsPopUp.setX(primaryStage.getWidth()/2);
-        detailsPopUp.setY(primaryStage.getHeight()/2);
+        detailsPopUp.setX(primaryStage.getWidth() / 2);
+        detailsPopUp.setY(primaryStage.getHeight() / 2);
         System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 
@@ -1421,7 +1390,6 @@ public class GUI extends Application {
                     }
                     heightRequiredLbl.setText("");
                 }
-                // Checking for valid obstacle name and valid obstacle height
                 if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
                     System.out.println("Add -edited- obstacle");
                     if (sourceList.equals("predefined")) {
@@ -1469,14 +1437,15 @@ public class GUI extends Application {
             @Override
             public void handle(MouseEvent event) {
                 editingObstacle = !editingObstacle;
-                if (editingObstacle){
+                if (editingObstacle) {
                     //Edit mode
 
                     nameLabel.setText("Name");
-                    heightLabel.setText("Height (m)");
+                    heightLabel.setText("Height");
 
                     nameHBox.setSpacing(55);
-                    subBox.setSpacing(132);
+                    heightHBox.setSpacing(46);
+                    subBox.setSpacing(138);
 
                     nameHBox.getChildren().remove(nameContentLabel);
                     nameHBox.getChildren().add(nameEditTF);
@@ -1503,7 +1472,7 @@ public class GUI extends Application {
     }
 
 
-    public Stage createAddAirportPopup(){
+    public Stage createAddAirportPopup() {
         Stage stage = new Stage();
         stage.setTitle("Add Airport");
 
@@ -1528,12 +1497,12 @@ public class GUI extends Application {
         airportCode.setOnKeyReleased(event -> {
             airportSuggestions.getItems().clear();
             System.out.println("text is " + airportCode.getText());
-            if (event.getCode() == KeyCode.BACK_SPACE){
+            if (event.getCode() == KeyCode.BACK_SPACE) {
                 return;
             }
-            if (airportCode.getText().length() > 0){
+            if (airportCode.getText().length() > 0) {
                 airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
-                if (airportSuggestions.getItems().size() == 1){
+                if (airportSuggestions.getItems().size() == 1) {
                     String suggestedAirportName = (String) airportSuggestions.getItems().get(0);
                     airportName.setText((String) airportSuggestions.getItems().get(0));
                     airportCode.setText(airportDB.getEntryReversed(suggestedAirportName));
@@ -1547,7 +1516,7 @@ public class GUI extends Application {
         //On double click in the suggestions, add to the
         //TODO we can also do on single click - what do you guys think?
         airportSuggestions.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2){
+            if (event.getClickCount() == 2) {
                 String selectedAirportName = (String) airportSuggestions.getSelectionModel().getSelectedItem();
                 System.out.println(selectedAirportName);
                 airportName.setText(selectedAirportName);
@@ -1602,7 +1571,7 @@ public class GUI extends Application {
     }
 
 
-    public Stage createAddRunwayPopup(){
+    public Stage createAddRunwayPopup() {
         Stage stage = new Stage();
         stage.setTitle("Add Runway");
 
@@ -1671,9 +1640,7 @@ public class GUI extends Application {
         airportSelection.getChildren().add(addRunwayAirportSelect);
 
 
-
         VBox addRunwayRoot = new VBox(20);
-
 
 
         addRunwayRoot.getStylesheets().add("styles/global.css");
@@ -1691,22 +1658,21 @@ public class GUI extends Application {
         runwayDesignatorTF.setOnKeyReleased(event -> {
             String contents = runwayDesignatorTF.getText();
             //If the user has typed 2 chars, we have a valid designator - fill the other side
-            if (contents.length() == 2){
+            if (contents.length() == 2) {
                 runwayDesignatorTF2.setText(getReverseRunwayName(contents));
-            } else if (contents.length() == 3){
+            } else if (contents.length() == 3) {
                 String designatorSide = contents.substring(2, 3).toUpperCase();
                 String otherSide = "C";
                 System.out.println("this is on side " + designatorSide);
-                if (designatorSide.equals("L")){
+                if (designatorSide.equals("L")) {
                     otherSide = "R";
-                } else if (designatorSide.equals("R")){
+                } else if (designatorSide.equals("R")) {
                     otherSide = "L";
                 }
                 runwayDesignatorTF2.setText(getReverseRunwayName(contents.substring(0, 2)) + otherSide);
             }
         });
 
-        //TODO - on confirm (or actually "Continue") the second Add Runway popup should show
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -1745,7 +1711,6 @@ public class GUI extends Application {
 
                     // Show the prompt that shows the summary of the runway values
                     displayRunwayParametersPrompt(runwayPair);
-                    //TODO - only add the runway once user has clicked Confirm in the second Add Runway popup
 
                     AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
                     System.out.println(selectedAirport.toString());
@@ -1776,7 +1741,6 @@ public class GUI extends Application {
         return stage;
     }
 
-    //TODO - position according to window size
     private void displayDeletePrompt(Obstacle obstacle, ObstacleList source) {
         Stage deleteWindow = new Stage();
         deleteWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1787,14 +1751,14 @@ public class GUI extends Application {
         Label confirmationLabel = new Label("Are you sure you want to delete " + obstacle.getName() + "?");
         confirmationLabel.setWrapText(true);
         confirmationLabel.setTextAlignment(TextAlignment.CENTER);
-        Button cancelDeletion = new Button ("Cancel");
+        Button cancelDeletion = new Button("Cancel");
         cancelDeletion.getStyleClass().add("primaryButton");
-        Button confirmDeletion = new Button ("Delete");
+        Button confirmDeletion = new Button("Delete");
         confirmDeletion.getStyleClass().add("primaryButton");
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(cancelDeletion, confirmDeletion);
+        buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
         VBox windowLayout = new VBox(10);
         windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
         windowLayout.setAlignment(Pos.CENTER);
@@ -1805,14 +1769,13 @@ public class GUI extends Application {
             removeObstacle(obstacle, source);
             updateObstaclesList();
             deleteWindow.close();
-        } );
+        });
 
-        Scene scene = new Scene(windowLayout, 300, 100);
+        Scene scene = new Scene(windowLayout, 400, 150);
         deleteWindow.setScene(scene);
         deleteWindow.showAndWait();
     }
 
-    //TODO - position according to window size
     private void displayOverwritePrompt(String obstacleName, double currentHeight, double newHeight) {
         Stage overwriteWindow = new Stage();
         overwriteWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1822,6 +1785,8 @@ public class GUI extends Application {
         Label overwriteLabel = new Label("");
         overwriteLabel.setWrapText(true);
         overwriteLabel.setTextAlignment(TextAlignment.CENTER);
+        overwriteLabel.getStyleClass().add("label");
+        overwriteLabel.getStylesheets().add("styles/global.css");
 
         if (predefinedObstaclesSorted.containsKey(obstacleName)) {
             overwriteLabel.setText(obstacleName + " already exists in the list of predefined obstacles. Do you wish to overwrite " +
@@ -1831,8 +1796,12 @@ public class GUI extends Application {
                     "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
         }
 
-        Button cancelOverwrite = new Button ("Cancel");
-        Button confirmOverwrite= new Button ("Overwrite");
+        Button cancelOverwrite = new Button("Cancel");
+        cancelOverwrite.getStyleClass().add("primaryButton");
+        cancelOverwrite.getStylesheets().add("styles/global.css");
+        Button confirmOverwrite = new Button("Overwrite");
+        confirmOverwrite.getStyleClass().add("primaryButton");
+        confirmOverwrite.getStylesheets().add("styles/global.css");
 
         HBox buttonsBox = new HBox(20);
         buttonsBox.setAlignment(Pos.CENTER);
@@ -1852,8 +1821,7 @@ public class GUI extends Application {
             if (predefinedObstaclesSorted.containsKey(obstacleName)) {
                 predefinedObstaclesSorted.remove(obstacleName);
                 predefinedObstaclesSorted.put(obstacleName, modifiedObstacle);
-            }
-            else {
+            } else {
                 userDefinedObstacles.remove(obstacleName);
                 userDefinedObstacles.put(obstacleName, modifiedObstacle);
             }
@@ -1864,20 +1832,23 @@ public class GUI extends Application {
             addObstaclePopup.hide();
             notifyUpdate("Obstacle overwritten");
             overwriteWindow.close();
-        } );
+        });
 
-        Scene scene = new Scene(windowLayout, 400, 100);
+        Scene scene = new Scene(windowLayout, 420, 170);
         overwriteWindow.setScene(scene);
         overwriteWindow.showAndWait();
     }
 
-    //TODO Make the buttons work
+    //TODO Make the Confirm/Cancel buttons work
+    //TODO other issues - deleting obstacles messes up the list of obstacles in Redeclaration,
+    // "Save changes" button doesn't work when editing
+    // When an obstacle is deleted, it still shows up as selected obstacle in the list of obstacles in Redeclaration
     private void displayRunwayParametersPrompt(RunwayPair runwayPair) {
         Stage runwayWindow = new Stage();
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
         runwayWindow.setTitle("Add Runway");
 
-        Label summaryLbl = new Label ("Summary of parameters for the new runway at " + addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString() + " airport:");
+        Label summaryLbl = new Label("Summary of parameters for the new runway at " + addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString() + " airport:");
         summaryLbl.getStyleClass().add("label");
         summaryLbl.getStylesheets().add("styles/global.css");
 
@@ -1933,10 +1904,10 @@ public class GUI extends Application {
         summaryTable.setAlignment(Pos.CENTER);
 
         // Confirm and Back buttons
-        Button backBtn = new Button ("Back");
+        Button backBtn = new Button("Back");
         backBtn.getStyleClass().add("primaryButton");
         backBtn.getStylesheets().add("styles/global.css");
-        Button confirmBtn = new Button ("Confirm");
+        Button confirmBtn = new Button("Confirm");
         confirmBtn.getStyleClass().add("primaryButton");
         confirmBtn.getStylesheets().add("styles/global.css");
         HBox buttonsBox = new HBox(10);
@@ -1956,14 +1927,13 @@ public class GUI extends Application {
     }
 
 
-
-    private void resetCalculationsTab(){
+    private void resetCalculationsTab() {
         calculationsPane.getChildren().remove(viewCalculationResultsVBox);
         calculationsPane.getChildren().add(calculationsRootBox);
     }
 
 
-    private void switchCalculationsTabToView(){
+    private void switchCalculationsTabToView() {
         centreLineRequiredLabel.setText("");
         thresholdDistanceRequiredLabel.setText("");
         thresholdRequiredLabel.setText("");
@@ -1972,7 +1942,7 @@ public class GUI extends Application {
         calculationsPane.getChildren().add(viewCalculationResultsVBox);
     }
 
-    private void updateRunwayInfoLabels(RunwayPair runwayPair){
+    private void updateRunwayInfoLabels(RunwayPair runwayPair) {
         runwayDesignatorCntLbl.setText(" " + runwayPair.getR1().getRunwayDesignator().toString());
         runwayDesignatorLbl2.setText(" " + runwayPair.getR2().getRunwayDesignator().toString());
         toraCntLbl.setText(" " + runwayPair.getR1().getTORA());
@@ -1985,7 +1955,7 @@ public class GUI extends Application {
         ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
     }
 
-    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated){
+    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated) {
         originalToda.setText(Integer.toString(original.getTODA()));
         originalTora.setText(Integer.toString(original.getTORA()));
         originalAsda.setText(Integer.toString(original.getASDA()));
@@ -1997,7 +1967,7 @@ public class GUI extends Application {
         recalculatedLda.setText(Integer.toString(recalculated.getLDA()));
     }
 
-    private void updateThresholdList(RunwayPair runwayPair){
+    private void updateThresholdList(RunwayPair runwayPair) {
         thresholdSelect.getItems().clear();
         thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
@@ -2008,7 +1978,7 @@ public class GUI extends Application {
         Map<String, Obstacle> sourceList;
         ListView sourceLV;
 
-        switch(listType){
+        switch (listType) {
             case PREDEFINED:
                 sourceList = predefinedObstaclesSorted;
                 sourceLV = predefinedObstaclesLV;
@@ -2032,7 +2002,7 @@ public class GUI extends Application {
     }
 
 
-    private void updateObstaclesList(){
+    private void updateObstaclesList() {
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
         predefinedObstaclesLV.getItems().clear();
@@ -2054,7 +2024,7 @@ public class GUI extends Application {
         obstacles.add(new Obstacle("Airbus A380", 24.1));
         obstacles.add(new Obstacle("Telescopic handler", 12));
 
-        for (Obstacle obstacle : obstacles){
+        for (Obstacle obstacle : obstacles) {
             predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
             allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
@@ -2068,29 +2038,28 @@ public class GUI extends Application {
     }
 
 
-    private Boolean validateObstaclesForm(){
+    private Boolean validateObstaclesForm() {
 
-        if (obstacleNameTxt.getText().length() < 1){
+        if (obstacleNameTxt.getText().length() < 1) {
             return false;
         }
 
         try {
             Double.parseDouble(obstacleHeightTxt.getText());
-        } catch (NumberFormatException e){
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             return false;
         }
 
 
-
         return true;
     }
 
-    private Boolean validateDoubleForm(ArrayList<String> doubleVals){
-        for (String s : doubleVals){
+    private Boolean validateDoubleForm(ArrayList<String> doubleVals) {
+        for (String s : doubleVals) {
             try {
                 Double.parseDouble(s);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
             if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
@@ -2100,18 +2069,18 @@ public class GUI extends Application {
         return true;
     }
 
-    private Boolean validateIntForm(ArrayList<String> intVals){
-        for (String s : intVals){
+    private Boolean validateIntForm(ArrayList<String> intVals) {
+        for (String s : intVals) {
             try {
                 Integer.parseInt(s);
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 return false;
             }
         }
         return true;
     }
 
-    private String getReverseRunwayName(String originalRunway){
+    private String getReverseRunwayName(String originalRunway) {
         return String.valueOf((Integer.parseInt(originalRunway) + 18) % 36);
     }
 
@@ -2125,7 +2094,7 @@ public class GUI extends Application {
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
-    private void notifyUpdate(String message){
+    private void notifyUpdate(String message) {
         new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
     }
 

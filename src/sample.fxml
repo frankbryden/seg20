@@ -26,7 +26,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -144,7 +144,7 @@
                                                       <Button layoutX="505.0" layoutY="55.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Reset" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="55.0" />
                                                       <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoom %" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
                                                       <Button layoutX="505.0" layoutY="95.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
-                                                      <CheckBox fx:id="renderWindCompass" layoutX="33.0" layoutY="367.0" mnemonicParsing="false" text="Render Wind Direction Compass" textFill="#103b52">
+                                                      <CheckBox fx:id="renderWindCompass" layoutX="33.0" layoutY="367.0" mnemonicParsing="false" text="Show wind direction compass" textFill="#103b52">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -304,9 +304,8 @@
                                                       <Label layoutX="6.0" layoutY="308.0" prefHeight="30.0" prefWidth="333.0" text="User-defined obstacles" />
                                                       <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="338.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
                                                       <Button fx:id="saveObstaclesBtn" layoutX="549.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="deleteObstacleBtn" layoutX="500.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="451.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="402.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="editObstacleBtn" layoutX="503.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="popAddObstacleBtn" layoutX="457.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
