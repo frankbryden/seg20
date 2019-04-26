@@ -1688,6 +1688,25 @@ public class GUI extends Application {
         gridPane.setVgap(10);
         gridPane.setPadding(new Insets(15, 15, 15, 15));
 
+        // Auto-complete for runway designator
+        runwayDesignatorTF.setOnKeyReleased(event -> {
+            String contents = runwayDesignatorTF.getText();
+            //If the user has typed 2 chars, we have a valid designator - fill the other side
+            if (contents.length() == 2){
+                runwayDesignatorTF2.setText(getReverseRunwayName(contents));
+            } else if (contents.length() == 3){
+                String designatorSide = contents.substring(2, 3).toUpperCase();
+                String otherSide = "C";
+                System.out.println("this is on side " + designatorSide);
+                if (designatorSide.equals("L")){
+                    otherSide = "R";
+                } else if (designatorSide.equals("R")){
+                    otherSide = "L";
+                }
+                runwayDesignatorTF2.setText(getReverseRunwayName(contents.substring(0, 2)) + otherSide);
+            }
+        });
+
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
@@ -2055,6 +2074,10 @@ public class GUI extends Application {
             }
         }
         return true;
+    }
+
+    private String getReverseRunwayName(String originalRunway){
+        return String.valueOf((Integer.parseInt(originalRunway) + 18) % 36);
     }
 
     public void addObstacle(String name, double height) {
