@@ -6,6 +6,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
@@ -43,6 +44,7 @@ import java.util.*;
 public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
             editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
+    @FXML
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
@@ -428,7 +430,7 @@ public class GUI extends Application {
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
-        calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
+        //calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         calculationsPane.getStylesheets().add("styles/global.css");
         calculationsPane.getStylesheets().add("styles/calculations.css");
 
@@ -1697,7 +1699,6 @@ public class GUI extends Application {
             } else if (contents.length() == 3){
                 String designatorSide = contents.substring(2, 3).toUpperCase();
                 String otherSide = "C";
-                System.out.println("this is on side " + designatorSide);
                 if (designatorSide.equals("L")){
                     otherSide = "R";
                 } else if (designatorSide.equals("R")){
