@@ -1495,6 +1495,7 @@ public class GUI extends Application {
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
+        airportName.setEditable(false);
 
         //Setting the tooltip
         airportCode = new TextField();
@@ -1527,10 +1528,9 @@ public class GUI extends Application {
             }
         });
 
-        //On double click in the suggestions, add to the
-        //TODO we can also do on single click - what do you guys think?
+        //Single-click on the airport suggestions box
         airportSuggestions.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 2) {
+            if (event.getClickCount() == 1) {
                 String selectedAirportName = (String) airportSuggestions.getSelectionModel().getSelectedItem();
                 System.out.println(selectedAirportName);
                 airportName.setText(selectedAirportName);
@@ -1569,12 +1569,17 @@ public class GUI extends Application {
 
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(event -> {
-            System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
-            AirportConfig airportConfig = new AirportConfig(airportName.getText());
-            airportConfigs.put(airportConfig.getName(), airportConfig);
-            updateAirportSelects();
-            addAirportPopup.hide();
-            addRunwayPopup.show();
+
+            if (!airportSuggestions.getSelectionModel().isEmpty()) {
+                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
+                AirportConfig airportConfig = new AirportConfig(airportName.getText());
+                airportConfigs.put(airportConfig.getName(), airportConfig);
+                updateAirportSelects();
+                addAirportPopup.hide();
+                addRunwayPopup.show();
+            } else {
+                displayAirportErrorPopup();
+            }
         });
 
         //Simply close the popup, discarding the data
@@ -1851,6 +1856,29 @@ public class GUI extends Application {
         Scene scene = new Scene(windowLayout, 420, 170);
         overwriteWindow.setScene(scene);
         overwriteWindow.showAndWait();
+    }
+
+    private void displayAirportErrorPopup() {
+        Stage errorWindow = new Stage();
+        errorWindow.initModality(Modality.APPLICATION_MODAL);
+        errorWindow.setTitle("Airport selection");
+
+        Label errorLabel = new Label("Please enter a valid 3-digit IATA airport code and then select an airport in order to continue.");
+        errorLabel.setWrapText(true);
+        errorLabel.setTextAlignment(TextAlignment.CENTER);
+        Button returnButton = new Button("Return");
+        returnButton.getStyleClass().add("primaryButton");
+
+        VBox windowLayout = new VBox(10);
+        windowLayout.getChildren().addAll(errorLabel, returnButton);
+        windowLayout.setAlignment(Pos.CENTER);
+        windowLayout.getStylesheets().add("styles/global.css");
+
+        returnButton.setOnAction(e -> errorWindow.close());
+
+        Scene scene = new Scene(windowLayout, 400, 150);
+        errorWindow.setScene(scene);
+        errorWindow.showAndWait();
     }
 
     //TODO Make the Confirm/Cancel buttons work
