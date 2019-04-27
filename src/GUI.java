@@ -42,12 +42,15 @@ import java.util.List;
 import java.util.*;
 
 public class GUI extends Application {
-    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
-            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
+    @FXML
+    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
+            editObstacleBtn, deleteObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     @FXML
     private Pane calculationsPane;
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
+    @FXML
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
+    @FXML
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
@@ -76,11 +79,15 @@ public class GUI extends Application {
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
+    @FXML
     private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx, renderWindCompass;
+    @FXML
     private ColorPicker topDownColorPicker, sideOnColorPicker;
+    @FXML
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
     private StackPane trackPane;
+    @FXML
     private TabPane rootTabPane;
     private enum ObstacleList {USER_DEFINED, PREDEFINED}
 
@@ -89,7 +96,12 @@ public class GUI extends Application {
     public void start(Stage primaryStage) throws Exception{
         // getClass().getResource("sample.fxml") gives me a null pointer exception - caused by the way the IDE loads the resource files
         // temporary fix for now
-        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
+
+        FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("sample.fxml"));
+        loader.setController(this);
+        Parent root = (Parent) loader.load();
+        //Parent root; // = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
+
         primaryStage.setTitle("Runway Redeclaration Tool");
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
@@ -134,13 +146,9 @@ public class GUI extends Application {
         exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
 
 
-        rootTabPane = (TabPane) primaryStage.getScene().lookup("#rootTabPane");
         rootTabPane.setVisible(false);
 
         //Set up color pickers in the view tab
-        topDownColorPicker = (ColorPicker) primaryStage.getScene().lookup("#topDownColorPicker");
-        sideOnColorPicker = (ColorPicker) primaryStage.getScene().lookup("#sideOnColorPicker");
-
         topDownColorPicker.setValue(Color.GOLD);
         sideOnColorPicker.setValue(Color.SKYBLUE);
 
@@ -158,10 +166,6 @@ public class GUI extends Application {
         });
 
         //Set up checkboxes in the View tab
-        renderRunwayLabelLinesChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayLabelLinesChkbx");
-        renderRunwayRotatedChkbx = (CheckBox) primaryStage.getScene().lookup("#renderRunwayRotatedChkbx");
-        renderWindCompass = (CheckBox) primaryStage.getScene().lookup("#renderWindCompass");
-
         renderRunwayLabelLinesChkbx.setSelected(true);
         renderRunwayLabelLinesChkbx.setSelected(true);
         renderWindCompass.setSelected(true);
@@ -179,7 +183,6 @@ public class GUI extends Application {
         });
 
         //Set up the slider controlling the zoom in the View tab
-        zoomSlider = (Slider) primaryStage.getScene().lookup("#zoomSlider");
         zoomSlider.setMin(RunwayRenderer.MIN_ZOOM);
         zoomSlider.setMax(RunwayRenderer.MAX_ZOOM);
         zoomSlider.setBlockIncrement(RunwayRenderer.ZOOM_STEP);
@@ -206,7 +209,6 @@ public class GUI extends Application {
         trackPane.setStyle("-fx-background-color: linear-gradient(to right, -fx-primary-color 0%, #ffffff 0%);");
 
 
-        runwaySelect = (ComboBox) primaryStage.getScene().lookup("#runwaySelect");
         runwaySelect.setId("runwayComboBox");
         runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
             @Override
@@ -246,7 +248,6 @@ public class GUI extends Application {
         });
 
 
-        airportSelect = (ComboBox) primaryStage.getScene().lookup("#airportSelect");
         airportSelect.setId("airportComboBox");
         airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Here");
@@ -273,7 +274,6 @@ public class GUI extends Application {
         //Icons in the obstacles tab
         int iconSize = 18;
 
-        popAddObstacleBtn = (Button) primaryStage.getScene().lookup("#popAddObstacleBtn");
         ImageView popAddObstacle = new ImageView(new Image(getClass().getResourceAsStream("/rec/popAddObstacle.png")));
         popAddObstacle.setFitHeight(iconSize);
         popAddObstacle.setFitWidth(iconSize);
@@ -290,7 +290,6 @@ public class GUI extends Application {
             }
         });
 
-        editObstacleBtn = (Button) primaryStage.getScene().lookup("#editObstacleBtn");
         ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/load.png")));
         editObstacleImgView.setFitWidth(iconSize);
         editObstacleImgView.setFitHeight(iconSize);
@@ -313,8 +312,6 @@ public class GUI extends Application {
             }
         });
 
-        deleteObstacleBtn = (Button) primaryStage.getScene().lookup("#deleteObstacleBtn");
-
         ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
         deleteObstacleImgView.setFitWidth(iconSize);
         deleteObstacleImgView.setFitHeight(iconSize);
@@ -330,8 +327,6 @@ public class GUI extends Application {
             }
         });
 
-        saveObstacleBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
-
         ImageView saveObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/save.png")));
         saveObstacleImgView.setFitHeight(iconSize);
         saveObstacleImgView.setFitWidth(iconSize);
@@ -345,8 +340,7 @@ public class GUI extends Application {
             }
         });
 
-        saveObstaclesBtn = (Button) primaryStage.getScene().lookup("#saveObstaclesBtn");
-        saveObstaclesBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        saveObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Save obstacles");
@@ -848,10 +842,8 @@ public class GUI extends Application {
 
         resetCalculationsTab();
 
-        predefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#predefinedObstaclesLV");
         predefinedObstaclesLV.getStyleClass().add("obstacleList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
-        userDefinedObstaclesLV = (ListView) primaryStage.getScene().lookup("#userDefinedObstaclesLV");
         userDefinedObstaclesLV.getStyleClass().add("obstacleList");
         userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
@@ -1530,19 +1522,24 @@ public class GUI extends Application {
         airportCode.setOnKeyReleased(event -> {
             airportSuggestions.getItems().clear();
             System.out.println("text is " + airportCode.getText());
-            if (event.getCode() == KeyCode.BACK_SPACE){
-                return;
-            }
+
             if (airportCode.getText().length() > 0){
                 airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
                 if (airportSuggestions.getItems().size() == 1){
+                    if (event.getCode() == KeyCode.BACK_SPACE && airportCode.getText().length() != 3){
+                        airportName.clear();
+                        return;
+                    }
                     String suggestedAirportName = (String) airportSuggestions.getItems().get(0);
                     airportName.setText((String) airportSuggestions.getItems().get(0));
                     airportCode.setText(airportDB.getEntryReversed(suggestedAirportName));
                     airportCode.positionCaret(airportCode.getText().length());
+                } else {
+                    airportName.clear();
                 }
             } else {
                 airportSuggestions.getItems().clear();
+                airportName.clear();
             }
         });
 
