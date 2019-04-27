@@ -12,7 +12,8 @@
 }
 
 .designator-tabs:focused{
-    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #2A99CE, #0F5875);
+    -fx-background-color: radial-gradient(center 50% 50%, radius 100%, #46b9f9, #2386bb);
+    -fx-text-fill: -fx-secondary-color;
 }
 
 .color-picker{
