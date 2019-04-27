@@ -76,7 +76,8 @@ public class GUI extends Application {
     private CheckBox renderRunwayLabelLinesChkbx, renderRunwayRotatedChkbx, renderWindCompass;
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
-    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip;
+    private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip,
+            addObstacleTooltip, importObstaclesTooltip, saveObstaclesTooltip;
     private StackPane trackPane;
 
 
@@ -124,6 +125,12 @@ public class GUI extends Application {
         asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
         ldaButtonTooltip = new Tooltip();
         ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
+        addObstacleTooltip = new Tooltip();
+        addObstacleTooltip.setText("Add an obstacle");
+        importObstaclesTooltip = new Tooltip();
+        importObstaclesTooltip.setText("Import obstacles");
+        saveObstaclesTooltip = new Tooltip();
+        saveObstaclesTooltip.setText("Save obstacles");
 
         addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
@@ -142,14 +149,14 @@ public class GUI extends Application {
         sideOnColorPicker.setValue(Color.SKYBLUE);
 
         topDownColorPicker.setOnAction(event -> {
-            if (runwayRenderer != null){
+            if (runwayRenderer != null) {
                 runwayRenderer.setTopDownBackgroundColor(topDownColorPicker.getValue());
             }
         });
 
 
         sideOnColorPicker.setOnAction(event -> {
-            if (runwayRendererSideView != null){
+            if (runwayRendererSideView != null) {
                 runwayRendererSideView.setSideOnBackgroundColor(sideOnColorPicker.getValue());
             }
         });
@@ -2106,6 +2113,9 @@ public class GUI extends Application {
         addObstacleHeightTF.setTooltip(null);
         centrelineTF.setTooltip(null);
         distanceFromThresholdTF.setTooltip(null);
+        popAddObstacleBtn.setTooltip(null);
+        editObstacleBtn.setTooltip(null);
+        saveObstacleBtn.setTooltip(null);
     }
 
     private void enableTooltips() {
@@ -2116,6 +2126,9 @@ public class GUI extends Application {
         addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
         centrelineTF.setTooltip(centrelineDistTooltip);
         distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+        popAddObstacleBtn.setTooltip(addObstacleTooltip);
+        editObstacleBtn.setTooltip(importObstaclesTooltip);
+        saveObstacleBtn.setTooltip(saveObstaclesTooltip);
     }
 
     public static void main(String[] args) {
