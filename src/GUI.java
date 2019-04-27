@@ -43,7 +43,8 @@ public class GUI extends Application {
     private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, printerBtn, outArrowBtn, popAddObstacleBtn,
             editObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
     private Pane calculationsPane;
-    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF;
+    private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF,
+            heightEditTF;
     private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
@@ -77,7 +78,7 @@ public class GUI extends Application {
     private ColorPicker topDownColorPicker, sideOnColorPicker;
     private Slider zoomSlider;
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip,
-            addObstacleTooltip, importObstaclesTooltip, saveObstaclesTooltip;
+            addObstacleTooltip, importObstaclesTooltip, saveObstaclesTooltip, editObstacleHeightTooltip;
     private StackPane trackPane;
 
 
@@ -131,6 +132,8 @@ public class GUI extends Application {
         importObstaclesTooltip.setText("Import obstacles");
         saveObstaclesTooltip = new Tooltip();
         saveObstaclesTooltip.setText("Save obstacles");
+        editObstacleHeightTooltip = new Tooltip();
+        editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
 
         addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
@@ -1058,6 +1061,8 @@ public class GUI extends Application {
         printer.setRunway(canvas);
         printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
 
+        heightEditTF = new TextField();
+
         enableTooltips();
     }
 
@@ -1283,7 +1288,6 @@ public class GUI extends Application {
         nameEditTF.setPrefWidth(240);
         Label heightLabel = new Label("Height:");
         Label heightContentLabel = new Label(obstacle.getHeight() + "m");
-        TextField heightEditTF = new TextField();
         heightEditTF.setPrefWidth(240);
 
         // Styling of name and height text fields to show red prompt text
@@ -2116,6 +2120,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setTooltip(null);
         editObstacleBtn.setTooltip(null);
         saveObstacleBtn.setTooltip(null);
+        heightEditTF.setTooltip(null);
     }
 
     private void enableTooltips() {
@@ -2129,6 +2134,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setTooltip(addObstacleTooltip);
         editObstacleBtn.setTooltip(importObstaclesTooltip);
         saveObstacleBtn.setTooltip(saveObstaclesTooltip);
+        heightEditTF.setTooltip(editObstacleHeightTooltip);
     }
 
     public static void main(String[] args) {

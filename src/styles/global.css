@@ -174,4 +174,5 @@
 
 .tooltip{
     -fx-font-size: 10px;
+    -fx-show-delay: 100ms;
 }
