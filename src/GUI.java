@@ -42,10 +42,11 @@ import java.util.*;
 
 public class GUI extends Application {
     @FXML
-    private Button loadAirportButton, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
-            editObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn;
+    private Button loadAirportBtn, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
+            editObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn;
     @FXML
     private Pane calculationsPane;
+    @FXML
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF,
             heightEditTF;
     @FXML
@@ -53,10 +54,12 @@ public class GUI extends Application {
     @FXML
     private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
+    @FXML
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
-            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windlLbl, selectedObstacleHeightLbl;
-    private Label centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
+            originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windLbl, selectedObstacleHeightLbl,
+            centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
+    @FXML
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
     private VBox calculationsRootBox, viewCalculationResultsVBox;
@@ -67,14 +70,17 @@ public class GUI extends Application {
     private Stage addAirportPopup, addRunwayPopup;
     private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
-    private Canvas canvas, sideviewCanvas;
+    @FXML
+    private Canvas canvas, canvasSideView;
     @FXML
     private TabPane tabPane, rootTabPane;
+    @FXML
     private Pane planePane;
     private ImageView planeImg;
     private RunwayRenderer runwayRenderer;
     private RunwayRenderer runwayRendererSideView;
-    private BorderPane canvasBorderPane;
+    @FXML
+    private BorderPane canvasBorderPane, tabsBox;
     private ComboBox obstacleSelect;
     private Boolean editingObstacle;
     private Stage primaryStage;
@@ -120,7 +126,6 @@ public class GUI extends Application {
 
         airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
 
-
         // Setting the texts for each tooltip
         centrelineDistTooltip = new Tooltip();
         centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
@@ -152,8 +157,8 @@ public class GUI extends Application {
         addObstaclePopup = createAddObstaclePopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
 
-
         rootTabPane.setVisible(false);
+        tabsBox.setStyle("-fx-background-color: #f4f4f4");
 
         //Set up color pickers in the view tab
         topDownColorPicker.setValue(Color.GOLD);
@@ -232,10 +237,11 @@ public class GUI extends Application {
                         runwayRenderer.render();
                         //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
 
-                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, sideviewCanvas.getGraphicsContext2D(), true);
+                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
                         rootTabPane.setVisible(true);
+                        tabsBox.setStyle("-fx-background-color: #1b88bb");
                         zoomSlider.setValue(runwayRenderer.getZoom());
 
                         LiveWindService liveWindService = new LiveWindService();
@@ -244,7 +250,7 @@ public class GUI extends Application {
                         liveWindService.setOnSucceeded(t -> {
                             Map<String, Double> result = (HashMap<String, Double>) t.getSource().getValue();
                             System.out.println("We have a result!");
-                            windlLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
+                            windLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
                             runwayRenderer.setWindAngle(result.get("direction"));
                         });
                         liveWindService.start();
@@ -352,7 +358,6 @@ public class GUI extends Application {
         });
 
         // Button in Settings tab for enabling/disabling tooltips
-        manageTooltipsBtn = (Button) primaryStage.getScene().lookup("#manageTooltipsBtn");
         manageTooltipsBtn.setOnMouseClicked(event -> {
             if (manageTooltipsBtn.getText().equals("Disable tooltips")) {
                 manageTooltipsBtn.setText("Enable tooltips");
@@ -363,61 +368,50 @@ public class GUI extends Application {
             }
         });
 
-
-        highlightTodaBtn = (Button) primaryStage.getScene().lookup("#highlightTodaBtn");
         highlightTodaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
 
             notifyUpdate("TODA Highlighted");
         });
 
-        highlightToraBtn = (Button) primaryStage.getScene().lookup("#highlightToraBtn");
         highlightToraBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
 
             notifyUpdate("TORA Highlighted");
         });
 
-        highlightAsdaBtn = (Button) primaryStage.getScene().lookup("#highlightAsdaBtn");
         highlightAsdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
 
             notifyUpdate("ASDA Highlighted");
         });
 
-        highlightLdaBtn = (Button) primaryStage.getScene().lookup("#highlightLdaBtn");
         highlightLdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
 
             notifyUpdate("LDA Highlighted");
         });
 
-
-        addAirportBtn = (Button) primaryStage.getScene().lookup("#addAirportBtn");
         addAirportBtn.setOnMouseClicked(event -> {
             System.out.println("Add airport");
             addAirportPopup.show();
         });
 
-        addRunwayBtn = (Button) primaryStage.getScene().lookup("#addRunwayBtn");
         addRunwayBtn.setOnMouseClicked(event -> {
             System.out.println("Add runway");
             addRunwayPopup.show();
         });
 
         //Settings tab
-        saveSettingsBtn = (Button) primaryStage.getScene().lookup("#saveSettingsBtn");
         saveSettingsBtn.setOnMouseClicked(value -> {
             System.out.println("Clicked on save settings");
             //new Notification("hey").show(primaryStage, 10, 10);
 
         });
 
-
         //Calculations Pane - selection view
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
-        //calculationsPane = (Pane) primaryStage.getScene().lookup("#calculationsPane");
         calculationsPane.getStylesheets().add("styles/global.css");
         calculationsPane.getStylesheets().add("styles/calculations.css");
 
@@ -436,7 +430,6 @@ public class GUI extends Application {
                 }
         );
 
-
         thresholdSelect = new ComboBox();
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
@@ -446,7 +439,11 @@ public class GUI extends Application {
         thresholdSelectLbl = new Label("Select threshold");
 
         centrelineTF = new TextField();
+        centrelineTF.getStyleClass().add("redErrorPromptText");
+        centrelineTF.getStylesheets().add("styles/obstacles.css");
         distanceFromThresholdTF = new TextField();
+        distanceFromThresholdTF.getStyleClass().add("redErrorPromptText");
+        distanceFromThresholdTF.getStylesheets().add("styles/obstacles.css");
 
         // Components for the selected obstacle's height in Redeclaration tab
         selectedObstacleHeightLbl = new Label("Height of the obstacle");
@@ -515,27 +512,35 @@ public class GUI extends Application {
         calculationsRootBox.getChildren().add(calculateBtnVBox);
         calculationsRootBox.getStyleClass().add("customCol");
 
-
-        centreLineRequiredLabel = (Label) primaryStage.getScene().lookup("#centreLineRequiredLabel");
-        thresholdDistanceRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdDistanceRequiredLabel");
-        thresholdRequiredLabel = (Label) primaryStage.getScene().lookup("#thresholdRequiredLabel");
-        obstacleRequiredLabel = (Label) primaryStage.getScene().lookup("#obstacleRequiredLabel");
-
         calculateBtn.setOnMouseClicked(event -> {
 
+            // Check if any of the textfields are empty or no selection is made from the comboboxes
             if (centrelineTF.getText().isEmpty() || distanceFromThresholdTF.getText().isEmpty() ||
                     thresholdSelect.getSelectionModel().isEmpty() || obstacleSelect.getSelectionModel().isEmpty()
             ) {
-
                 if (centrelineTF.getText().isEmpty()) {
+                    centrelineTF.setPromptText("");
                     centreLineRequiredLabel.setText("            This field is required");
                 } else {
                     centreLineRequiredLabel.setText("");
+                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+                        centrelineTF.clear();
+                        centrelineTF.setPromptText("Invalid centreline distance!");
+                    } else {
+                        centrelineTF.setPromptText("");
+                    }
                 }
                 if (distanceFromThresholdTF.getText().isEmpty()) {
+                    distanceFromThresholdTF.setPromptText("");
                     thresholdDistanceRequiredLabel.setText("            This field is required");
                 } else {
                     thresholdDistanceRequiredLabel.setText("");
+                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+                        distanceFromThresholdTF.clear();
+                        distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
+                    } else {
+                        distanceFromThresholdTF.setPromptText("");
+                    }
                 }
                 if (thresholdSelect.getSelectionModel().isEmpty()) {
                     thresholdRequiredLabel.setText("      Please select a threshold");
@@ -548,9 +553,32 @@ public class GUI extends Application {
                     obstacleRequiredLabel.setText("");
                 }
 
+                // If everything is filled in, check if the user input to distance from threshold and centreline is valid
+            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText()))) && !validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+                obstacleRequiredLabel.setText("");
+                thresholdRequiredLabel.setText("");
+                centreLineRequiredLabel.setText("");
+                thresholdDistanceRequiredLabel.setText("");
+                centrelineTF.clear();
+                distanceFromThresholdTF.clear();
+                centrelineTF.setPromptText("Invalid centreline distance!");
+                distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
+            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+                obstacleRequiredLabel.setText("");
+                thresholdRequiredLabel.setText("");
+                centreLineRequiredLabel.setText("");
+                thresholdDistanceRequiredLabel.setText("");
+                distanceFromThresholdTF.clear();
+                distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
+            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+                obstacleRequiredLabel.setText("");
+                thresholdRequiredLabel.setText("");
+                centreLineRequiredLabel.setText("");
+                thresholdDistanceRequiredLabel.setText("");
+                centrelineTF.clear();
+                centrelineTF.setPromptText("Invalid threshold distance!");
             } else {
-
-
+                // If everything is filled in and valid, start calculations
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
                 Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
                 Obstacle selectedObstacle = (Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem();
@@ -656,7 +684,7 @@ public class GUI extends Application {
         });
 
         //Calculations Pane - calculation results view
-        breakdownCalcLbl = new Label("Breakdown of the calculations");
+        breakdownCalcLbl = new Label("Breakdown of the calculations: ");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
         calculationDetails.setId("calcBreakdown");
@@ -685,10 +713,7 @@ public class GUI extends Application {
         VBox calculateBackBtnVBox = new VBox();
         calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
-        calculateBackBtnVBox.setPadding(new Insets(0, 20, 0, 0));
 
-        tabPane = (TabPane) primaryStage.getScene().lookup("#tabPane");
-        canvas = (Canvas) primaryStage.getScene().lookup("#canvas");
         canvas.setOnScroll(new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
@@ -725,9 +750,6 @@ public class GUI extends Application {
             }
         });
 
-        sideviewCanvas = (Canvas) primaryStage.getScene().lookup("#canvasSideView");
-
-        canvasBorderPane = (BorderPane) primaryStage.getScene().lookup("#canvasBorderPane");
         /*canvasBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -894,34 +916,7 @@ public class GUI extends Application {
 
         populatePredefinedList();
 
-        obstacleNameTxt = (TextField) primaryStage.getScene().lookup("#obstacleNameTxt");
-        obstacleHeightTxt = (TextField) primaryStage.getScene().lookup("#obstacleHeightTxt");
-
-        runwayGrid = (GridPane) primaryStage.getScene().lookup("#runwayGrid");
-        //runwayGrid.getStyleClass().add("light");
-
-        runwayDesignatorLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl");
-        toraLbl = (Label) primaryStage.getScene().lookup("#toraLbl");
-        todaLbl = (Label) primaryStage.getScene().lookup("#todaLbl");
-        asdaLbl = (Label) primaryStage.getScene().lookup("#asdaLbl");
-        ldaLbl = (Label) primaryStage.getScene().lookup("#ldaLbl");
-
-        runwayDesignatorCntLbl = (Label) primaryStage.getScene().lookup("#runwayDesignatorCntLbl");
-        runwayDesignatorLbl2 = (Label) primaryStage.getScene().lookup("#runwayDesignatorLbl2");
-        toraCntLbl = (Label) primaryStage.getScene().lookup("#toraCntLbl");
-        todaCntLbl = (Label) primaryStage.getScene().lookup("#todaCntLbl");
-        asdaCntLbl = (Label) primaryStage.getScene().lookup("#asdaCntLbl");
-        ldaCntLbl = (Label) primaryStage.getScene().lookup("#ldaCntLbl");
-        toraCntLbl2 = (Label) primaryStage.getScene().lookup("#toraCntLbl2");
-        todaCntLbl2 = (Label) primaryStage.getScene().lookup("#todaCntLbl2");
-        asdaCntLbl2 = (Label) primaryStage.getScene().lookup("#asdaCntLbl2");
-        ldaCntLbl2 = (Label) primaryStage.getScene().lookup("#ldaCntLbl2");
-
-
-        windlLbl = (Label) primaryStage.getScene().lookup("#windLbl");
-
         //Home screen plane rotation
-        planePane = (Pane) primaryStage.getScene().lookup("#planePane");
         planePane.getStyleClass().add("myPane");
         planeImg = (ImageView) planePane.getChildren().get(0);
 
@@ -1006,11 +1001,7 @@ public class GUI extends Application {
             exportPopup.show();
         });
 
-
-        loadAirportButton = (Button) primaryStage.getScene().lookup("#loadAirportBtn");
-        /*loadAirportButton.getStyleClass().add("loadBtn");
-        loadAirportButton.getStylesheets().add("styles/fileTab.css");*/
-        loadAirportButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+        loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println("Click !");
@@ -1031,9 +1022,6 @@ public class GUI extends Application {
             }
         });
 
-        startBtn = (Button) primaryStage.getScene().lookup("#startBtn");
-        /*startBtn.getStyleClass().add("loadBtn");
-        startBtn.getStylesheets().add("styles/fileTab.css");*/
         startBtn.setOnMouseClicked(event -> {
             System.out.println("Tab Switched!");
             takeOffTransition.play();
@@ -1696,7 +1684,6 @@ public class GUI extends Application {
         confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
                 if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))) {
                     System.out.println("valid form");
 
@@ -2097,6 +2084,7 @@ public class GUI extends Application {
         return true;
     }
 
+    // Used for obstacle heights, distance from centreline and distance from threshold
     private Boolean validateDoubleForm(ArrayList<String> doubleVals) {
         for (String s : doubleVals) {
             try {
@@ -2111,6 +2099,7 @@ public class GUI extends Application {
         return true;
     }
 
+    // Used for TORA, Clearway, Stopway, Displaced threshold
     private Boolean validateIntForm(ArrayList<String> intVals) {
         for (String s : intVals) {
             try {
@@ -2167,7 +2156,7 @@ public class GUI extends Application {
         saveObstacleBtn.setTooltip(saveObstaclesTooltip);
         heightEditTF.setTooltip(editObstacleHeightTooltip);
     }
-
+    
     public static void main(String[] args) {
         launch(args);
     }

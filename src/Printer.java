@@ -139,8 +139,8 @@ public class Printer {
         title.setFont(titleFont);
 
         ArrayList<Text> contentsItems = new ArrayList<>();
-        contentsItems.add(new Text("Calculations Breakdown"));
-        contentsItems.add(new Text("Runway Top-down and side-on view"));
+        contentsItems.add(new Text("Calculations breakdown"));
+        contentsItems.add(new Text("Runway top-down and side-on view"));
         contentsItems.add(new Text("Original and recalculated values"));
 
         int startX = 0;

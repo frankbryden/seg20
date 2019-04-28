@@ -408,7 +408,7 @@ public void renderSideview(){
         this.graphicsContext.setFill(Color.BLACK);
         renderArrowCap((int) directionLeft.getEndX(), (int) directionLeft.getEndY(), ArrowDirection.LEFT);
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
+        this.graphicsContext.fillText("Landing and take-off in this direction",maxWidth - maxWidth/2 ,maxHeight-maxHeight/20);
 
         Line directionRight = new Line(0,maxHeight/30, maxWidth/7, maxHeight/30);
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.BOLD, 15));
@@ -419,7 +419,7 @@ public void renderSideview(){
         this.graphicsContext.setFill(Color.BLACK);
         renderArrowCap((int) directionRight.getEndX(), (int) directionRight.getEndY(), ArrowDirection.RIGHT);
         this.graphicsContext.setFont(Font.font("Verdana", FontWeight.NORMAL, 15));
-        this.graphicsContext.fillText("Landing and Take -off in this direction",maxWidth/20 ,maxWidth/20);
+        this.graphicsContext.fillText("Landing and take-off in this direction",maxWidth/20 ,maxWidth/20);
     }
 
     public void renderParamLine(Pair<Line, String> labelLine){

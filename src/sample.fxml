@@ -12,7 +12,6 @@
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -114,7 +113,7 @@
                            <right>
                               <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="724.0" prefWidth="589.0" BorderPane.alignment="CENTER">
                                  <children>
-                                    <BorderPane layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
+                                    <BorderPane fx:id="tabsBox" layoutY="5.0" prefHeight="52.0" prefWidth="591.0" style="-fx-background-color: #1b88bb;" />
                                     <TabPane fx:id="rootTabPane" layoutY="7.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="713.0" prefWidth="609.0" styleClass="mini-tabs" tabClosingPolicy="UNAVAILABLE" tabMaxHeight="200.0" tabMaxWidth="200.0">
                                       <tabs>
                                         <Tab text="View">
@@ -125,26 +124,24 @@
                                                       <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="512.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="517.0" />
                                                       <Button fx:id="highlightToraBtn" layoutX="116.0" layoutY="427.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="427.0" />
                                                       <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="301.0" AnchorPane.topAnchor="517.0" />
-                                                      <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="314.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="314.0">
+                                                      <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="291.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="291.0">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </CheckBox>
-                                                      <CheckBox fx:id="renderRunwayRotatedChkbx" layoutX="33.0" layoutY="262.0" mnemonicParsing="false" text="Rotate runway to match compass heading" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="262.0">
+                                                      <CheckBox fx:id="renderRunwayRotatedChkbx" layoutX="33.0" layoutY="240.0" mnemonicParsing="false" text="Rotate runway to match compass heading" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="240.0">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
                                                       </CheckBox>
-                                                      <ColorPicker fx:id="sideOnColorPicker" layoutX="390.0" layoutY="192.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="192.0" />
-                                                      <Label layoutX="33.0" layoutY="198.0" text="Change side-on view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="198.0" />
-                                                      <Label layoutX="33.0" layoutY="148.0" text="Change top-down view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="148.0" />
-                                                      <ColorPicker fx:id="topDownColorPicker" layoutX="390.0" layoutY="142.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="142.0" />
+                                                      <ColorPicker fx:id="sideOnColorPicker" layoutX="390.0" layoutY="175.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="175.0" />
+                                                      <Label layoutX="33.0" layoutY="182.0" text="Change side-on view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="182.0" />
+                                                      <Label layoutX="33.0" layoutY="122.0" text="Change top-down view background " AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="122.0" />
+                                                      <ColorPicker fx:id="topDownColorPicker" layoutX="390.0" layoutY="115.0" promptText="Pick color" AnchorPane.leftAnchor="390.0" AnchorPane.topAnchor="115.0" />
                                                       <Label layoutX="36.0" layoutY="58.0" prefHeight="21.0" prefWidth="231.0" text="Adjust top-down view zoom" AnchorPane.leftAnchor="36.0" AnchorPane.topAnchor="58.0" />
                                                       <Slider fx:id="zoomSlider" layoutX="341.0" layoutY="60.0" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="60.0" />
                                                       <Button layoutX="505.0" layoutY="55.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Reset" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="55.0" />
-                                                      <TextField layoutX="341.0" layoutY="94.0" prefHeight="27.0" prefWidth="133.0" promptText="Enter zoom %" AnchorPane.leftAnchor="341.0" AnchorPane.topAnchor="94.0" />
-                                                      <Button layoutX="505.0" layoutY="95.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="34.0" prefWidth="64.0" styleClass="primaryButton" text="Enter" AnchorPane.leftAnchor="505.0" AnchorPane.topAnchor="95.0" />
-                                                      <CheckBox fx:id="renderWindCompass" layoutX="33.0" layoutY="367.0" mnemonicParsing="false" text="Show wind direction compass" textFill="#103b52">
+                                                      <CheckBox fx:id="renderWindCompass" layoutX="32.0" layoutY="342.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="252.0" text="Show wind direction compass" textFill="#103b52">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
@@ -368,7 +365,7 @@
                               <ComboBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
                               <Button layoutX="383.0" layoutY="25.0" mnemonicParsing="false" styleClass="primaryButton" text="Apply" />
                               <Label layoutX="16.0" layoutY="74.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
-                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="OK" />
+                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="Save" />
                               <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
                               <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
                               <Label layoutX="15.0" layoutY="160.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
@@ -379,7 +376,11 @@
                 </Tab>
                   <Tab text="Help">
                      <content>
-                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                           <children>
+                              <Label layoutX="22.0" layoutY="42.0" prefHeight="23.0" prefWidth="207.0" text="View help manual" />
+                              <Button fx:id="viewManualBtn" layoutX="219.0" layoutY="36.0" mnemonicParsing="false" styleClass="primaryButton" text="View" />
+                           </children></AnchorPane>
                      </content>
                   </Tab>
               </tabs>
