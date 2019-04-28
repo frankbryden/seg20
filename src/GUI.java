@@ -28,6 +28,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Popup;
@@ -95,6 +96,12 @@ public class GUI extends Application {
     private Tooltip centrelineDistTooltip, thresholdDistTooltip, obstacleHeightTooltip, airportCodeTooltip, toraButtonTooltip, todaButtonTooltip, asdaButtonTooltip, ldaButtonTooltip,
             addObstacleTooltip, importObstaclesTooltip, saveObstaclesTooltip, editObstacleHeightTooltip;
     private StackPane trackPane;
+    private int numOfNotifications;
+    @FXML
+    private Label notifCount;
+    @FXML
+    private Circle notifCircle;
+    private ArrayList<String> notifList;
     private enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
@@ -114,6 +121,8 @@ public class GUI extends Application {
 
         this.primaryStage = primaryStage;
 
+        notifList = new ArrayList<>();
+        notifCircle.setVisible(false);
 
         fileIO = new FileIO();
         userDefinedObstacles = new TreeMap<>();
@@ -125,6 +134,18 @@ public class GUI extends Application {
         airportConfigs = new HashMap<>();
 
         airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
+
+        //TODO - change to the notif bell icon
+        notifCount.setOnMouseClicked(e -> {
+            numOfNotifications = 0;
+            notifCount.setText("");
+            notifCircle.setVisible(false);
+
+
+            NotificationLog log = new NotificationLog(notifList, primaryStage);
+            log.createNotifLog();
+
+        });
 
         // Setting the texts for each tooltip
         centrelineDistTooltip = new Tooltip();
@@ -203,7 +224,7 @@ public class GUI extends Application {
             runwayRenderer.setZoom(zoomSlider.getValue());
             /*String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", (int)zoomSlider.getValue(),(int)zoomSlider.getValue());
             trackPane.setStyle(style);*/
-            notifyUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
+            notifyZoomUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
         });
 
         trackPane = (StackPane) zoomSlider.lookup(".track");
@@ -439,9 +460,10 @@ public class GUI extends Application {
         thresholdSelectLbl = new Label("Select threshold");
 
         centrelineTF = new TextField();
+        distanceFromThresholdTF = new TextField();
+
         centrelineTF.getStyleClass().add("redErrorPromptText");
         centrelineTF.getStylesheets().add("styles/obstacles.css");
-        distanceFromThresholdTF = new TextField();
         distanceFromThresholdTF.getStyleClass().add("redErrorPromptText");
         distanceFromThresholdTF.getStylesheets().add("styles/obstacles.css");
 
@@ -520,7 +542,7 @@ public class GUI extends Application {
             ) {
                 if (centrelineTF.getText().isEmpty()) {
                     centrelineTF.setPromptText("");
-                    centreLineRequiredLabel.setText("            This field is required");
+                    centreLineRequiredLabel.setText("      Enter centreline distance");
                 } else {
                     centreLineRequiredLabel.setText("");
                     if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
@@ -531,8 +553,9 @@ public class GUI extends Application {
                     }
                 }
                 if (distanceFromThresholdTF.getText().isEmpty()) {
+
                     distanceFromThresholdTF.setPromptText("");
-                    thresholdDistanceRequiredLabel.setText("            This field is required");
+                    thresholdDistanceRequiredLabel.setText("      Enter threshold distance");
                 } else {
                     thresholdDistanceRequiredLabel.setText("");
                     if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
@@ -576,7 +599,7 @@ public class GUI extends Application {
                 centreLineRequiredLabel.setText("");
                 thresholdDistanceRequiredLabel.setText("");
                 centrelineTF.clear();
-                centrelineTF.setPromptText("Invalid threshold distance!");
+                centrelineTF.setPromptText("Invalid centreline distance!");
             } else {
                 // If everything is filled in and valid, start calculations
                 String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
@@ -1111,7 +1134,6 @@ public class GUI extends Application {
         addObstacleNameTF = new TextField();
         addObstacleHeightTF = new TextField();
 
-
         addObstacleNameTF.getStyleClass().add("redErrorPromptText");
         addObstacleNameTF.getStylesheets().add("styles/obstacles.css");
         addObstacleHeightTF.getStyleClass().add("redErrorPromptText");
@@ -1164,7 +1186,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 // Checking for empty name and height fields
                 if (addObstacleNameTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                             This field is required");
+                    nameRequiredLbl.setText("                                             Enter obstacle name");
                     if (!rootBox.getChildren().contains(emptyNameBox)) {
                         rootBox.getChildren().add(0, emptyNameBox);
                     }
@@ -1176,7 +1198,7 @@ public class GUI extends Application {
                     nameRequiredLbl.setText("");
                 }
                 if (addObstacleHeightTF.getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                             This field is required");
+                    heightRequiredLbl.setText("                                             Enter obstacle height");
                     if (rootBox.getChildren().contains(emptyNameBox)) {
                         if (!rootBox.getChildren().contains(emptyHeightBox)) {
                             rootBox.getChildren().add(2, emptyHeightBox);
@@ -1359,7 +1381,7 @@ public class GUI extends Application {
             public void handle(MouseEvent event) {
                 // Checking for empty name and height fields
                 if (nameEditTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                       This field is required");
+                    nameRequiredLbl.setText("                                       Enter obstacle name");
                     if (!box.getChildren().contains(emptyNameBox)) {
                         box.getChildren().add(1, emptyNameBox);
                     }
@@ -1371,7 +1393,7 @@ public class GUI extends Application {
                     nameRequiredLbl.setText("");
                 }
                 if (heightEditTF.getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                       This field is required");
+                    heightRequiredLbl.setText("                                       Enter obstacle height");
                     if (box.getChildren().contains(emptyNameBox)) {
                         if (!box.getChildren().contains(emptyHeightBox)) {
                             box.getChildren().add(3, emptyHeightBox);
@@ -2125,8 +2147,17 @@ public class GUI extends Application {
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
+    private void notifyZoomUpdate(String message) {
+        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
+    }
+
+    //HERE
     private void notifyUpdate(String message) {
         new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
+        numOfNotifications++;
+        notifList.add(message);
+        notifCircle.setVisible(true);
+        notifCount.setText(Integer.toString(numOfNotifications));
     }
 
     private void disableTooltips() {

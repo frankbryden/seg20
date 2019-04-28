@@ -43,4 +43,5 @@ public class Notification extends Popup {
         delay.setOnFinished( event -> super.hide() );
         delay.play();
     }
+
 }
