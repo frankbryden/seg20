@@ -717,6 +717,9 @@ public class GUI extends Application {
         canvas.setOnScroll(new EventHandler<ScrollEvent>() {
             @Override
             public void handle(ScrollEvent event) {
+                if (runwayRenderer == null){
+                    return;
+                }
                 runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
                 if (event.getDeltaY() > 0) {
                     runwayRenderer.incZoom();
@@ -744,6 +747,9 @@ public class GUI extends Application {
         canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
+                if (runwayRenderer == null){
+                    return;
+                }
                 MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
                 Point delta = MouseDragTracker.getInstance().getDelta();
                 runwayRenderer.translate(delta.x, delta.y);
@@ -1390,39 +1396,32 @@ public class GUI extends Application {
                 }
                 if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
                     System.out.println("Add -edited- obstacle");
-                    if (sourceList.equals("predefined")) {
-                        predefinedObstaclesSorted.remove(obstacle.getName());
-                        allObstaclesSorted.remove(obstacle.getName());
-                        obstacle.setName(nameEditTF.getText());
-                        obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
-                        allObstaclesSorted.put(obstacle.getName(), obstacle);
-
-                        nameContentLabel.setText(obstacle.getName());
-                        heightContentLabel.setText(Double.toString(obstacle.getHeight()));
-
-                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, obstacle);
-
-                        updateObstaclesList();
-                        detailsPopUp.hide();
-                    } else if (sourceList.equals("userDefined")) {
-                        userDefinedObstacles.remove(obstacle.getName());
-                        allObstaclesSorted.remove(obstacle.getName());
-                        obstacle.setName(nameEditTF.getText());
-                        obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-                        userDefinedObstacles.put(obstacle.getName(), obstacle);
-                        allObstaclesSorted.put(obstacle.getName(), obstacle);
-
-                        nameContentLabel.setText(obstacle.getName());
-                        heightContentLabel.setText(Double.toString(obstacle.getHeight()));
-
-                        int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                        listView.getItems().set(selectedIndex, obstacle);
-
-                        updateObstaclesList();
-                        detailsPopUp.hide();
+                    Map<String, Obstacle> obstacleList;
+                    if (sourceList == ObstacleList.PREDEFINED) {
+                        obstacleList = predefinedObstaclesSorted;
+                    } else if (sourceList == ObstacleList.USER_DEFINED) {
+                        obstacleList = userDefinedObstacles;
+                    } else {
+                        System.err.println("We have a problem - unknown source list " + sourceList);
+                        return;
                     }
+                    obstacleList.remove(obstacle.getName());
+                    allObstaclesSorted.remove(obstacle.getName());
+                    obstacle.setName(nameEditTF.getText());
+                    obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
+
+                    obstacleList.put(obstacle.getName(), obstacle);
+                    allObstaclesSorted.put(obstacle.getName(), obstacle);
+
+                    nameContentLabel.setText(obstacle.getName());
+                    heightContentLabel.setText(Double.toString(obstacle.getHeight()));
+
+                    // TODO Jasmine, not sure we need this. Commenting it out for now. DM me if you think otherwise.
+                    /*int selectedIndex = listView.getSelectionModel().getSelectedIndex();
+                    listView.getItems().set(selectedIndex, obstacle);*/
+
+                    updateObstaclesList();
+                    detailsPopUp.hide();
 
                 } else if (!heightEditTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText())))) {
                     heightEditTF.clear();
@@ -2037,7 +2036,7 @@ public class GUI extends Application {
         predefinedObstaclesLV.getItems().clear();
         predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.values());
         obstacleSelect.getItems().clear();
-        obstacleSelect.getItems().addAll(allObstaclesSorted.values());
+        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
     }
 
     private void populatePredefinedList() {
