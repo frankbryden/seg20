@@ -338,7 +338,8 @@ public class GUI extends Application {
                 });
                 updateObstaclesList();
 
-                notifyUpdate("Obstacles loaded");
+                notifyUpdate("Obstacles imported");
+                addNotification("Imported obstacles into the list of user-defined obstacles.");
             }
         });
 
