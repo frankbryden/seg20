@@ -578,25 +578,18 @@ public class GUI extends Application {
 
                 // If everything is filled in, check if the user input to distance from threshold and centreline is valid
             } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText()))) && !validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
-                obstacleRequiredLabel.setText("");
-                thresholdRequiredLabel.setText("");
-                centreLineRequiredLabel.setText("");
-                thresholdDistanceRequiredLabel.setText("");
+                clearErrorLabels();
                 centrelineTF.clear();
                 distanceFromThresholdTF.clear();
                 centrelineTF.setPromptText("Invalid centreline distance!");
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
             } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
-                obstacleRequiredLabel.setText("");
-                thresholdRequiredLabel.setText("");
-                centreLineRequiredLabel.setText("");
+                clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 distanceFromThresholdTF.clear();
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
             } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
-                obstacleRequiredLabel.setText("");
-                thresholdRequiredLabel.setText("");
-                centreLineRequiredLabel.setText("");
+                clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 centrelineTF.clear();
                 centrelineTF.setPromptText("Invalid centreline distance!");
@@ -1109,6 +1102,12 @@ public class GUI extends Application {
         for (String runwayPairName : ac.getRunways().keySet()) {
             runwaySelect.getItems().add(runwayPairName);
         }
+    }
+
+    private void clearErrorLabels(){
+        obstacleRequiredLabel.setText("");
+        thresholdRequiredLabel.setText("");
+        centreLineRequiredLabel.setText("");
     }
 
     public Popup createAddObstaclePopup() {
