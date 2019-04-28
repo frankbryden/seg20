@@ -27,6 +27,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
+import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.TextAlignment;
@@ -141,7 +142,7 @@ public class GUI extends Application {
             notifCount.setText("");
             notifCircle.setVisible(false);
 
-            NotificationLog log = new NotificationLog(notifList, primaryStage);
+            NotificationLog log = new NotificationLog(notifList);
             log.createNotifLog();
 
         });
@@ -2156,9 +2157,12 @@ public class GUI extends Application {
 
     private void addNotification(String message) {
         numOfNotifications++;
-        notifList.add(message);
+        notifList.add(0, message);
         notifCircle.setVisible(true);
         notifCount.setText(Integer.toString(numOfNotifications));
+
+        AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
+        note.play();
     }
 
     private void disableTooltips() {

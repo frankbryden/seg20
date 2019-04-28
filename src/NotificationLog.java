@@ -2,21 +2,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-
 import java.util.ArrayList;
-import java.util.Collections;
 
 public class NotificationLog {
 
     private ArrayList<String> notifications;
-    private Stage primaryStage;
 
-    public NotificationLog(ArrayList<String> notifications, Stage primaryStage) {
+    public NotificationLog(ArrayList<String> notifications) {
         this.notifications = notifications;
-        this.primaryStage = primaryStage;
     }
 
     // TODO - add styling
@@ -29,9 +24,6 @@ public class NotificationLog {
         ScrollPane scrollPane = new ScrollPane();
 
         VBox rootBox = new VBox();
-
-        // So that latest notification is on top of the notification log
-        Collections.reverse(notifications);
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
