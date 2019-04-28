@@ -13,6 +13,7 @@ public class NotificationLog {
 
     private ArrayList<String> notifications;
     private Stage primaryStage;
+    private final int WINDOW_WIDTH = 270;
 
     public NotificationLog(ArrayList<String> notifications, Stage primaryStage) {
         this.notifications = notifications;
@@ -35,14 +36,14 @@ public class NotificationLog {
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
-            notification.setPrefWidth(270);
+            notification.setPrefWidth(WINDOW_WIDTH);
             notification.setWrapText(true);
             rootBox.getChildren().add(notification);
         }
 
         scrollPane.setContent(rootBox);
 
-        Scene scene = new Scene(scrollPane, 270, 350);
+        Scene scene = new Scene(scrollPane, WINDOW_WIDTH, 350);
 
         notifWindow.setScene(scene);
         notifWindow.show();
