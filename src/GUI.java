@@ -2079,11 +2079,7 @@ public class GUI extends Application {
             allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
 
-        //predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.keySet());
-        predefinedObstaclesLV.getItems().addAll(obstacles);
-
-        obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
-
+        updateObstaclesList();
 
     }
 
