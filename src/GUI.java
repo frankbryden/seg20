@@ -141,7 +141,6 @@ public class GUI extends Application {
             notifCount.setText("");
             notifCircle.setVisible(false);
 
-
             NotificationLog log = new NotificationLog(notifList, primaryStage);
             log.createNotifLog();
 
@@ -224,7 +223,7 @@ public class GUI extends Application {
             runwayRenderer.setZoom(zoomSlider.getValue());
             /*String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", (int)zoomSlider.getValue(),(int)zoomSlider.getValue());
             trackPane.setStyle(style);*/
-            notifyZoomUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
+            notifyUpdate("Zoom : " + runwayRenderer.getZoomPercentage() + "%");
         });
 
         trackPane = (StackPane) zoomSlider.lookup(".track");
@@ -369,6 +368,7 @@ public class GUI extends Application {
                 if (file != null) {
                     fileIO.write(userDefinedObstacles.values(), file.getPath());
                     notifyUpdate("Obstacles saved");
+                    addNotification("Saved list of user-defined obstacles.");
                 }
 
                 /*userDefinedObstaclesLV.getItems().forEach((name) -> {
@@ -1236,6 +1236,7 @@ public class GUI extends Application {
                     if (!matchFound) {
                         System.out.println("Add obstacle");
                         addObstacle(addObstacleNameTF.getText(), Double.parseDouble(addObstacleHeightTF.getText()));
+                        addNotification("Added " + addObstacleNameTF.getText() + " to the list of user-defined obstacles.");
                         addObstacleNameTF.clear();
                         addObstacleHeightTF.clear();
                         addObstacleNameTF.setPromptText("");
@@ -1245,6 +1246,7 @@ public class GUI extends Application {
 
                         //notify user obstacle was added
                         notifyUpdate("Obstacle added");
+
                     }
 
                 } else if (!addObstacleHeightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(addObstacleHeightTF.getText())))) {
@@ -1427,6 +1429,8 @@ public class GUI extends Application {
                         System.err.println("We have a problem - unknown source list " + sourceList);
                         return;
                     }
+                    double currentHeight = obstacle.getHeight();
+                    double newHeight = Double.parseDouble(heightEditTF.getText());
                     obstacleList.remove(obstacle.getName());
                     allObstaclesSorted.remove(obstacle.getName());
                     obstacle.setName(nameEditTF.getText());
@@ -1438,9 +1442,8 @@ public class GUI extends Application {
                     nameContentLabel.setText(obstacle.getName());
                     heightContentLabel.setText(Double.toString(obstacle.getHeight()));
 
-                    // TODO Jasmine, not sure we need this. Commenting it out for now. DM me if you think otherwise.
-                    /*int selectedIndex = listView.getSelectionModel().getSelectedIndex();
-                    listView.getItems().set(selectedIndex, obstacle);*/
+                    notifyUpdate("Obstacle edited");
+                    addNotification("Edited details of " + obstacle.getName() + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
 
                     updateObstaclesList();
                     detailsPopUp.hide();
@@ -1858,6 +1861,7 @@ public class GUI extends Application {
             addObstacleHeightTF.clear();
             addObstaclePopup.hide();
             notifyUpdate("Obstacle overwritten");
+            addNotification("Overwrote details of " + obstacleName + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
             overwriteWindow.close();
         });
 
@@ -2032,10 +2036,12 @@ public class GUI extends Application {
             case PREDEFINED:
                 sourceList = predefinedObstaclesSorted;
                 sourceLV = predefinedObstaclesLV;
+                addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
                 break;
             case USER_DEFINED:
                 sourceList = userDefinedObstacles;
                 sourceLV = userDefinedObstaclesLV;
+                addNotification("Removed " + obstacle.getName() + " from the list of user-defined obstacles.");
                 break;
             default:
                 System.err.println("unknown origin '" + listType.toString() + "'");
@@ -2142,13 +2148,13 @@ public class GUI extends Application {
         this.allObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
-    private void notifyZoomUpdate(String message) {
+
+    private void notifyUpdate(String message) {
         new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
     }
 
-    //HERE
-    private void notifyUpdate(String message) {
-        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
+
+    private void addNotification(String message) {
         numOfNotifications++;
         notifList.add(message);
         notifCircle.setVisible(true);
