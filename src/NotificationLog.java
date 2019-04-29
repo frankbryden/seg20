@@ -1,5 +1,6 @@
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -9,7 +10,6 @@ import java.util.ArrayList;
 public class NotificationLog {
 
     private ArrayList<String> notifications;
-    private Stage primaryStage;
     private final int WINDOW_WIDTH = 270;
 
     public NotificationLog(ArrayList<String> notifications) {
@@ -26,6 +26,10 @@ public class NotificationLog {
         ScrollPane scrollPane = new ScrollPane();
 
         VBox rootBox = new VBox();
+
+        Label notifLbl = new Label("Notifications");
+
+        rootBox.getChildren().add(notifLbl);
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
