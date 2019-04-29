@@ -255,15 +255,16 @@ public class GUI extends Application {
                         updateThresholdList(selectedRunwayPair);
                         currentlySelectedRunway = selectedRunwayPair;
                         runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
+                        setRunwayRendererParams();
                         runwayRenderer.render();
-                        //selectedRunwayPair.getR1().render(canvas.getGraphicsContext2D());
+
 
                         runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
                         runwayRendererSideView.renderSideview();
 
                         rootTabPane.setVisible(true);
                         tabsBox.setStyle("-fx-background-color: #1b88bb");
-                        zoomSlider.setValue(runwayRenderer.getZoom());
+
 
                         LiveWindService liveWindService = new LiveWindService();
                         liveWindService.setLatitude(ac.getLatitude());
@@ -2163,6 +2164,16 @@ public class GUI extends Application {
 
         AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
         note.play();
+    }
+
+    private void setRunwayRendererParams(){
+        if (runwayRenderer == null){
+            return;
+        }
+        runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        runwayRenderer.setZoom(zoomSlider.getValue());
+        runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
+        runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
     }
 
     private void disableTooltips() {

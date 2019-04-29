@@ -27,8 +27,8 @@ public class RunwayRenderer {
     private int rotation;
     private int zoomDelta;
     private double currentZoom;
-    public static final double MIN_ZOOM = 0.2;
-    public static final double MAX_ZOOM = 2.2;
+    public static final double MIN_ZOOM = 0.5;
+    public static final double MAX_ZOOM = 2.4;
     public static final double ZOOM_STEP = (MAX_ZOOM - MIN_ZOOM)/30;
 
     //Tranforms

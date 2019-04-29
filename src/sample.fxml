@@ -126,7 +126,7 @@
                                                       <Button fx:id="highlightAsdaBtn" layoutX="94.0" layoutY="512.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="ASDA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="517.0" />
                                                       <Button fx:id="highlightToraBtn" layoutX="116.0" layoutY="427.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="TORA" AnchorPane.leftAnchor="116.0" AnchorPane.topAnchor="427.0" />
                                                       <Button fx:id="highlightLdaBtn" layoutX="310.0" layoutY="529.0" mnemonicParsing="false" prefHeight="80.0" prefWidth="175.0" styleClass="designator-tabs" stylesheets="@styles/viewTab.css" text="LDA" AnchorPane.leftAnchor="301.0" AnchorPane.topAnchor="517.0" />
-                                                      <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="291.0" mnemonicParsing="false" text="Hide all runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="291.0">
+                                                      <CheckBox fx:id="renderRunwayLabelLinesChkbx" layoutX="33.0" layoutY="291.0" mnemonicParsing="false" text="Show runway parameter lines" textFill="#103b52" AnchorPane.leftAnchor="33.0" AnchorPane.topAnchor="291.0">
                                                          <font>
                                                             <Font size="16.0" />
                                                          </font>
