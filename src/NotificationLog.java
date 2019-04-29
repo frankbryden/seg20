@@ -4,7 +4,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import java.util.ArrayList;
 
 public class NotificationLog {
@@ -18,7 +17,6 @@ public class NotificationLog {
 
     // TODO - add styling
     public void createNotifLog() {
-        //Stage notifWindow = new Stage(StageStyle.UNDECORATED);
         Stage notifWindow = new Stage();
         notifWindow.setTitle("Notification Log");
 

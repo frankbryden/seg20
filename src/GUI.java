@@ -987,6 +987,7 @@ public class GUI extends Application {
 
             NotificationLog log = new NotificationLog(notifList);
             log.createNotifLog();
+
         });
 
         loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1249,6 +1250,7 @@ public class GUI extends Application {
 
     public Stage createAddAirportPopup() {
         Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Add Airport");
 
         //Components for the popups
@@ -1355,6 +1357,7 @@ public class GUI extends Application {
 
     public Stage createAddRunwayPopup() {
         Stage stage = new Stage();
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Add Runway");
 
         //Components for the popups

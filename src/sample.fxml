@@ -414,7 +414,7 @@
                              <Image url="@rec/notifBell.png" />
                          </image>
                      </ImageView>
-                     <Label fx:id="notifCount" layoutX="8" layoutY="7" prefHeight="18.0" prefWidth="17.0" style="-fx-font-size: 11px; -fx-text-fill: #FFFFFF; -fx-alignment: center; -fx-background-color: red;" text="1" textFill="WHITE" />
+                     <Label fx:id="notifCount" layoutX="20" layoutY="2" prefHeight="18.0" prefWidth="17.0" style="-fx-font-size: 11px; -fx-text-fill: #FFFFFF; -fx-alignment: center; -fx-background-color: red;" text="1" textFill="WHITE" />
                  </children>
              </Pane>
          </children>
