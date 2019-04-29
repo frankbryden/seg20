@@ -103,7 +103,9 @@ public class GUI extends Application {
     @FXML
     private Circle notifCircle;
     private ArrayList<String> notifList;
-    private enum ObstacleList {USER_DEFINED, PREDEFINED}
+    private DeleteObstaclePopup delObstaclePopup;
+    private ObstacleDetailsPopup obstacleDetPopup;
+    public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
     @Override
@@ -126,6 +128,8 @@ public class GUI extends Application {
             //TODO save persistent settings here
             System.out.println("closed");
         });
+        delObstaclePopup = new DeleteObstaclePopup(this);
+        obstacleDetPopup = new ObstacleDetailsPopup(this);
 
         notifList = new ArrayList<>();
         notifCircle.setVisible(false);
@@ -897,22 +901,22 @@ public class GUI extends Application {
 
         predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("List view got a delete for obstacle " + event.getObstacleName());
-            displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
+            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
             System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
-            showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
+            obstacleDetPopup.showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
         });
 
         userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
             System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
-            displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
+            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
         });
 
         userDefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
             System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
-            showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
+            obstacleDetPopup.showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
@@ -1289,218 +1293,6 @@ public class GUI extends Application {
         return popup;
     }
 
-
-    private void showObstacleDetails(Obstacle obstacle, ListView listView, MouseEvent event, Stage primaryStage, ObstacleList sourceList) {
-
-        editingObstacle = false;
-
-        //TODO rework sorting of the obstacles
-
-        Popup detailsPopUp = new Popup();
-
-        VBox box = new VBox(100);
-        box.getStyleClass().add("popup");
-        box.getStylesheets().add("styles/global.css");
-        box.getStylesheets().add("styles/layoutStyles.css");
-
-        HBox subBox = new HBox(100);
-
-        Label detailsLabel = new Label("Overview of obstacle details");
-        Label nameLabel = new Label("Name:");
-        Label nameContentLabel = new Label(obstacle.getName());
-        TextField nameEditTF = new TextField();
-        nameEditTF.setPrefWidth(240);
-        Label heightLabel = new Label("Height:");
-        Label heightContentLabel = new Label(obstacle.getHeight() + "m");
-        heightEditTF.setPrefWidth(240);
-
-        // Styling of name and height text fields to show red prompt text
-        nameEditTF.getStyleClass().add("redErrorPromptText");
-        nameEditTF.getStylesheets().add("styles/obstacles.css");
-        heightEditTF.getStyleClass().add("redErrorPromptText");
-        heightEditTF.getStylesheets().add("styles/obstacles.css");
-
-        // Content for error messages
-        Label nameRequiredLbl = new Label("");
-        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
-        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
-        HBox emptyNameBox = new HBox();
-        emptyNameBox.getChildren().add(nameRequiredLbl);
-        Label heightRequiredLbl = new Label("");
-        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
-        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
-        HBox emptyHeightBox = new HBox();
-        emptyHeightBox.getChildren().add(heightRequiredLbl);
-
-        // Styling of labels in the obstacle details popup
-        detailsLabel.getStyleClass().add("popUpTitles");
-        detailsLabel.getStylesheets().add("styles/layoutStyles.css");
-        detailsLabel.setStyle("-fx-font-size: 16px");
-        nameLabel.getStyleClass().add("popUpTitles");
-        nameLabel.getStylesheets().add("styles/layoutStyles.css");
-        nameContentLabel.getStyleClass().add("popUpText");
-        nameContentLabel.getStylesheets().add("styles/layoutStyles.css");
-        heightLabel.getStyleClass().add("popUpTitles");
-        heightLabel.getStylesheets().add("styles/layoutStyles.css");
-        heightContentLabel.getStyleClass().add("popUpText");
-        heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
-
-        Button returnButton = new Button("Go back");
-        Button editButton = new Button("Edit details");
-        Button saveButton = new Button("Save changes");
-
-        // Styling of buttons in the obstacle details popup
-        returnButton.getStyleClass().add("primaryButton");
-        returnButton.getStylesheets().add("styles/global.css");
-        editButton.getStyleClass().add("primaryButton");
-        editButton.getStylesheets().add("styles/global.css");
-        saveButton.getStyleClass().add("primaryButton");
-        saveButton.getStylesheets().add("styles/global.css");
-
-        HBox nameHBox = new HBox(20);
-        nameHBox.getChildren().add(nameLabel);
-        nameHBox.getChildren().add(nameContentLabel);
-
-        HBox heightHBox = new HBox(13.5);
-        heightHBox.getChildren().add(heightLabel);
-        heightHBox.getChildren().add(heightContentLabel);
-
-        subBox.getChildren().add(editButton);
-        subBox.getChildren().add(returnButton);
-        box.getChildren().add(detailsLabel);
-        box.getChildren().add(nameHBox);
-        box.getChildren().add(heightHBox);
-        box.getChildren().add(subBox);
-
-        detailsPopUp.getContent().add(box);
-
-        /*Node eventSource = (Node) event.getSource();
-        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());*/
-        /*detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);*/
-        detailsPopUp.setX(primaryStage.getWidth() / 2);
-        detailsPopUp.setY(primaryStage.getHeight() / 2);
-        System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
-        detailsPopUp.show(primaryStage);
-
-        returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                detailsPopUp.hide();
-            }
-        });
-
-
-        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                // Checking for empty name and height fields
-                if (nameEditTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                       Enter obstacle name");
-                    if (!box.getChildren().contains(emptyNameBox)) {
-                        box.getChildren().add(1, emptyNameBox);
-                    }
-                    nameEditTF.setPromptText("");
-                } else {
-                    if (box.getChildren().contains(emptyNameBox)) {
-                        box.getChildren().remove(emptyNameBox);
-                    }
-                    nameRequiredLbl.setText("");
-                }
-                if (heightEditTF.getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                       Enter obstacle height");
-                    if (box.getChildren().contains(emptyNameBox)) {
-                        if (!box.getChildren().contains(emptyHeightBox)) {
-                            box.getChildren().add(3, emptyHeightBox);
-                        }
-                    } else {
-                        if (!box.getChildren().contains(emptyHeightBox)) {
-                            box.getChildren().add(2, emptyHeightBox);
-                        }
-                    }
-                    heightEditTF.setPromptText("");
-                } else {
-                    if (box.getChildren().contains(emptyHeightBox)) {
-                        box.getChildren().remove(emptyHeightBox);
-                    }
-                    heightRequiredLbl.setText("");
-                }
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText()))) && !nameEditTF.getText().isEmpty()) {
-                    System.out.println("Add -edited- obstacle");
-                    Map<String, Obstacle> obstacleList;
-                    if (sourceList == ObstacleList.PREDEFINED) {
-                        obstacleList = predefinedObstaclesSorted;
-                    } else if (sourceList == ObstacleList.USER_DEFINED) {
-                        obstacleList = userDefinedObstacles;
-                    } else {
-                        System.err.println("We have a problem - unknown source list " + sourceList);
-                        return;
-                    }
-                    double currentHeight = obstacle.getHeight();
-                    double newHeight = Double.parseDouble(heightEditTF.getText());
-                    obstacleList.remove(obstacle.getName());
-                    allObstaclesSorted.remove(obstacle.getName());
-                    obstacle.setName(nameEditTF.getText());
-                    obstacle.setHeight(Double.valueOf(heightEditTF.getText()));
-
-                    obstacleList.put(obstacle.getName(), obstacle);
-                    allObstaclesSorted.put(obstacle.getName(), obstacle);
-
-                    nameContentLabel.setText(obstacle.getName());
-                    heightContentLabel.setText(Double.toString(obstacle.getHeight()));
-
-                    notifyUpdate("Obstacle edited");
-                    addNotification("Edited details of " + obstacle.getName() + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
-
-                    updateObstaclesList();
-                    detailsPopUp.hide();
-
-                } else if (!heightEditTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(heightEditTF.getText())))) {
-                    heightEditTF.clear();
-                    heightEditTF.setPromptText("Invalid obstacle height!");
-                }
-            }
-        });
-
-        editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                editingObstacle = !editingObstacle;
-                if (editingObstacle) {
-                    //Edit mode
-
-                    nameLabel.setText("Name");
-                    heightLabel.setText("Height");
-
-                    nameHBox.setSpacing(55);
-                    heightHBox.setSpacing(46);
-                    subBox.setSpacing(138);
-
-                    nameHBox.getChildren().remove(nameContentLabel);
-                    nameHBox.getChildren().add(nameEditTF);
-
-                    heightHBox.getChildren().remove(heightContentLabel);
-                    heightHBox.getChildren().add(heightEditTF);
-
-                    nameEditTF.setText(obstacle.getName());
-                    heightEditTF.setText(Double.toString(obstacle.getHeight()));
-
-                    detailsLabel.setText("Edit obstacle details");
-
-                    subBox.getChildren().remove(returnButton);
-                    subBox.getChildren().remove(editButton);
-                    subBox.getChildren().add(saveButton);
-                    subBox.getChildren().add(returnButton);
-
-                    returnButton.setText("Cancel");
-                }
-            }
-        });
-
-
-    }
-
-
     public Stage createAddAirportPopup() {
         Stage stage = new Stage();
         stage.setTitle("Add Airport");
@@ -1778,41 +1570,6 @@ public class GUI extends Application {
         return stage;
     }
 
-    private void displayDeletePrompt(Obstacle obstacle, ObstacleList source) {
-        Stage deleteWindow = new Stage();
-        deleteWindow.initModality(Modality.APPLICATION_MODAL);
-        deleteWindow.setTitle("Delete Obstacle");
-
-        // Components for the delete obstacle window
-
-        Label confirmationLabel = new Label("Are you sure you want to delete " + obstacle.getName() + "?");
-        confirmationLabel.setWrapText(true);
-        confirmationLabel.setTextAlignment(TextAlignment.CENTER);
-        Button cancelDeletion = new Button("Cancel");
-        cancelDeletion.getStyleClass().add("primaryButton");
-        Button confirmDeletion = new Button("Delete");
-        confirmDeletion.getStyleClass().add("primaryButton");
-
-        HBox buttonsBox = new HBox(20);
-        buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(confirmDeletion, cancelDeletion);
-        VBox windowLayout = new VBox(10);
-        windowLayout.getChildren().addAll(confirmationLabel, buttonsBox);
-        windowLayout.setAlignment(Pos.CENTER);
-        windowLayout.getStylesheets().add("styles/global.css");
-
-        cancelDeletion.setOnAction(e -> deleteWindow.close());
-        confirmDeletion.setOnAction(e -> {
-            removeObstacle(obstacle, source);
-            updateObstaclesList();
-            deleteWindow.close();
-        });
-
-        Scene scene = new Scene(windowLayout, 400, 150);
-        deleteWindow.setScene(scene);
-        deleteWindow.showAndWait();
-    }
-
     private void displayOverwritePrompt(String obstacleName, double currentHeight, double newHeight) {
         Stage overwriteWindow = new Stage();
         overwriteWindow.initModality(Modality.APPLICATION_MODAL);
@@ -2034,7 +1791,7 @@ public class GUI extends Application {
         thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
     }
 
-    private void removeObstacle(Obstacle obstacle, ObstacleList listType) {
+    public void removeObstacle(Obstacle obstacle, ObstacleList listType) {
 
         Map<String, Obstacle> sourceList;
         ListView sourceLV;
@@ -2065,7 +1822,7 @@ public class GUI extends Application {
     }
 
 
-    private void updateObstaclesList() {
+    public void updateObstaclesList() {
         userDefinedObstaclesLV.getItems().clear();
         userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
         predefinedObstaclesLV.getItems().clear();
@@ -2115,7 +1872,7 @@ public class GUI extends Application {
     }
 
     // Used for obstacle heights, distance from centreline and distance from threshold
-    private Boolean validateDoubleForm(ArrayList<String> doubleVals) {
+    public Boolean validateDoubleForm(ArrayList<String> doubleVals) {
         for (String s : doubleVals) {
             try {
                 Double.parseDouble(s);
@@ -2156,12 +1913,12 @@ public class GUI extends Application {
     }
 
 
-    private void notifyUpdate(String message) {
+   public void notifyUpdate(String message) {
         new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
     }
 
 
-    private void addNotification(String message) {
+    public void addNotification(String message) {
         numOfNotifications++;
         notifList.add(0, message);
         notifCircle.setVisible(true);
@@ -2207,6 +1964,30 @@ public class GUI extends Application {
         editObstacleBtn.setTooltip(importObstaclesTooltip);
         saveObstacleBtn.setTooltip(saveObstaclesTooltip);
         heightEditTF.setTooltip(editObstacleHeightTooltip);
+    }
+
+    public Boolean getEditingObstacle() {
+        return editingObstacle;
+    }
+
+    public void setEditingObstacle(Boolean editingObstacle) {
+        this.editingObstacle = editingObstacle;
+    }
+
+    public TextField getHeightEditTF() {
+        return heightEditTF;
+    }
+
+    public Map<String, Obstacle> getUserDefinedObstacles() {
+        return userDefinedObstacles;
+    }
+
+    public Map<String, Obstacle> getPredefinedObstaclesSorted() {
+        return predefinedObstaclesSorted;
+    }
+
+    public Map<String, Obstacle> getAllObstaclesSorted() {
+        return allObstaclesSorted;
     }
     
     public static void main(String[] args) {
