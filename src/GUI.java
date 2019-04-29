@@ -100,11 +100,10 @@ public class GUI extends Application {
     private int numOfNotifications;
     @FXML
     private Label notifCount;
-    @FXML
-    private Circle notifCircle;
     private ArrayList<String> notifList;
     private DeleteObstaclePopup delObstaclePopup;
     private ObstacleDetailsPopup obstacleDetPopup;
+    private ObstacleOverwritePopup overwriteObstaclePopup;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
@@ -130,9 +129,10 @@ public class GUI extends Application {
         });
         delObstaclePopup = new DeleteObstaclePopup(this);
         obstacleDetPopup = new ObstacleDetailsPopup(this);
+        overwriteObstaclePopup = new ObstacleOverwritePopup(this);
 
         notifList = new ArrayList<>();
-        notifCircle.setVisible(false);
+        notifCount.setVisible(false);
 
         fileIO = new FileIO();
         userDefinedObstacles = new TreeMap<>();
@@ -145,42 +145,7 @@ public class GUI extends Application {
 
         airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
 
-        //TODO - change to the notif bell icon
-        notifCount.setOnMouseClicked(e -> {
-            numOfNotifications = 0;
-            notifCount.setText("");
-            notifCircle.setVisible(false);
-
-            NotificationLog log = new NotificationLog(notifList);
-            log.createNotifLog();
-
-        });
-
-        // Setting the texts for each tooltip
-        centrelineDistTooltip = new Tooltip();
-        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
-        thresholdDistTooltip = new Tooltip();
-        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
-        obstacleHeightTooltip = new Tooltip();
-        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
-        airportCodeTooltip = new Tooltip();
-        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
-        toraButtonTooltip = new Tooltip();
-        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
-        todaButtonTooltip = new Tooltip();
-        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
-        asdaButtonTooltip = new Tooltip();
-        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
-        ldaButtonTooltip = new Tooltip();
-        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
-        addObstacleTooltip = new Tooltip();
-        addObstacleTooltip.setText("Add an obstacle");
-        importObstaclesTooltip = new Tooltip();
-        importObstaclesTooltip.setText("Import obstacles");
-        saveObstaclesTooltip = new Tooltip();
-        saveObstaclesTooltip.setText("Save obstacles");
-        editObstacleHeightTooltip = new Tooltip();
-        editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+        createTooltips();
 
         addAirportPopup = createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
@@ -818,28 +783,6 @@ public class GUI extends Application {
         calculationResultsGrid.add(recalculatedAsda, 2, 3);
         calculationResultsGrid.add(recalculatedLda, 2, 4);
 
-/*
-        //Col 0 : the value names (TODA, TORA, ASDA, LDA)
-        calculationResultsGrid.add(new Pane(toraRowLbl), 0, 1);
-        calculationResultsGrid.add(new Pane(todaRowLbl), 0, 2);
-        calculationResultsGrid.add(asdaRowLbl, 0, 3);
-        calculationResultsGrid.add(ldaRowLbl, 0, 4);
-
-        //Col 1 : the original values
-        calculationResultsGrid.add(new Pane(originalValuesGridLbl), 1, 0);
-        calculationResultsGrid.add(new Pane(originalTora), 1, 1);
-        calculationResultsGrid.add(new Pane(originalToda), 1, 2);
-        calculationResultsGrid.add(originalAsda, 1, 3);
-        calculationResultsGrid.add(originalLda, 1, 4);
-
-        //Col 2 : the recalculated values
-        calculationResultsGrid.add(new Pane(recalculatedlValuesGridLbl), 2, 0);
-        calculationResultsGrid.add(new Pane(recalculatedTora), 2, 1);
-        calculationResultsGrid.add(new Pane(recalculatedToda), 2, 2);
-        calculationResultsGrid.add(recalculatedAsda, 2, 3);
-        calculationResultsGrid.add(recalculatedLda, 2, 4);
-
-*/
         //Style the newly created and populated table
         ArrayList<Pair<Node, Point>> wrappedUpNodes = new ArrayList<>();
         ObservableList<Node> nodesObservable = calculationResultsGrid.getChildrenUnmodifiable();
@@ -1019,10 +962,12 @@ public class GUI extends Application {
         //Listeners for the print and export button on the top right side of the GUI
         Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
         Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
+        Pane notifBtnPane = (Pane) primaryStage.getScene().lookup("#notifBtnPane");
 
-        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is, look the same under xfce ubuntu
+        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is (there is a difference lol) look the same under xfce ubuntu
         printBtnPane.setCursor(Cursor.HAND);
-        exportBtnPane.setCursor(Cursor.OPEN_HAND);
+        exportBtnPane.setCursor(Cursor.HAND);
+        notifBtnPane.setCursor(Cursor.HAND);
 
         printBtnPane.setOnMouseClicked(event -> {
             System.out.println("Print report");
@@ -1033,6 +978,15 @@ public class GUI extends Application {
             //TODO implement exporting, and link back to here when done
             System.out.println("Export data");
             exportPopup.show();
+        });
+
+        notifBtnPane.setOnMouseClicked(event -> {
+            numOfNotifications = 0;
+            notifCount.setText("");
+            notifCount.setVisible(false);
+
+            NotificationLog log = new NotificationLog(notifList);
+            log.createNotifLog();
         });
 
         loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
@@ -1238,7 +1192,7 @@ public class GUI extends Application {
                     boolean matchFound = false;
                     for (String obstacleName : allObstaclesSorted.keySet()) {
                         if (addObstacleNameTF.getText().equals(obstacleName)) {
-                            displayOverwritePrompt(obstacleName, allObstaclesSorted.get(obstacleName).getHeight(), Double.parseDouble(addObstacleHeightTF.getText()));
+                            overwriteObstaclePopup.displayOverwritePrompt(obstacleName, allObstaclesSorted.get(obstacleName).getHeight(), Double.parseDouble(addObstacleHeightTF.getText()));
                             matchFound = true;
                             break;
                         }
@@ -1308,9 +1262,7 @@ public class GUI extends Application {
         airportName = new TextField();
         airportName.setEditable(false);
 
-        //Setting the tooltip
         airportCode = new TextField();
-        airportCode.setTooltip(airportCodeTooltip);
 
         airportSuggestions = new ListView();
         airportSuggestions.setMaxHeight(100);
@@ -1570,70 +1522,6 @@ public class GUI extends Application {
         return stage;
     }
 
-    private void displayOverwritePrompt(String obstacleName, double currentHeight, double newHeight) {
-        Stage overwriteWindow = new Stage();
-        overwriteWindow.initModality(Modality.APPLICATION_MODAL);
-        overwriteWindow.setTitle("Overwrite Obstacle");
-
-        // Components for the overwrite obstacle details window
-        Label overwriteLabel = new Label("");
-        overwriteLabel.setWrapText(true);
-        overwriteLabel.setTextAlignment(TextAlignment.CENTER);
-        overwriteLabel.getStyleClass().add("label");
-        overwriteLabel.getStylesheets().add("styles/global.css");
-
-        if (predefinedObstaclesSorted.containsKey(obstacleName)) {
-            overwriteLabel.setText(obstacleName + " already exists in the list of predefined obstacles. Do you wish to overwrite " +
-                    "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
-        } else {
-            overwriteLabel.setText(obstacleName + " already exists in the list of user-defined obstacles. Do you wish to overwrite " +
-                    "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
-        }
-
-        Button cancelOverwrite = new Button("Cancel");
-        cancelOverwrite.getStyleClass().add("primaryButton");
-        cancelOverwrite.getStylesheets().add("styles/global.css");
-        Button confirmOverwrite = new Button("Overwrite");
-        confirmOverwrite.getStyleClass().add("primaryButton");
-        confirmOverwrite.getStylesheets().add("styles/global.css");
-
-        HBox buttonsBox = new HBox(20);
-        buttonsBox.setAlignment(Pos.CENTER);
-        buttonsBox.getChildren().addAll(confirmOverwrite, cancelOverwrite);
-        VBox windowLayout = new VBox(10);
-        windowLayout.getChildren().addAll(overwriteLabel, buttonsBox);
-        windowLayout.setAlignment(Pos.CENTER);
-
-        cancelOverwrite.setOnAction(e -> overwriteWindow.close());
-
-        confirmOverwrite.setOnAction(e -> {
-
-            allObstaclesSorted.remove(obstacleName);
-            Obstacle modifiedObstacle = new Obstacle(obstacleName, newHeight);
-            allObstaclesSorted.put(obstacleName, modifiedObstacle);
-
-            if (predefinedObstaclesSorted.containsKey(obstacleName)) {
-                predefinedObstaclesSorted.remove(obstacleName);
-                predefinedObstaclesSorted.put(obstacleName, modifiedObstacle);
-            } else {
-                userDefinedObstacles.remove(obstacleName);
-                userDefinedObstacles.put(obstacleName, modifiedObstacle);
-            }
-
-            updateObstaclesList();
-            addObstacleNameTF.clear();
-            addObstacleHeightTF.clear();
-            addObstaclePopup.hide();
-            notifyUpdate("Obstacle overwritten");
-            addNotification("Overwrote details of " + obstacleName + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
-            overwriteWindow.close();
-        });
-
-        Scene scene = new Scene(windowLayout, 420, 170);
-        overwriteWindow.setScene(scene);
-        overwriteWindow.showAndWait();
-    }
-
     private void displayAirportErrorPopup() {
         Stage errorWindow = new Stage();
         errorWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1658,9 +1546,6 @@ public class GUI extends Application {
     }
 
     //TODO Make the Confirm/Cancel buttons work
-    //TODO other issues - deleting obstacles messes up the list of obstacles in Redeclaration,
-    // "Save changes" button doesn't work when editing
-    // When an obstacle is deleted, it still shows up as selected obstacle in the list of obstacles in Redeclaration
     private void displayRunwayParametersPrompt(RunwayPair runwayPair) {
         Stage runwayWindow = new Stage();
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
@@ -1921,7 +1806,7 @@ public class GUI extends Application {
     public void addNotification(String message) {
         numOfNotifications++;
         notifList.add(0, message);
-        notifCircle.setVisible(true);
+        notifCount.setVisible(true);
         notifCount.setText(Integer.toString(numOfNotifications));
 
         AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
@@ -1950,6 +1835,7 @@ public class GUI extends Application {
         editObstacleBtn.setTooltip(null);
         saveObstacleBtn.setTooltip(null);
         heightEditTF.setTooltip(null);
+        airportCode.setTooltip(null);
     }
 
     private void enableTooltips() {
@@ -1964,6 +1850,34 @@ public class GUI extends Application {
         editObstacleBtn.setTooltip(importObstaclesTooltip);
         saveObstacleBtn.setTooltip(saveObstaclesTooltip);
         heightEditTF.setTooltip(editObstacleHeightTooltip);
+        airportCode.setTooltip(airportCodeTooltip);
+    }
+
+    private void createTooltips() {
+        centrelineDistTooltip = new Tooltip();
+        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
+        thresholdDistTooltip = new Tooltip();
+        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
+        obstacleHeightTooltip = new Tooltip();
+        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+        airportCodeTooltip = new Tooltip();
+        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
+        toraButtonTooltip = new Tooltip();
+        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
+        todaButtonTooltip = new Tooltip();
+        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
+        asdaButtonTooltip = new Tooltip();
+        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
+        ldaButtonTooltip = new Tooltip();
+        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
+        addObstacleTooltip = new Tooltip();
+        addObstacleTooltip.setText("Add an obstacle");
+        importObstaclesTooltip = new Tooltip();
+        importObstaclesTooltip.setText("Import obstacles");
+        saveObstaclesTooltip = new Tooltip();
+        saveObstaclesTooltip.setText("Save obstacles");
+        editObstacleHeightTooltip = new Tooltip();
+        editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
     }
 
     public Boolean getEditingObstacle() {
@@ -1989,7 +1903,19 @@ public class GUI extends Application {
     public Map<String, Obstacle> getAllObstaclesSorted() {
         return allObstaclesSorted;
     }
-    
+
+    public TextField getAddObstacleNameTF() {
+        return addObstacleNameTF;
+    }
+
+    public TextField getAddObstacleHeightTF() {
+        return addObstacleHeightTF;
+    }
+
+    public Popup getAddObstaclePopup() {
+        return addObstaclePopup;
+    }
+
     public static void main(String[] args) {
         launch(args);
     }

@@ -18,8 +18,7 @@ public class NotificationLog {
 
     // TODO - add styling
     public void createNotifLog() {
-        // Will use this later to create a messenger-like notification popup
-        // Stage notifWindow = new Stage(StageStyle.UNDECORATED);
+        //Stage notifWindow = new Stage(StageStyle.UNDECORATED);
         Stage notifWindow = new Stage();
         notifWindow.setTitle("Notification Log");
 
@@ -33,7 +32,7 @@ public class NotificationLog {
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
-            notification.setPrefWidth(WINDOW_WIDTH);
+            notification.setPrefWidth(WINDOW_WIDTH - 2);
             notification.setWrapText(true);
             rootBox.getChildren().add(notification);
         }
