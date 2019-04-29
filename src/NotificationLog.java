@@ -23,6 +23,7 @@ public class NotificationLog {
         ScrollPane scrollPane = new ScrollPane();
 
         VBox rootBox = new VBox();
+        rootBox.getStylesheets().add("styles/global.css");
 
         Label notifLbl = new Label("Notifications");
 
@@ -30,6 +31,7 @@ public class NotificationLog {
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
+            notification.getStyleClass().add("primaryButton");
             notification.setPrefWidth(WINDOW_WIDTH - 2);
             notification.setWrapText(true);
             rootBox.getChildren().add(notification);
