@@ -122,6 +122,11 @@ public class GUI extends Application {
 
         this.primaryStage = primaryStage;
 
+        primaryStage.setOnCloseRequest(event -> {
+            //TODO save persistent settings here
+            System.out.println("closed");
+        });
+
         notifList = new ArrayList<>();
         notifCircle.setVisible(false);
 
