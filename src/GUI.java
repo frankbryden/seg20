@@ -46,7 +46,7 @@ public class GUI extends Application {
     @FXML
     private ListView<Obstacle> predefinedObstaclesLV;
     @FXML
-    private ComboBox<String> thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
+    private ComboBox<String> thresholdSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
     @FXML
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
@@ -61,7 +61,8 @@ public class GUI extends Application {
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> predefinedObstaclesSorted;
-    private Stage addAirportPopup, addRunwayPopup;
+    private Stage addRunwayPopup;
+    private AddAirportPopup addAirportPopup;
     private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     @FXML
@@ -130,8 +131,6 @@ public class GUI extends Application {
         addObstacleHeightTF = new TextField();
         airportCode = new TextField();
         heightEditTF = new TextField();
-
-        addRunwayAirportSelect = new ComboBox<>();
 
         notifList = new ArrayList<>();
         notifCount.setVisible(false);
@@ -583,7 +582,7 @@ public class GUI extends Application {
         String selectedRunwayPair = (String) runwaySelect.getSelectionModel().getSelectedItem();
         runwaySelect.getItems().clear();
         airportSelect.getItems().clear();
-        addRunwayAirportSelect.getItems().clear();
+        //TODO call clear method on new popup class
 
         String[] names = airportConfigs.keySet().toArray(new String[0]);
         Arrays.sort(names);

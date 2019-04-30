@@ -22,6 +22,8 @@ class AddRunwayPopup {
     //TODO fix to make independent self-sufficient class
     private Stage addRunwayStage;
     private AirportConfig currentlySelectedAirportConfig;
+    private ComboBox<String> addRunwayAirportSelect;
+
 
     public AddRunwayPopup(GUI gui) {
         this.gui = gui;
@@ -48,9 +50,10 @@ class AddRunwayPopup {
         clearwayLbl = new Label("Clearway");
         stopwayLbl = new Label("Stopway");
         displacementThresholdLbl = new Label("Displaced Threshold");
+        addRunwayAirportSelect = new ComboBox<>();
 
-        gui.getAddRunwayAirportSelect().setId("airportComboBox");
-        gui.getAddRunwayAirportSelect().setVisibleRowCount(10);
+        addRunwayAirportSelect.setId("airportComboBox");
+        addRunwayAirportSelect.setVisibleRowCount(10);
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
@@ -96,7 +99,7 @@ class AddRunwayPopup {
         HBox airportSelection = new HBox(30);
         airportSelection.setPadding(new Insets(10, 12, 15, 15));
         airportSelection.getChildren().add(selectAirportLbl);
-        airportSelection.getChildren().add(gui.getAddRunwayAirportSelect());
+        airportSelection.getChildren().add(addRunwayAirportSelect);
 
 
         VBox addRunwayRoot = new VBox(20);
@@ -169,7 +172,7 @@ class AddRunwayPopup {
                 NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
                 runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
 
-                AirportConfig selectedAirport = gui.getAirportConfigs().get(gui.getAddRunwayAirportSelect().getSelectionModel().getSelectedItem().toString());
+                AirportConfig selectedAirport = gui.getAirportConfigs().get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
                 System.out.println(selectedAirport.toString());
 
                 selectedAirport.addRunwayPair(runwayPair);
@@ -197,6 +200,14 @@ class AddRunwayPopup {
         if (currentlySelectedAirportConfig != null){
 
         }
+    }
+
+    void clearAirportList(){
+        addRunwayAirportSelect.getItems().clear();
+    }
+
+    void addAirportToList(String name){
+        addRunwayAirportSelect.getItems().add(name);
     }
 
     void show(){
