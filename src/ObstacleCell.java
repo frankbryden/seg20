@@ -8,6 +8,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 
 import java.io.IOException;
 
@@ -38,7 +39,12 @@ class ObstacleCell extends ListCell<Obstacle> {
         rootBox.prefWidthProperty().bind(parent.widthProperty().subtract(40));
 
         setupListeners();
+        styleComponents();
 
+    }
+
+    private void styleComponents(){
+        contentLbl.setFont(new Font(9));
     }
 
     private void setupListeners(){
@@ -87,6 +93,7 @@ class ObstacleCell extends ListCell<Obstacle> {
         } else {
             this.obstacle = item;
             setGraphic(rootBox);
+            contentLbl.setFont(new Font(9));
             contentLbl.setText(item.getName());
         }
     }

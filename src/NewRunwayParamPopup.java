@@ -24,7 +24,7 @@ class NewRunwayParamPopup {
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
         runwayWindow.setTitle("Add Runway");
 
-        Label summaryLbl = new Label("Summary of parameters for the new runway at " + gui.getAddRunwayAirportSelect().getSelectionModel().getSelectedItem().toString() + " airport:");
+        Label summaryLbl = new Label("Summary of parameters for the new runway at " + gui.getAddRunwayPopup().getAddRunwayAirportSelect().getSelectionModel().getSelectedItem().toString() + " airport:");
         summaryLbl.getStyleClass().add("label");
         summaryLbl.getStylesheets().add("styles/global.css");
 

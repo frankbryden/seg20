@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><Obstacles>
+    <Obstacle>
+        <name>Airbus A330</name>
+        <height>17.9</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Airbus A340</name>
+        <height>17.1</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Airbus A350</name>
+        <height>16.9</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Airbus A380</name>
+        <height>24.1</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Boeing 747</name>
+        <height>19.4</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Boeing 767</name>
+        <height>16.8</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Boeing 777</name>
+        <height>18.5</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Boeing 787</name>
+        <height>18.5</height>
+    </Obstacle>
+    <Obstacle>
+        <name>Telescopic handler</name>
+        <height>12.0</height>
+    </Obstacle>
+</Obstacles>

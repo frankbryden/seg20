@@ -29,7 +29,7 @@ class Printer {
     private String calculations;
     //This might be a bit confusing. It solves a slightly weird kinda frustrating problem
     //DM me if you have any questions about is - Frankie
-    private Pair<Pane, Node> originalRecalculatedPane;
+    private Pair<Pane, Node> originalRecalculatedPane, originalRecalculatedBackBtn;
     private Canvas runway;
     private final Font headerFont;
     private final Font titleFont;
@@ -228,6 +228,7 @@ class Printer {
         GridPane gp = (GridPane) recalculatedVals;
         gp.setPrefWidth(400);
         root.getChildren().add(originalRecalculatedPane.getValue());
+        originalRecalculatedBackBtn.getKey().getChildren().remove(originalRecalculatedBackBtn.getValue());
 
         addPageNumber(root, job.getPrinter().getDefaultPageLayout());
 
@@ -235,6 +236,7 @@ class Printer {
 
         //when we add that pane to the root, it gets removed from its previous parent. It therefore needs to be added again.
         parent.getChildren().add(originalRecalculatedPane.getValue());
+        originalRecalculatedBackBtn.getKey().getChildren().add(originalRecalculatedBackBtn.getValue());
 
         //Restore to original position
         originalRecalculatedPane.getValue().setLayoutX(originalX);//originalPosition.x);
@@ -294,5 +296,7 @@ class Printer {
         this.originalRecalculatedPane = originalRecalculatedPane;
     }
 
-
+    public void setOriginalRecalculatedBackBtn(Pair<Pane, Node> originalRecalculatedBackBtn) {
+        this.originalRecalculatedBackBtn = originalRecalculatedBackBtn;
+    }
 }

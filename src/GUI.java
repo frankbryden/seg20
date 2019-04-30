@@ -61,8 +61,8 @@ public class GUI extends Application {
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
     private Map<String, Obstacle> predefinedObstaclesSorted;
-    private Stage addRunwayPopup;
-    private AddAirportPopup addAirportPopup;
+    private Stage addAirportPopup;
+    private AddRunwayPopup addRunwayPopup;
     private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
     @FXML
@@ -100,6 +100,7 @@ public class GUI extends Application {
     private AddObstaclePopup addObstaclePopup;
     private AddAirportPopup addingAirportPopup;
     private AddRunwayPopup addingRunwayPopup;
+    private VBox calculateBackBtnVBox;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
@@ -119,6 +120,7 @@ public class GUI extends Application {
         primaryStage.show();
 
         this.primaryStage = primaryStage;
+        addRunwayPopup = new AddRunwayPopup(this);
 
         primaryStage.setOnCloseRequest(event -> {
             //TODO save persistent settings here
@@ -437,7 +439,10 @@ public class GUI extends Application {
         });
 
         predefinedObstaclesLV.setOnMouseClicked(click -> {
-            obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem().getName());
+            Obstacle selectedItem = predefinedObstaclesLV.getSelectionModel().getSelectedItem();
+            if(selectedItem != null){
+                obstacleSelect.setValue(selectedItem.getName());
+            }
         });
 
         populatePredefinedList();
@@ -567,6 +572,7 @@ public class GUI extends Application {
         printer = new Printer(primaryStage);
         printer.setRunway(canvas);
         printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
+        printer.setOriginalRecalculatedBackBtn(new Pair<>(viewCalculationResultsVBox, calculateBackBtnVBox));
 
         enableTooltips();
     }
@@ -583,6 +589,7 @@ public class GUI extends Application {
         runwaySelect.getItems().clear();
         airportSelect.getItems().clear();
         //TODO call clear method on new popup class
+        addRunwayPopup.clearAirportList();
 
         String[] names = airportConfigs.keySet().toArray(new String[0]);
         Arrays.sort(names);
@@ -590,7 +597,7 @@ public class GUI extends Application {
         for (String name : names) {
             AirportConfig ac = airportConfigs.get(name);
             airportSelect.getItems().add(name);
-            addRunwayAirportSelect.getItems().add(name);
+            addRunwayPopup.addAirportToList(name);
         }
 
         airportSelect.getSelectionModel().select(airportSelect.getItems().indexOf(selectedAirportName));
@@ -1149,7 +1156,7 @@ public class GUI extends Application {
         calculationsBackBtn.getStyleClass().add("primaryButton");
         calculationsBackBtn.getStylesheets().add("styles/global.css");
 
-        VBox calculateBackBtnVBox = new VBox();
+        calculateBackBtnVBox = new VBox();
         calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
 
@@ -1230,7 +1237,6 @@ public class GUI extends Application {
         addingAirportPopup = new AddAirportPopup(this);
         addingRunwayPopup = new AddRunwayPopup(this);
         addAirportPopup = addingAirportPopup.createAddAirportPopup();
-        addRunwayPopup = addingRunwayPopup.createAddRunwayPopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, predefinedObstaclesSorted, fileIO);
     }
 
@@ -1272,7 +1278,7 @@ public class GUI extends Application {
 
     Stage getAddAirportPopup() {return addAirportPopup; }
 
-    Stage getAddRunwayPopup() {return addRunwayPopup; }
+    AddRunwayPopup getAddRunwayPopup() {return addRunwayPopup; }
 
     private void updateThresholdLbl(String thresholdName) { thresholdLbl.setText(thresholdName + "\nthreshold"); }
 

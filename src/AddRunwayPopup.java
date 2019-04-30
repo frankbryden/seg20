@@ -202,6 +202,10 @@ class AddRunwayPopup {
         }
     }
 
+    ComboBox<String> getAddRunwayAirportSelect(){
+        return addRunwayAirportSelect;
+    }
+
     void clearAirportList(){
         addRunwayAirportSelect.getItems().clear();
     }
