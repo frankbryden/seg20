@@ -1,4 +1,5 @@
 import javafx.event.EventHandler;
+import javafx.geometry.Bounds;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -108,10 +109,11 @@ class ObstacleDetailsPopup {
 
         /*Node eventSource = (Node) event.getSource();
         Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());*/
-        /*detailsPopUp.setX(sourceNodeBounds.getMinX() - 310.0);
-        detailsPopUp.setY(sourceNodeBounds.getMaxY() - 180.0);*/
-        detailsPopUp.setX(primaryStage.getWidth() / 2);
-        detailsPopUp.setY(primaryStage.getHeight() / 2);
+        /*detailsPopUp.setX(primaryStage.getWidth() / 2);
+        detailsPopUp.setY(primaryStage.getHeight() / 2);*/
+        Bounds boundsInScene = gui.getObstacleListView().localToScene(gui.getObstacleListView().getBoundsInLocal());
+        detailsPopUp.setX(boundsInScene.getMinX() - 70);
+        detailsPopUp.setY(boundsInScene.getMinY() + boundsInScene.getHeight()/2);
         System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 

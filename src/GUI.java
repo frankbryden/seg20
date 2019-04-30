@@ -281,7 +281,7 @@ public class GUI extends Application {
         popAddObstacleBtn.setOnMouseClicked(event -> {
             Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
             addObstaclePopup.show(primaryStage);
-            addObstaclePopup.center(bounds.getMaxX(), bounds.getMinY());
+            addObstaclePopup.center(bounds.getMaxX() - 46, bounds.getMinY() + 100);
         });
 
         ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/load.png")));
@@ -1110,6 +1110,8 @@ public class GUI extends Application {
                     runwayRenderer.getRunwayRenderParams().setRealLifeMaxLenR1(otherConfig.getTORA());
                 }
 
+                setRunwayRendererParams();
+
                 runwayRenderer.refreshLines();
                 runwayRenderer.render();
 
@@ -1277,6 +1279,10 @@ public class GUI extends Application {
     Map<String, AirportConfig> getAirportConfigs() {return airportConfigs; }
 
     Stage getAddAirportPopup() {return addAirportPopup; }
+
+    ListView getObstacleListView(){
+        return predefinedObstaclesLV;
+    }
 
     AddRunwayPopup getAddRunwayPopup() {return addRunwayPopup; }
 
