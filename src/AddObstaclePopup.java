@@ -134,9 +134,9 @@ class AddObstaclePopup {
             // Checking for valid obstacle name and valid obstacle height
             if (gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getAddObstacleHeightTF().getText()))) && !gui.getAddObstacleNameTF().getText().isEmpty()) {
                 boolean matchFound = false;
-                for (String obstacleName : gui.getAllObstaclesSorted().keySet()) {
+                for (String obstacleName : gui.getPredefinedObstaclesSorted().keySet()) {
                     if (gui.getAddObstacleNameTF().getText().equals(obstacleName)) {
-                        gui.getOverwriteObstaclePopup().displayOverwritePrompt(obstacleName, gui.getAllObstaclesSorted().get(obstacleName).getHeight(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
+                        gui.getOverwriteObstaclePopup().displayOverwritePrompt(obstacleName, gui.getPredefinedObstaclesSorted().get(obstacleName).getHeight(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
                         matchFound = true;
                         break;
                     }
@@ -145,14 +145,13 @@ class AddObstaclePopup {
                 if (!matchFound) {
                     System.out.println("Add obstacle");
                     gui.addObstacle(gui.getAddObstacleNameTF().getText(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
-                    gui.addNotification("Added " + gui.getAddObstacleNameTF().getText() + " to the list of user-defined obstacles.");
+                    gui.addNotification("Added " + gui.getAddObstacleNameTF().getText() + " to the list of obstacles.");
                     gui.getAddObstacleNameTF().clear();
                     gui.getAddObstacleHeightTF().clear();
                     gui.getAddObstacleNameTF().setPromptText("");
                     gui.getAddObstacleHeightTF().setPromptText("");
                     gui.updateObstaclesList();
                     hide();
-
                     //notify user obstacle was added
                     gui.notifyUpdate("Obstacle added");
 

@@ -44,7 +44,7 @@ public class GUI extends Application {
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF,
             heightEditTF;
     @FXML
-    private ListView<Obstacle> userDefinedObstaclesLV, predefinedObstaclesLV;
+    private ListView<Obstacle> predefinedObstaclesLV;
     @FXML
     private ComboBox<String> thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
@@ -60,7 +60,7 @@ public class GUI extends Application {
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
-    private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
+    private Map<String, Obstacle> predefinedObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private ExportPopup exportPopup;
     private RunwayPair currentlySelectedRunway = null;
@@ -138,9 +138,7 @@ public class GUI extends Application {
 
         fileIO = new FileIO();
 
-        userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
-        allObstaclesSorted = new TreeMap<>();
 
         airportDB = new AirportDatabase();
 
@@ -214,6 +212,7 @@ public class GUI extends Application {
 
 
         runwaySelect.setId("runwayComboBox");
+
         runwaySelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
             AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
@@ -252,6 +251,7 @@ public class GUI extends Application {
 
         airportSelect.setId("airportComboBox");
         airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+
             if (newValue == null) {
                 System.out.println("Selection cleared");
                 return;
@@ -319,16 +319,12 @@ public class GUI extends Application {
             System.out.println("Save obstacles");
             File file = fileIO.fileChooser.showSaveDialog(primaryStage);
             if (file != null) {
-                fileIO.write(userDefinedObstacles.values(), file.getPath());
+                fileIO.write(predefinedObstaclesSorted.values(), file.getPath());
                 notifyUpdate("Obstacles saved");
                 addNotification("Saved list of user-defined obstacles.");
             }
-
-            /*userDefinedObstaclesLV.getItems().forEach((name) -> {
-                System.out.println(name);
-            });*/
-
         });
+
 
         // Button in Settings tab for enabling/disabling tooltips
         manageTooltipsBtn.setOnMouseClicked(event -> {
@@ -426,30 +422,15 @@ public class GUI extends Application {
 
         predefinedObstaclesLV.getStyleClass().add("obstacleList");
         predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
-        userDefinedObstaclesLV.getStyleClass().add("obstacleList");
-        userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
 
         predefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(predefinedObstaclesLV));
-        userDefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(userDefinedObstaclesLV));
 
         predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
-            System.out.println("List view got a delete for obstacle " + event.getObstacleName());
             delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
-            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
             obstacleDetPopup.showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
-        });
-
-        userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
-            System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
-            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
-        });
-
-        userDefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
-            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
-            obstacleDetPopup.showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
         });
 
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
@@ -457,27 +438,7 @@ public class GUI extends Application {
         });
 
         predefinedObstaclesLV.setOnMouseClicked(click -> {
-
-            if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                System.out.println("Obstacle in user-defined list was selected, has now been deselected");
-            }
-
             obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem().getName());
-
-        });
-
-        userDefinedObstaclesLV.setOnMouseClicked(click -> {
-
-            if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                System.out.println("Obstacle in predefined list was selected, has now been deselected");
-            }
-
-            obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
-
         });
 
         populatePredefinedList();
@@ -534,7 +495,6 @@ public class GUI extends Application {
             planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
             System.out.println(planeImg.getY());
         });
-
         //Listeners for the print and export button on the top right side of the GUI
         Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
         Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
@@ -562,8 +522,7 @@ public class GUI extends Application {
             notifCount.setVisible(false);
 
             NotificationLog log = new NotificationLog(notifList);
-            Stage notifWindow = log.createNotifLog();
-            notifWindow.show();
+            log.createNotifLog();
         });
 
         loadAirportBtn.setOnMouseClicked(event -> {
@@ -582,10 +541,10 @@ public class GUI extends Application {
 
             notifyUpdate("Airport config loaded");
             //tabPane.getSelectionModel().select(1);
+
         });
 
         startBtn.setOnMouseClicked(event -> {
-            System.out.println("Tab Switched!");
             takeOffTransition.play();
             //tabPane.getSelectionModel().select(1);
         });
@@ -707,11 +666,6 @@ public class GUI extends Application {
                 sourceLV = predefinedObstaclesLV;
                 addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
                 break;
-            case USER_DEFINED:
-                sourceList = userDefinedObstacles;
-                sourceLV = userDefinedObstaclesLV;
-                addNotification("Removed " + obstacle.getName() + " from the list of user-defined obstacles.");
-                break;
             default:
                 System.err.println("unknown origin '" + listType.toString() + "'");
                 return;
@@ -721,19 +675,16 @@ public class GUI extends Application {
         obstacleSelect.getItems().remove(obstacle.getName());
 
         sourceList.remove(obstacle.getName());
-        allObstaclesSorted.remove(obstacle.getName());
 
         notifyUpdate("Obstacle removed");
     }
 
 
     public void updateObstaclesList() {
-        userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
         predefinedObstaclesLV.getItems().clear();
         predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.values());
         obstacleSelect.getItems().clear();
-        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
+        obstacleSelect.getItems().addAll(predefinedObstaclesSorted.keySet());
     }
 
     private void populatePredefinedList() {
@@ -751,7 +702,6 @@ public class GUI extends Application {
 
         for (Obstacle obstacle : obstacles) {
             predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
-            allObstaclesSorted.put(obstacle.getName(), obstacle);
         }
 
         updateObstaclesList();
@@ -813,8 +763,7 @@ public class GUI extends Application {
     }
 
     private void addObstacle(Obstacle obstacle) {
-        this.userDefinedObstacles.put(obstacle.getName(), obstacle);
-        this.allObstaclesSorted.put(obstacle.getName(), obstacle);
+        this.predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
     }
 
 
@@ -916,7 +865,7 @@ public class GUI extends Application {
                     if (obstacleSelect.getSelectionModel().isEmpty()) {
                         selectedObstacleHeightTF.clear();
                     } else {
-                        selectedObstacleHeightTF.setText(allObstaclesSorted.get(selectedObstacleName).getHeight() + "m");
+                        selectedObstacleHeightTF.setText(predefinedObstaclesSorted.get(selectedObstacleName).getHeight() + "m");
                     }
 
                 }
@@ -1066,10 +1015,11 @@ public class GUI extends Application {
                 centrelineTF.setPromptText("Invalid centreline distance!");
             } else {
                 // If everything is filled in and valid, start calculations
-                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem();
-                Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
 
-                //HERE
+                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem();
+                Obstacle currentlySelectedObstacle = predefinedObstaclesSorted.get(obstacleName);
+                Obstacle selectedObstacle = (Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem();
+
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem();
                 updateThresholdLbl(thresholdName);
 
@@ -1102,7 +1052,6 @@ public class GUI extends Application {
 
                 int distanceFromOtherThreshold = runwayLength - runwayConfig.getDisplacementThreshold() - distanceFromThreshold - otherConfig.getDisplacementThreshold();
 
-
                 // I compare the distances from each threshold. Whichever threshold the obstacle is closer to, that logical runway is used for taking off away
                 CalculationResults results;
                 CalculationResults results2;
@@ -1122,13 +1071,15 @@ public class GUI extends Application {
                     recalculatedParams2 = results2.getRecalculatedParams();
                 }
 
+                RunwayPair runwayPair = new RunwayPair(recalculatedParams, recalculatedParams2);
+                updateRunwayInfoLabels(runwayPair);
+
                 System.out.println("calculation details");
                 System.out.println(results.getCalculationDetails());
                 System.out.println(results2.getCalculationDetails());
 
                 //Generate summary string which designates the calculations (eg. A320 50m from 27R threshold)
                 String summary = obstacleName + " " + distanceFromThreshold + "m from " + thresholdName + " threshold";
-                System.out.println("Just performed calculations on the following situation :");
                 System.out.println(summary);
 
                 // Printing results into the breakdown of calculations text box
@@ -1140,6 +1091,7 @@ public class GUI extends Application {
                 System.out.println(recalculatedParams.toString());
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 //updateCalculationResultsView(otherConfig, recalculatedParams2);
+
                 switchCalculationsTabToView();
 
                 if (selectedSide == RunwayPair.Side.R1) {
@@ -1206,7 +1158,6 @@ public class GUI extends Application {
         //Add all the labels, col by col,  to create a table
         calculationResultsGrid.setId("smallRunwayGrid");
 
-        //HERE
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
         calculationResultsGrid.add(thresholdLbl, 0, 0);
         calculationResultsGrid.add(toraRowLbl, 0, 1);
@@ -1281,7 +1232,7 @@ public class GUI extends Application {
         addingRunwayPopup = new AddRunwayPopup(this);
         addAirportPopup = addingAirportPopup.createAddAirportPopup();
         addRunwayPopup = addingRunwayPopup.createAddRunwayPopup();
-        exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
+        exportPopup = new ExportPopup(primaryStage, airportConfigs, predefinedObstaclesSorted, fileIO);
     }
 
     Boolean getEditingObstacle() {
@@ -1296,19 +1247,11 @@ public class GUI extends Application {
         return heightEditTF;
     }
 
-    Map<String, Obstacle> getUserDefinedObstacles() {
-        return userDefinedObstacles;
-    }
-
-    Map<String, Obstacle> getPredefinedObstaclesSorted() {
+    public Map<String, Obstacle> getPredefinedObstaclesSorted() {
         return predefinedObstaclesSorted;
     }
 
-    Map<String, Obstacle> getAllObstaclesSorted() {
-        return allObstaclesSorted;
-    }
-
-    TextField getAddObstacleNameTF() {
+    public TextField getAddObstacleNameTF() {
         return addObstacleNameTF;
     }
 
