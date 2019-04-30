@@ -104,6 +104,8 @@ public class GUI extends Application {
     private DeleteObstaclePopup delObstaclePopup;
     private ObstacleDetailsPopup obstacleDetPopup;
     private ObstacleOverwritePopup overwriteObstaclePopup;
+    private AddObstaclePopup addingObstaclePopup;
+    private AddAirportPopup addingAirportPopup;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
@@ -130,6 +132,12 @@ public class GUI extends Application {
         delObstaclePopup = new DeleteObstaclePopup(this);
         obstacleDetPopup = new ObstacleDetailsPopup(this);
         overwriteObstaclePopup = new ObstacleOverwritePopup(this);
+        addingObstaclePopup = new AddObstaclePopup(this);
+        addingAirportPopup = new AddAirportPopup(this);
+
+        addObstacleNameTF = new TextField();
+        addObstacleHeightTF = new TextField();
+        airportCode = new TextField();
 
         notifList = new ArrayList<>();
         notifCount.setVisible(false);
@@ -147,9 +155,9 @@ public class GUI extends Application {
 
         createTooltips();
 
-        addAirportPopup = createAddAirportPopup();
+        addAirportPopup = addingAirportPopup.createAddAirportPopup();
         addRunwayPopup = createAddRunwayPopup();
-        addObstaclePopup = createAddObstaclePopup();
+        addObstaclePopup = addingObstaclePopup.createAddObstaclePopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
 
         rootTabPane.setVisible(false);
@@ -1077,284 +1085,6 @@ public class GUI extends Application {
         centreLineRequiredLabel.setText("");
     }
 
-    public Popup createAddObstaclePopup() {
-        Popup popup = new Popup();
-
-        VBox rootBox = new VBox(20);
-        rootBox.getStylesheets().add("styles/global.css");
-        rootBox.getStylesheets().add("styles/layoutStyles.css");
-        rootBox.getStylesheets().add("styles/obstacles.css");
-        HBox emptyNameBox = new HBox();
-        HBox emptyHeightBox = new HBox();
-        HBox nameBox = new HBox(20);
-        HBox heightBox = new HBox(20);
-        HBox buttonsBox = new HBox();
-        Region nameRegion = new Region();
-        Region heightRegion = new Region();
-        Region buttonsRegion = new Region();
-        Label nameLbl, heightLbl, nameRequiredLbl, heightRequiredLbl;
-        Button addObstacleBtn, cancelBtn;
-
-        nameLbl = new Label("Name");
-        nameLbl.getStyleClass().add("popUpTitles");
-        nameLbl.getStylesheets().add("styles/layoutStyles.css");
-
-        heightLbl = new Label("Height");
-        heightLbl.getStyleClass().add("popUpTitles");
-        heightLbl.getStylesheets().add("styles/layoutStyles.css");
-
-        addObstacleNameTF = new TextField();
-        addObstacleHeightTF = new TextField();
-
-        addObstacleNameTF.getStyleClass().add("redErrorPromptText");
-        addObstacleNameTF.getStylesheets().add("styles/obstacles.css");
-        addObstacleHeightTF.getStyleClass().add("redErrorPromptText");
-        addObstacleHeightTF.getStylesheets().add("styles/obstacles.css");
-
-        nameRequiredLbl = new Label("");
-        heightRequiredLbl = new Label("");
-
-        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
-        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
-        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
-        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
-
-        addObstacleBtn = new Button("Add");
-        addObstacleBtn.getStyleClass().add("primaryButton");
-        addObstacleBtn.getStylesheets().add("styles/global.css");
-        cancelBtn = new Button("Cancel");
-        cancelBtn.getStyleClass().add("primaryButton");
-        cancelBtn.getStylesheets().add("styles/global.css");
-
-        HBox.setHgrow(nameRegion, Priority.ALWAYS);
-        HBox.setHgrow(heightRegion, Priority.ALWAYS);
-        HBox.setHgrow(buttonsRegion, Priority.ALWAYS);
-
-        emptyNameBox.getChildren().add(nameRequiredLbl);
-        emptyHeightBox.getChildren().add(heightRequiredLbl);
-
-        nameBox.getChildren().add(nameLbl);
-        nameBox.getChildren().add(nameRegion);
-        nameBox.getChildren().add(addObstacleNameTF);
-
-        heightBox.getChildren().add(heightLbl);
-        heightBox.getChildren().add(heightRegion);
-        heightBox.getChildren().add(addObstacleHeightTF);
-
-        buttonsBox.getChildren().add(addObstacleBtn);
-        buttonsBox.getChildren().add(buttonsRegion);
-        buttonsBox.getChildren().add(cancelBtn);
-
-
-        rootBox.getChildren().add(nameBox);
-        rootBox.getChildren().add(heightBox);
-        rootBox.getChildren().add(buttonsBox);
-
-        rootBox.getStyleClass().add("popup");
-        rootBox.getStylesheets().add("styles/layoutStyles.css");
-
-        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                // Checking for empty name and height fields
-                if (addObstacleNameTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                             Enter obstacle name");
-                    if (!rootBox.getChildren().contains(emptyNameBox)) {
-                        rootBox.getChildren().add(0, emptyNameBox);
-                    }
-                    addObstacleNameTF.setPromptText("");
-                } else {
-                    if (rootBox.getChildren().contains(emptyNameBox)) {
-                        rootBox.getChildren().remove(emptyNameBox);
-                    }
-                    nameRequiredLbl.setText("");
-                }
-                if (addObstacleHeightTF.getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                             Enter obstacle height");
-                    if (rootBox.getChildren().contains(emptyNameBox)) {
-                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
-                            rootBox.getChildren().add(2, emptyHeightBox);
-                        }
-                    } else {
-                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
-                            rootBox.getChildren().add(1, emptyHeightBox);
-                        }
-                    }
-                    addObstacleHeightTF.setPromptText("");
-                } else {
-                    if (rootBox.getChildren().contains(emptyHeightBox)) {
-                        rootBox.getChildren().remove(emptyHeightBox);
-                    }
-                    heightRequiredLbl.setText("");
-                }
-
-                // Checking for valid obstacle name and valid obstacle height
-                if (validateDoubleForm(new ArrayList<>(Arrays.asList(addObstacleHeightTF.getText()))) && !addObstacleNameTF.getText().isEmpty()) {
-                    boolean matchFound = false;
-                    for (String obstacleName : allObstaclesSorted.keySet()) {
-                        if (addObstacleNameTF.getText().equals(obstacleName)) {
-                            overwriteObstaclePopup.displayOverwritePrompt(obstacleName, allObstaclesSorted.get(obstacleName).getHeight(), Double.parseDouble(addObstacleHeightTF.getText()));
-                            matchFound = true;
-                            break;
-                        }
-                    }
-
-                    if (!matchFound) {
-                        System.out.println("Add obstacle");
-                        addObstacle(addObstacleNameTF.getText(), Double.parseDouble(addObstacleHeightTF.getText()));
-                        addNotification("Added " + addObstacleNameTF.getText() + " to the list of user-defined obstacles.");
-                        addObstacleNameTF.clear();
-                        addObstacleHeightTF.clear();
-                        addObstacleNameTF.setPromptText("");
-                        addObstacleHeightTF.setPromptText("");
-                        updateObstaclesList();
-                        addObstaclePopup.hide();
-
-                        //notify user obstacle was added
-                        notifyUpdate("Obstacle added");
-
-                    }
-
-                } else if (!addObstacleHeightTF.getText().isEmpty() && !validateDoubleForm(new ArrayList<>(Arrays.asList(addObstacleHeightTF.getText())))) {
-                    addObstacleHeightTF.clear();
-                    addObstacleHeightTF.setPromptText("Invalid obstacle height!");
-                }
-
-            }
-        });
-
-        cancelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (rootBox.getChildren().contains(emptyNameBox)) {
-                    rootBox.getChildren().remove(emptyNameBox);
-                }
-                if (rootBox.getChildren().contains(emptyHeightBox)) {
-                    rootBox.getChildren().remove(emptyHeightBox);
-                }
-                nameRequiredLbl.setText("");
-                heightRequiredLbl.setText("");
-                addObstacleNameTF.clear();
-                addObstacleNameTF.setPromptText("");
-                addObstacleHeightTF.clear();
-                addObstacleHeightTF.setPromptText("");
-                addObstaclePopup.hide();
-            }
-        });
-
-        popup.getContent().add(rootBox);
-
-
-        return popup;
-    }
-
-    public Stage createAddAirportPopup() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Add Airport");
-
-        //Components for the popups
-        Button confirmButton = new Button("Add");
-        Button cancelButton = new Button("Cancel");
-        TextField airportName;
-        Label airportNameLbl, airportCodeLbl;
-        ListView airportSuggestions;
-        airportNameLbl = new Label("Airport Name");
-        airportCodeLbl = new Label("Airport Code");
-        airportName = new TextField();
-        airportName.setEditable(false);
-
-        airportCode = new TextField();
-
-        airportSuggestions = new ListView();
-        airportSuggestions.setMaxHeight(100);
-
-        //Add auto-completion to the airport code
-        airportCode.setOnKeyReleased(event -> {
-            airportSuggestions.getItems().clear();
-            System.out.println("text is " + airportCode.getText());
-            if (airportCode.getText().length() > 0){
-                airportSuggestions.getItems().addAll(airportDB.getEntries(airportCode.getText()));
-                if (airportSuggestions.getItems().size() == 1){
-                    if (event.getCode() == KeyCode.BACK_SPACE && airportCode.getText().length() != 3){
-                        airportName.clear();
-                        return;
-                    }
-                    String suggestedAirportName = (String) airportSuggestions.getItems().get(0);
-                    airportName.setText((String) airportSuggestions.getItems().get(0));
-                    airportCode.setText(airportDB.getEntryReversed(suggestedAirportName));
-                    airportCode.positionCaret(airportCode.getText().length());
-                } else {
-                    airportName.clear();
-                }
-            } else {
-                airportSuggestions.getItems().clear();
-                airportName.clear();
-            }
-        });
-
-        //Single-click on the airport suggestions box
-        airportSuggestions.setOnMouseClicked(event -> {
-            if (event.getClickCount() == 1) {
-                String selectedAirportName = (String) airportSuggestions.getSelectionModel().getSelectedItem();
-                System.out.println(selectedAirportName);
-                airportName.setText(selectedAirportName);
-                airportCode.setText(airportDB.getEntryReversed(selectedAirportName));
-            } else {
-                System.out.println("Not a double click");
-            }
-        });
-
-        //VBox containing confirm and cancel button
-        HBox hbox = new HBox();
-        hbox.getChildren().add(confirmButton);
-        hbox.getChildren().add(cancelButton);
-        hbox.setSpacing(10);
-
-        //GridPane - root of the popup
-        GridPane gridPane = new GridPane();
-
-        gridPane.getStylesheets().add("styles/global.css");
-
-        gridPane.add(airportCodeLbl, 0, 0);
-        gridPane.add(airportCode, 1, 0);
-        gridPane.add(airportNameLbl, 0, 1);
-        gridPane.add(airportName, 1, 1);
-        gridPane.add(airportSuggestions, 1, 2, 2, 1);
-        gridPane.add(hbox, 1, 3);
-        Scene scene = new Scene(gridPane);
-
-        //Add some spacing around and in between the cells
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(5, 5, 5, 5));
-
-        confirmButton.getStyleClass().add("primaryButton");
-        cancelButton.getStyleClass().add("primaryButton");
-
-        //On confirm button, add the airport to the list of known airports
-        confirmButton.setOnMouseClicked(event -> {
-
-            if (!airportSuggestions.getSelectionModel().isEmpty()) {
-                System.out.println("add airport with name " + airportName.getText() + " and code " + airportCode.getText());
-                AirportConfig airportConfig = new AirportConfig(airportName.getText());
-                airportConfigs.put(airportConfig.getName(), airportConfig);
-                updateAirportSelects();
-                addAirportPopup.hide();
-                addRunwayPopup.show();
-            } else {
-                displayAirportErrorPopup();
-            }
-        });
-
-        //Simply close the popup, discarding the data
-        cancelButton.setOnMouseClicked(event -> addAirportPopup.hide());
-
-        stage.setScene(scene);
-        return stage;
-    }
-
-
     public Stage createAddRunwayPopup() {
         Stage stage = new Stage();
         stage.initModality(Modality.APPLICATION_MODAL);
@@ -1525,7 +1255,7 @@ public class GUI extends Application {
         return stage;
     }
 
-    private void displayAirportErrorPopup() {
+    public void displayAirportErrorPopup() {
         Stage errorWindow = new Stage();
         errorWindow.initModality(Modality.APPLICATION_MODAL);
         errorWindow.setTitle("Airport selection");
@@ -1918,6 +1648,18 @@ public class GUI extends Application {
     public Popup getAddObstaclePopup() {
         return addObstaclePopup;
     }
+
+    public ObstacleOverwritePopup getOverwriteObstaclePopup() { return overwriteObstaclePopup; }
+
+    public TextField getAirportCode() { return airportCode; }
+
+    public AirportDatabase getAirportDB() { return airportDB; }
+
+    public Map<String, AirportConfig> getAirportConfigs() {return airportConfigs; }
+
+    public Stage getAddAirportPopup() {return addAirportPopup; }
+
+    public Stage getAddRunwayPopup() {return addRunwayPopup; }
 
     public static void main(String[] args) {
         launch(args);

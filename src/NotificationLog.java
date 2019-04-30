@@ -15,7 +15,6 @@ public class NotificationLog {
         this.notifications = notifications;
     }
 
-    // TODO - add styling
     public void createNotifLog() {
         Stage notifWindow = new Stage();
         notifWindow.setTitle("Notification Log");
@@ -23,15 +22,18 @@ public class NotificationLog {
         ScrollPane scrollPane = new ScrollPane();
 
         VBox rootBox = new VBox();
-        rootBox.getStylesheets().add("styles/global.css");
+        rootBox.getStylesheets().add("styles/notifications.css");
+        rootBox.setStyle("-fx-background-color: #1B88BB;");
 
         Label notifLbl = new Label("Notifications");
+        notifLbl.setPrefWidth(WINDOW_WIDTH - 2);
+        notifLbl.getStyleClass().add("notifHeader");
 
         rootBox.getChildren().add(notifLbl);
 
         for (String notif : notifications) {
             Button notification = new Button(notif);
-            notification.getStyleClass().add("primaryButton");
+            notification.getStyleClass().add("notification");
             notification.setPrefWidth(WINDOW_WIDTH - 2);
             notification.setWrapText(true);
             rootBox.getChildren().add(notification);

@@ -23,3 +23,19 @@
     -fx-background-radius: 20px;
 }
 
+.notifHeader{
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-background-color: #075170;
+}
+
+.notification{
+    -fx-background-color: #1B88BB;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.notification:hover{
+    -fx-background-color: #20B9F9;
+}
+
