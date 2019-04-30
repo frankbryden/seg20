@@ -111,7 +111,7 @@ public class AddAirportPopup {
                 gui.getAddAirportPopup().hide();
                 gui.getAddRunwayPopup().show();
             } else {
-                gui.displayAirportErrorPopup();
+                AirportErrorPopup.displayAirportErrorPopup();
             }
         });
 

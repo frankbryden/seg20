@@ -106,6 +106,7 @@ public class GUI extends Application {
     private ObstacleOverwritePopup overwriteObstaclePopup;
     private AddObstaclePopup addingObstaclePopup;
     private AddAirportPopup addingAirportPopup;
+    private AddRunwayPopup addingRunwayPopup;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
 
@@ -129,20 +130,19 @@ public class GUI extends Application {
             //TODO save persistent settings here
             System.out.println("closed");
         });
-        delObstaclePopup = new DeleteObstaclePopup(this);
-        obstacleDetPopup = new ObstacleDetailsPopup(this);
-        overwriteObstaclePopup = new ObstacleOverwritePopup(this);
-        addingObstaclePopup = new AddObstaclePopup(this);
-        addingAirportPopup = new AddAirportPopup(this);
 
         addObstacleNameTF = new TextField();
         addObstacleHeightTF = new TextField();
         airportCode = new TextField();
+        heightEditTF = new TextField();
+
+        addRunwayAirportSelect = new ComboBox();
 
         notifList = new ArrayList<>();
         notifCount.setVisible(false);
 
         fileIO = new FileIO();
+
         userDefinedObstacles = new TreeMap<>();
         predefinedObstaclesSorted = new TreeMap<>();
         allObstaclesSorted = new TreeMap<>();
@@ -150,15 +150,11 @@ public class GUI extends Application {
         airportDB = new AirportDatabase();
 
         airportConfigs = new HashMap<>();
-
         airportConfigs.putAll(fileIO.readRunwayDB("runways.csv"));
 
-        createTooltips();
+        createPopups();
 
-        addAirportPopup = addingAirportPopup.createAddAirportPopup();
-        addRunwayPopup = createAddRunwayPopup();
-        addObstaclePopup = addingObstaclePopup.createAddObstaclePopup();
-        exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
+        createTooltips();
 
         rootTabPane.setVisible(false);
         tabsBox.setStyle("-fx-background-color: #f4f4f4");
@@ -172,7 +168,6 @@ public class GUI extends Application {
                 runwayRenderer.setTopDownBackgroundColor(topDownColorPicker.getValue());
             }
         });
-
 
         sideOnColorPicker.setOnAction(event -> {
             if (runwayRendererSideView != null) {
@@ -376,25 +371,21 @@ public class GUI extends Application {
 
         highlightTodaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TODA);
-
             notifyUpdate("TODA Highlighted");
         });
 
         highlightToraBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.TORA);
-
             notifyUpdate("TORA Highlighted");
         });
 
         highlightAsdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.ASDA);
-
             notifyUpdate("ASDA Highlighted");
         });
 
         highlightLdaBtn.setOnMouseClicked(event -> {
             runwayRenderer.setCurrentlyHighlightedParam(RunwayRenderer.RunwayParams.LDA);
-
             notifyUpdate("LDA Highlighted");
         });
 
@@ -415,7 +406,551 @@ public class GUI extends Application {
 
         });
 
-        //Calculations Pane - selection view
+        createCalculationsSelectionView();
+        createCalculationsResultView();
+        resetCalculationsTab();
+
+        /*canvasBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                canvas.setWidth(newVal/2);
+            }Font.font("Verdana", FontWeight.BOLD, 14)
+        });
+        canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
+
+        canvas.setOnScroll(new EventHandler<ScrollEvent>() {
+            @Override
+            public void handle(ScrollEvent event) {
+                if (runwayRenderer == null){
+                    return;
+                }
+                runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
+                if (event.getDeltaY() > 0) {
+                    runwayRenderer.incZoom();
+                } else if (event.getDeltaY() < 0) {
+                    runwayRenderer.decZoom();
+                }
+                zoomSlider.setValue(runwayRenderer.getZoom());
+                //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
+            }
+        });
+
+        canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
+                /*double currentAngle = runwayRenderer.getWindAngle();
+                System.out.println("Current angle = " + currentAngle);
+                currentAngle += Math.PI/4;
+                System.out.println("After addition = " + currentAngle);
+                runwayRenderer.setWindAngle(currentAngle);*/
+            }
+        });
+
+
+        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                if (runwayRenderer == null){
+                    return;
+                }
+                MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
+                Point delta = MouseDragTracker.getInstance().getDelta();
+                runwayRenderer.translate(delta.x, delta.y);
+            }
+        });
+
+        predefinedObstaclesLV.getStyleClass().add("obstacleList");
+        predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
+        userDefinedObstaclesLV.getStyleClass().add("obstacleList");
+        userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
+
+        predefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(predefinedObstaclesLV));
+        userDefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(userDefinedObstaclesLV));
+
+        predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
+            System.out.println("List view got a delete for obstacle " + event.getObstacleName());
+            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
+        });
+
+        predefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
+            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
+            obstacleDetPopup.showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
+        });
+
+        userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
+            System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
+            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
+        });
+
+        userDefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
+            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
+            obstacleDetPopup.showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
+        });
+
+        predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
+
+        });
+
+        predefinedObstaclesLV.setOnMouseClicked(click -> {
+
+            if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                System.out.println("Obstacle in user-defined list was selected, has now been deselected");
+            }
+
+            obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
+
+        });
+
+        userDefinedObstaclesLV.setOnMouseClicked(click -> {
+
+            if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
+                int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
+                predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
+                System.out.println("Obstacle in predefined list was selected, has now been deselected");
+            }
+
+            obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
+
+        });
+
+        populatePredefinedList();
+
+        //Home screen plane rotation
+        planePane.getStyleClass().add("myPane");
+        planeImg = (ImageView) planePane.getChildren().get(0);
+
+        //Animate one way...
+        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
+        rotateTransition.setFromAngle(0);
+        rotateTransition.setToAngle(-20);
+        rotateTransition.setCycleCount(1);
+
+        //...and the other !
+        RotateTransition reverseRotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
+        reverseRotateTransition.setFromAngle(-20);
+        reverseRotateTransition.setToAngle(0);
+        reverseRotateTransition.setCycleCount(1);
+
+        //Animate plane taking off
+        TranslateTransition takeOffTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
+        takeOffTransition.setFromY(0);
+        takeOffTransition.setToY(-900);
+
+        //Animate plane landing
+        TranslateTransition landTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
+        landTransition.setFromY(-900);
+        landTransition.setToY(0);
+
+        takeOffTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
+            @Override
+            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
+                System.out.println("Finished running take off transition");
+                if (newValue == Animation.Status.STOPPED) {
+                    tabPane.getSelectionModel().select(1);
+                }
+            }
+        });
+
+        tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                if ((int) newValue == 0) {
+                    landTransition.play();
+                }
+            }
+        });
+        //planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
+
+        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
+                System.out.println(planeImg.getX());
+            }
+        });
+
+        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                double newVal = (double) newValue;
+                System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
+                planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
+                System.out.println(planeImg.getY());
+            }
+        });
+
+        //Listeners for the print and export button on the top right side of the GUI
+        Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
+        Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
+        Pane notifBtnPane = (Pane) primaryStage.getScene().lookup("#notifBtnPane");
+
+        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is (there is a difference lol) look the same under xfce ubuntu
+        printBtnPane.setCursor(Cursor.HAND);
+        exportBtnPane.setCursor(Cursor.HAND);
+        notifBtnPane.setCursor(Cursor.HAND);
+
+        printBtnPane.setOnMouseClicked(event -> {
+            System.out.println("Print report");
+            printer.print();
+        });
+
+        exportBtnPane.setOnMouseClicked(event -> {
+            //TODO implement exporting, and link back to here when done
+            System.out.println("Export data");
+            exportPopup.show();
+        });
+
+        notifBtnPane.setOnMouseClicked(event -> {
+            numOfNotifications = 0;
+            notifCount.setText("");
+            notifCount.setVisible(false);
+
+            NotificationLog log = new NotificationLog(notifList);
+            Stage notifWindow = log.createNotifLog();
+            notifWindow.show();
+        });
+
+        loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                System.out.println("Click !");
+                File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
+                if (xmlFileToLoad == null) {
+                    System.err.println("User did not select a file");
+                    return;
+                }
+                //setTabMinHeight(double v)
+                takeOffTransition.play();
+                System.out.println("Loading " + xmlFileToLoad.getName());
+                AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
+                airportConfigs.put(ac.getName(), ac);
+                updateAirportSelects();
+
+                notifyUpdate("Airport config loaded");
+                //tabPane.getSelectionModel().select(1);
+            }
+        });
+
+        startBtn.setOnMouseClicked(event -> {
+            System.out.println("Tab Switched!");
+            takeOffTransition.play();
+            //tabPane.getSelectionModel().select(1);
+        });
+
+        planePane.hoverProperty().addListener((observable, oldValue, rotate) -> {
+            //Ignore the hover property when the plane is taking off or landing
+            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)) {
+                return;
+            }
+
+            //Rotate on mouse over, return to original state on mouse leave
+            if (rotate) {
+                rotateTransition.play();
+            } else {
+                reverseRotateTransition.play();
+            }
+        });
+
+        updateAirportSelects();
+
+        printer = new Printer(primaryStage);
+        printer.setRunway(canvas);
+        printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
+
+        enableTooltips();
+    }
+
+    private Region getHGrowingRegion() {
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS);
+        return region;
+    }
+
+    public void updateAirportSelects() {
+        runwaySelect.getItems().clear();
+        airportSelect.getItems().clear();
+        addRunwayAirportSelect.getItems().clear();
+
+        String[] names = airportConfigs.keySet().toArray(new String[0]);
+        Arrays.sort(names);
+
+        for (String name : names) {
+            AirportConfig ac = airportConfigs.get(name);
+            airportSelect.getItems().add(name);
+            addRunwayAirportSelect.getItems().add(name);
+        }
+    }
+
+    public void updateRunwaySelect(String airportName) {
+        runwaySelect.getItems().clear();
+        AirportConfig ac = airportConfigs.get(airportName);
+        for (String runwayPairName : ac.getRunways().keySet()) {
+            runwaySelect.getItems().add(runwayPairName);
+        }
+    }
+
+    private void clearErrorLabels(){
+        obstacleRequiredLabel.setText("");
+        thresholdRequiredLabel.setText("");
+        centreLineRequiredLabel.setText("");
+    }
+
+    private void resetCalculationsTab() {
+        calculationsPane.getChildren().remove(viewCalculationResultsVBox);
+        calculationsPane.getChildren().add(calculationsRootBox);
+    }
+
+
+    private void switchCalculationsTabToView() {
+        centreLineRequiredLabel.setText("");
+        thresholdDistanceRequiredLabel.setText("");
+        thresholdRequiredLabel.setText("");
+        obstacleRequiredLabel.setText("");
+        calculationsPane.getChildren().remove(calculationsRootBox);
+        calculationsPane.getChildren().add(viewCalculationResultsVBox);
+    }
+
+    private void updateRunwayInfoLabels(RunwayPair runwayPair) {
+        runwayDesignatorCntLbl.setText(" " + runwayPair.getR1().getRunwayDesignator().toString());
+        runwayDesignatorLbl2.setText(" " + runwayPair.getR2().getRunwayDesignator().toString());
+        toraCntLbl.setText(" " + runwayPair.getR1().getTORA());
+        todaCntLbl.setText(" " + runwayPair.getR1().getTODA());
+        asdaCntLbl.setText(" " + runwayPair.getR1().getASDA());
+        ldaCntLbl.setText(" " + runwayPair.getR1().getLDA());
+        toraCntLbl2.setText(" " + runwayPair.getR2().getTORA());
+        todaCntLbl2.setText(" " + runwayPair.getR2().getTODA());
+        asdaCntLbl2.setText(" " + runwayPair.getR2().getASDA());
+        ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
+    }
+
+    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated) {
+        originalToda.setText(Integer.toString(original.getTODA()));
+        originalTora.setText(Integer.toString(original.getTORA()));
+        originalAsda.setText(Integer.toString(original.getASDA()));
+        originalLda.setText(Integer.toString(original.getLDA()));
+
+        recalculatedToda.setText(Integer.toString(recalculated.getTODA()));
+        recalculatedTora.setText(Integer.toString(recalculated.getTORA()));
+        recalculatedAsda.setText(Integer.toString(recalculated.getASDA()));
+        recalculatedLda.setText(Integer.toString(recalculated.getLDA()));
+    }
+
+    private void updateThresholdList(RunwayPair runwayPair) {
+        thresholdSelect.getItems().clear();
+        thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
+        thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
+    }
+
+    public void removeObstacle(Obstacle obstacle, ObstacleList listType) {
+
+        Map<String, Obstacle> sourceList;
+        ListView sourceLV;
+
+        switch (listType) {
+            case PREDEFINED:
+                sourceList = predefinedObstaclesSorted;
+                sourceLV = predefinedObstaclesLV;
+                addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
+                break;
+            case USER_DEFINED:
+                sourceList = userDefinedObstacles;
+                sourceLV = userDefinedObstaclesLV;
+                addNotification("Removed " + obstacle.getName() + " from the list of user-defined obstacles.");
+                break;
+            default:
+                System.err.println("unknown origin '" + listType.toString() + "'");
+                return;
+        }
+
+        sourceLV.getItems().remove(obstacle);
+        obstacleSelect.getItems().remove(obstacle);
+
+        sourceList.remove(obstacle.getName());
+        allObstaclesSorted.remove(obstacle.getName());
+
+        notifyUpdate("Obstacle removed");
+    }
+
+
+    public void updateObstaclesList() {
+        userDefinedObstaclesLV.getItems().clear();
+        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
+        predefinedObstaclesLV.getItems().clear();
+        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.values());
+        obstacleSelect.getItems().clear();
+        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
+    }
+
+    private void populatePredefinedList() {
+        ArrayList<Obstacle> obstacles = new ArrayList<>();
+        obstacles.add(new Obstacle("Boeing 747", 19.4));
+        obstacles.add(new Obstacle("Boeing 767", 16.8));
+        obstacles.add(new Obstacle("Boeing 777", 18.5));
+        obstacles.add(new Obstacle("Boeing 787", 18.5));
+        obstacles.add(new Obstacle("Airbus A320", 11.8));
+        obstacles.add(new Obstacle("Airbus A330", 17.9));
+        obstacles.add(new Obstacle("Airbus A340", 17.1));
+        obstacles.add(new Obstacle("Airbus A350", 16.9));
+        obstacles.add(new Obstacle("Airbus A380", 24.1));
+        obstacles.add(new Obstacle("Telescopic handler", 12));
+
+        for (Obstacle obstacle : obstacles) {
+            predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
+            allObstaclesSorted.put(obstacle.getName(), obstacle);
+        }
+
+        updateObstaclesList();
+
+    }
+
+
+    private Boolean validateObstaclesForm() {
+
+        if (obstacleNameTxt.getText().length() < 1) {
+            return false;
+        }
+
+        try {
+            Double.parseDouble(obstacleHeightTxt.getText());
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+        return true;
+    }
+
+    // Used for obstacle heights, distance from centreline and distance from threshold
+    public Boolean validateDoubleForm(ArrayList<String> doubleVals) {
+        for (String s : doubleVals) {
+            try {
+                Double.parseDouble(s);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    // Used for TORA, Clearway, Stopway, Displaced threshold
+    public Boolean validateIntForm(ArrayList<String> intVals) {
+        for (String s : intVals) {
+            try {
+                Integer.parseInt(s);
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public String getReverseRunwayName(String originalRunway) {
+        return String.valueOf((Integer.parseInt(originalRunway) + 18) % 36);
+    }
+
+    public void addObstacle(String name, double height) {
+        Obstacle obstacle = new Obstacle(name, height);
+        addObstacle(obstacle);
+    }
+
+    private void addObstacle(Obstacle obstacle) {
+        this.userDefinedObstacles.put(obstacle.getName(), obstacle);
+        this.allObstaclesSorted.put(obstacle.getName(), obstacle);
+    }
+
+
+   public void notifyUpdate(String message) {
+        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
+    }
+
+
+    public void addNotification(String message) {
+        numOfNotifications++;
+        notifList.add(0, message);
+        notifCount.setVisible(true);
+        notifCount.setText(Integer.toString(numOfNotifications));
+
+        AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
+        note.play();
+    }
+
+    private void setRunwayRendererParams(){
+        if (runwayRenderer == null){
+            return;
+        }
+        runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
+        runwayRenderer.setZoom(zoomSlider.getValue());
+        runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
+        runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
+    }
+
+    private void disableTooltips() {
+        highlightTodaBtn.setTooltip(null);
+        highlightToraBtn.setTooltip(null);
+        highlightAsdaBtn.setTooltip(null);
+        highlightLdaBtn.setTooltip(null);
+        addObstacleHeightTF.setTooltip(null);
+        centrelineTF.setTooltip(null);
+        distanceFromThresholdTF.setTooltip(null);
+        popAddObstacleBtn.setTooltip(null);
+        editObstacleBtn.setTooltip(null);
+        saveObstacleBtn.setTooltip(null);
+        heightEditTF.setTooltip(null);
+        airportCode.setTooltip(null);
+    }
+
+    private void enableTooltips() {
+        highlightTodaBtn.setTooltip(todaButtonTooltip);
+        highlightToraBtn.setTooltip(toraButtonTooltip);
+        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
+        highlightLdaBtn.setTooltip(ldaButtonTooltip);
+        addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
+        centrelineTF.setTooltip(centrelineDistTooltip);
+        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
+        popAddObstacleBtn.setTooltip(addObstacleTooltip);
+        editObstacleBtn.setTooltip(importObstaclesTooltip);
+        saveObstacleBtn.setTooltip(saveObstaclesTooltip);
+        heightEditTF.setTooltip(editObstacleHeightTooltip);
+        airportCode.setTooltip(airportCodeTooltip);
+    }
+
+    private void createTooltips() {
+        centrelineDistTooltip = new Tooltip();
+        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
+        thresholdDistTooltip = new Tooltip();
+        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
+        obstacleHeightTooltip = new Tooltip();
+        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+        airportCodeTooltip = new Tooltip();
+        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
+        toraButtonTooltip = new Tooltip();
+        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
+        todaButtonTooltip = new Tooltip();
+        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
+        asdaButtonTooltip = new Tooltip();
+        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
+        ldaButtonTooltip = new Tooltip();
+        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
+        addObstacleTooltip = new Tooltip();
+        addObstacleTooltip.setText("Add an obstacle");
+        importObstaclesTooltip = new Tooltip();
+        importObstaclesTooltip.setText("Import obstacles");
+        saveObstaclesTooltip = new Tooltip();
+        saveObstaclesTooltip.setText("Save obstacles");
+        editObstacleHeightTooltip = new Tooltip();
+        editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+    }
+
+    public void createCalculationsSelectionView() {
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane.getStylesheets().add("styles/global.css");
@@ -683,8 +1218,9 @@ public class GUI extends Application {
 
 
         });
+    }
 
-        //Calculations Pane - calculation results view
+    public void createCalculationsResultView() {
         breakdownCalcLbl = new Label("Breakdown of the calculations: ");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
@@ -714,57 +1250,6 @@ public class GUI extends Application {
         VBox calculateBackBtnVBox = new VBox();
         calculateBackBtnVBox.getChildren().add(calculationsBackBtn);
         calculateBackBtnVBox.setAlignment(Pos.BASELINE_RIGHT);
-
-        canvas.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-                if (runwayRenderer == null){
-                    return;
-                }
-                runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
-                if (event.getDeltaY() > 0) {
-                    runwayRenderer.incZoom();
-                } else if (event.getDeltaY() < 0) {
-                    runwayRenderer.decZoom();
-                }
-                zoomSlider.setValue(runwayRenderer.getZoom());
-                //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
-            }
-        });
-
-        canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
-                /*double currentAngle = runwayRenderer.getWindAngle();
-                System.out.println("Current angle = " + currentAngle);
-                currentAngle += Math.PI/4;
-                System.out.println("After addition = " + currentAngle);
-                runwayRenderer.setWindAngle(currentAngle);*/
-            }
-        });
-
-
-        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (runwayRenderer == null){
-                    return;
-                }
-                MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
-                Point delta = MouseDragTracker.getInstance().getDelta();
-                runwayRenderer.translate(delta.x, delta.y);
-            }
-        });
-
-        /*canvasBorderPane.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double newVal = (double) newValue;
-                canvas.setWidth(newVal/2);
-            }Font.font("Verdana", FontWeight.BOLD, 14)
-        });
-        canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
 
         //calculationResultsGrid.setHgap(20);
         //Add all the labels, col by col,  to create a table
@@ -838,779 +1323,19 @@ public class GUI extends Application {
                 resetCalculationsTab();
             }
         });
-
-
-        resetCalculationsTab();
-
-        predefinedObstaclesLV.getStyleClass().add("obstacleList");
-        predefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
-        userDefinedObstaclesLV.getStyleClass().add("obstacleList");
-        userDefinedObstaclesLV.setStyle("-fx-font-size: 1.2em ;");
-
-        predefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(predefinedObstaclesLV));
-        userDefinedObstaclesLV.setCellFactory(lv -> new ObstacleCell(userDefinedObstaclesLV));
-
-        predefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
-            System.out.println("List view got a delete for obstacle " + event.getObstacleName());
-            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.PREDEFINED);
-        });
-
-        predefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
-            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
-            obstacleDetPopup.showObstacleDetails(event.getObstacle(), predefinedObstaclesLV, null, primaryStage, ObstacleList.PREDEFINED);
-        });
-
-        userDefinedObstaclesLV.addEventHandler(DeleteEvent.DELETE_EVENT_TYPE, event -> {
-            System.out.println("User defined list view got a delete for obstacle " + event.getObstacleName());
-            delObstaclePopup.displayDeletePrompt(event.getObstacle(), ObstacleList.USER_DEFINED);
-        });
-
-        userDefinedObstaclesLV.addEventHandler(ObstacleInfoEvent.OBSTACLE_INFO_EVENT_TYPE, event -> {
-            System.out.println("Obstacle info request received for obstacle " + event.getObstacleName());
-            obstacleDetPopup.showObstacleDetails(event.getObstacle(), userDefinedObstaclesLV, null, primaryStage, ObstacleList.USER_DEFINED);
-        });
-
-        predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
-
-        });
-
-        predefinedObstaclesLV.setOnMouseClicked(click -> {
-
-            if (!userDefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                int selectedUserItem = userDefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                userDefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                System.out.println("Obstacle in user-defined list was selected, has now been deselected");
-            }
-
-            obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
-
-        });
-
-        userDefinedObstaclesLV.setOnMouseClicked(click -> {
-
-            if (!predefinedObstaclesLV.getSelectionModel().isEmpty()) {
-                int selectedUserItem = predefinedObstaclesLV.getSelectionModel().getSelectedIndex();
-                predefinedObstaclesLV.getSelectionModel().clearSelection(selectedUserItem);
-                System.out.println("Obstacle in predefined list was selected, has now been deselected");
-            }
-
-            obstacleSelect.setValue(((Obstacle) userDefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
-
-        });
-
-
-        populatePredefinedList();
-
-        //Home screen plane rotation
-        planePane.getStyleClass().add("myPane");
-        planeImg = (ImageView) planePane.getChildren().get(0);
-
-        //Animate one way...
-        RotateTransition rotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
-        rotateTransition.setFromAngle(0);
-        rotateTransition.setToAngle(-20);
-        rotateTransition.setCycleCount(1);
-
-        //...and the other !
-        RotateTransition reverseRotateTransition = new RotateTransition(Duration.seconds(0.3), planeImg);
-        reverseRotateTransition.setFromAngle(-20);
-        reverseRotateTransition.setToAngle(0);
-        reverseRotateTransition.setCycleCount(1);
-
-        //Animate plane taking off
-        TranslateTransition takeOffTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
-        takeOffTransition.setFromY(0);
-        takeOffTransition.setToY(-900);
-
-        //Animate plane landing
-        TranslateTransition landTransition = new TranslateTransition(Duration.seconds(0.3), planeImg);
-        landTransition.setFromY(-900);
-        landTransition.setToY(0);
-
-        takeOffTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-            @Override
-            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                System.out.println("Finished running take off transition");
-                if (newValue == Animation.Status.STOPPED) {
-                    tabPane.getSelectionModel().select(1);
-                }
-            }
-        });
-
-        tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if ((int) newValue == 0) {
-                    landTransition.play();
-                }
-            }
-        });
-        //planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
-
-        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double newVal = (double) newValue;
-                planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
-                System.out.println(planeImg.getX());
-            }
-        });
-
-        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double newVal = (double) newValue;
-                System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
-                planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
-                System.out.println(planeImg.getY());
-            }
-        });
-
-
-        //Listeners for the print and export button on the top right side of the GUI
-        Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
-        Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
-        Pane notifBtnPane = (Pane) primaryStage.getScene().lookup("#notifBtnPane");
-
-        //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is (there is a difference lol) look the same under xfce ubuntu
-        printBtnPane.setCursor(Cursor.HAND);
-        exportBtnPane.setCursor(Cursor.HAND);
-        notifBtnPane.setCursor(Cursor.HAND);
-
-        printBtnPane.setOnMouseClicked(event -> {
-            System.out.println("Print report");
-            printer.print();
-        });
-
-        exportBtnPane.setOnMouseClicked(event -> {
-            //TODO implement exporting, and link back to here when done
-            System.out.println("Export data");
-            exportPopup.show();
-        });
-
-        notifBtnPane.setOnMouseClicked(event -> {
-            numOfNotifications = 0;
-            notifCount.setText("");
-            notifCount.setVisible(false);
-
-            NotificationLog log = new NotificationLog(notifList);
-            log.createNotifLog();
-
-        });
-
-        loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Click !");
-                File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
-                if (xmlFileToLoad == null) {
-                    System.err.println("User did not select a file");
-                    return;
-                }
-                //setTabMinHeight(double v)
-                takeOffTransition.play();
-                System.out.println("Loading " + xmlFileToLoad.getName());
-                AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
-                airportConfigs.put(ac.getName(), ac);
-                updateAirportSelects();
-
-                notifyUpdate("Airport config loaded");
-                //tabPane.getSelectionModel().select(1);
-            }
-        });
-
-        startBtn.setOnMouseClicked(event -> {
-            System.out.println("Tab Switched!");
-            takeOffTransition.play();
-            //tabPane.getSelectionModel().select(1);
-        });
-
-        planePane.hoverProperty().addListener((observable, oldValue, rotate) -> {
-            //Ignore the hover property when the plane is taking off or landing
-            if (takeOffTransition.statusProperty().get().equals(Animation.Status.RUNNING) || landTransition.statusProperty().get().equals(Animation.Status.RUNNING)) {
-                return;
-            }
-
-            //Rotate on mouse over, return to original state on mouse leave
-            if (rotate) {
-                rotateTransition.play();
-            } else {
-                reverseRotateTransition.play();
-            }
-        });
-
-        updateAirportSelects();
-
-        printer = new Printer(primaryStage);
-        printer.setRunway(canvas);
-        printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
-
-        heightEditTF = new TextField();
-
-        enableTooltips();
     }
 
-    private Region getHGrowingRegion() {
-        Region region = new Region();
-        HBox.setHgrow(region, Priority.ALWAYS);
-        return region;
-    }
-
-    public void updateAirportSelects() {
-        runwaySelect.getItems().clear();
-        airportSelect.getItems().clear();
-        addRunwayAirportSelect.getItems().clear();
-
-        String[] names = airportConfigs.keySet().toArray(new String[0]);
-        Arrays.sort(names);
-
-        for (String name : names) {
-            AirportConfig ac = airportConfigs.get(name);
-            airportSelect.getItems().add(name);
-            addRunwayAirportSelect.getItems().add(name);
-        }
-    }
-
-    public void updateRunwaySelect(String airportName) {
-        runwaySelect.getItems().clear();
-        AirportConfig ac = airportConfigs.get(airportName);
-        for (String runwayPairName : ac.getRunways().keySet()) {
-            runwaySelect.getItems().add(runwayPairName);
-        }
-    }
-
-    private void clearErrorLabels(){
-        obstacleRequiredLabel.setText("");
-        thresholdRequiredLabel.setText("");
-        centreLineRequiredLabel.setText("");
-    }
-
-    public Stage createAddRunwayPopup() {
-        Stage stage = new Stage();
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Add Runway");
-
-        //Components for the popups
-        Label selectAirportLbl = new Label("Select airport");
-        Button confirmButton = new Button("Continue");
-        confirmButton.getStyleClass().add("primaryButton");
-        Button cancelButton = new Button("Cancel");
-        cancelButton.getStyleClass().add("primaryButton");
-        TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
-        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl;
-
-        runwayDesignatorLbl = new Label("Runway Designator");
-        toraLbl = new Label("TORA");
-        clearwayLbl = new Label("Clearway");
-        stopwayLbl = new Label("Stopway");
-        displacementThresholdLbl = new Label("Displaced Threshold");
-        addRunwayAirportSelect = new ComboBox();
-        addRunwayAirportSelect.setId("airportComboBox");
-        addRunwayAirportSelect.setVisibleRowCount(10);
-
-        runwayDesignatorTF = new TextField();
-        toraTF = new TextField();
-        clearwayTF = new TextField();
-        stopwayTF = new TextField();
-        displacementThresholdTF = new TextField();
-        runwayDesignatorTF2 = new TextField();
-        toraTF2 = new TextField();
-        clearwayTF2 = new TextField();
-        stopwayTF2 = new TextField();
-        displacementThresholdTF2 = new TextField();
-
-        //VBox containing confirm and cancel button
-        HBox hbox = new HBox(10);
-        hbox.getChildren().add(confirmButton);
-        hbox.getChildren().add(cancelButton);
-
-        //GridPane - root of the popup
-        GridPane gridPane = new GridPane();
-
-        //Left column
-        gridPane.add(runwayDesignatorLbl, 0, 0);
-        gridPane.add(runwayDesignatorTF, 1, 0);
-        gridPane.add(toraLbl, 0, 1);
-        gridPane.add(toraTF, 1, 1);
-        gridPane.add(clearwayLbl, 0, 2);
-        gridPane.add(clearwayTF, 1, 2);
-        gridPane.add(stopwayLbl, 0, 3);
-        gridPane.add(stopwayTF, 1, 3);
-        gridPane.add(displacementThresholdLbl, 0, 4);
-        gridPane.add(displacementThresholdTF, 1, 4);
-
-        //Right Column
-        gridPane.add(runwayDesignatorTF2, 2, 0);
-        gridPane.add(toraTF2, 2, 1);
-        gridPane.add(clearwayTF2, 2, 2);
-        gridPane.add(stopwayTF2, 2, 3);
-        gridPane.add(displacementThresholdTF2, 2, 4);
-
-        gridPane.add(hbox, 3, 6);
-
-
-        HBox airportSelection = new HBox(30);
-        airportSelection.setPadding(new Insets(10, 12, 15, 15));
-        airportSelection.getChildren().add(selectAirportLbl);
-        airportSelection.getChildren().add(addRunwayAirportSelect);
-
-
-        VBox addRunwayRoot = new VBox(20);
-
-
-        addRunwayRoot.getStylesheets().add("styles/global.css");
-
-        addRunwayRoot.getChildren().add(airportSelection);
-        addRunwayRoot.getChildren().add(gridPane);
-        Scene scene = new Scene(addRunwayRoot);
-
-        //Add some spacing around and in between the cells
-        gridPane.setHgap(10);
-        gridPane.setVgap(10);
-        gridPane.setPadding(new Insets(15, 15, 15, 15));
-
-        // Auto-complete for runway designator
-        runwayDesignatorTF.setOnKeyReleased(event -> {
-            String contents = runwayDesignatorTF.getText();
-            //If the user has typed 2 chars, we have a valid designator - fill the other side
-            if (contents.length() == 2) {
-                runwayDesignatorTF2.setText(getReverseRunwayName(contents));
-            } else if (contents.length() == 3) {
-                String designatorSide = contents.substring(2, 3).toUpperCase();
-                String otherSide = "C";
-                System.out.println("this is on side " + designatorSide);
-                if (designatorSide.equals("L")) {
-                    otherSide = "R";
-                } else if (designatorSide.equals("R")) {
-                    otherSide = "L";
-                }
-                runwayDesignatorTF2.setText(getReverseRunwayName(contents.substring(0, 2)) + otherSide);
-            }
-        });
-
-        //On confirm button, add the airport to the list of known airports
-        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))) {
-                    System.out.println("valid form");
-
-                    // Working out runway values for one side of the runway
-                    String runwayDesignator = runwayDesignatorTF.getText();
-                    int TORA = Integer.parseInt(toraTF.getText());
-                    int TODA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(clearwayTF.getText());
-                    int ASDA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(stopwayTF.getText());
-                    int LDA = Integer.parseInt(toraTF.getText()) - Integer.parseInt(displacementThresholdTF.getText());
-                    int displacedThreshold = Integer.parseInt(displacementThresholdTF.getText());
-                    int clearway = Integer.parseInt(clearwayTF.getText());
-                    int stopway = Integer.parseInt(stopwayTF.getText());
-
-                    // Working out runway values but for the other side of the runway
-                    String runwayDesignator2 = runwayDesignatorTF2.getText();
-                    int TORA2 = Integer.parseInt(toraTF2.getText());
-                    int TODA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(clearwayTF2.getText());
-                    int ASDA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(stopwayTF2.getText());
-                    int LDA2 = Integer.parseInt(toraTF2.getText()) - Integer.parseInt(displacementThresholdTF2.getText());
-                    int displacedThreshold2 = Integer.parseInt(displacementThresholdTF2.getText());
-                    int clearway2 = Integer.parseInt(clearwayTF2.getText());
-                    int stopway2 = Integer.parseInt(stopwayTF2.getText());
-
-                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
-                    r1.setClearway(clearway);
-                    r1.setStopway(stopway);
-                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
-                    r1.setClearway(clearway2);
-                    r1.setStopway(stopway2);
-                    RunwayPair runwayPair = new RunwayPair(r1, r2);
-
-                    // Show the prompt that shows the summary of the runway values
-                    displayRunwayParametersPrompt(runwayPair);
-
-                    AirportConfig selectedAirport = airportConfigs.get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
-                    System.out.println(selectedAirport.toString());
-
-                    selectedAirport.addRunwayPair(runwayPair);
-                    airportConfigs.put(selectedAirport.getName(), selectedAirport);
-                    System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
-                    addRunwayPopup.hide();
-                    updateAirportSelects();
-                } else {
-                    System.err.println("Invalid form");
-                }
-
-            }
-        });
-
-        //Simply close the popup, discarding the data
-        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                addRunwayPopup.hide();
-            }
-        });
-
-        stage.setScene(scene);
-        stage.setWidth(700);
-        stage.setHeight(390);
-        return stage;
-    }
-
-    public void displayAirportErrorPopup() {
-        Stage errorWindow = new Stage();
-        errorWindow.initModality(Modality.APPLICATION_MODAL);
-        errorWindow.setTitle("Airport selection");
-
-        Label errorLabel = new Label("Please enter a valid 3-digit IATA airport code and then select an airport in order to continue.");
-        errorLabel.setWrapText(true);
-        errorLabel.setTextAlignment(TextAlignment.CENTER);
-        Button returnButton = new Button("Return");
-        returnButton.getStyleClass().add("primaryButton");
-
-        VBox windowLayout = new VBox(10);
-        windowLayout.getChildren().addAll(errorLabel, returnButton);
-        windowLayout.setAlignment(Pos.CENTER);
-        windowLayout.getStylesheets().add("styles/global.css");
-
-        returnButton.setOnAction(e -> errorWindow.close());
-
-        Scene scene = new Scene(windowLayout, 400, 150);
-        errorWindow.setScene(scene);
-        errorWindow.showAndWait();
-    }
-
-    //TODO Make the Confirm/Cancel buttons work
-    private void displayRunwayParametersPrompt(RunwayPair runwayPair) {
-        Stage runwayWindow = new Stage();
-        runwayWindow.initModality(Modality.APPLICATION_MODAL);
-        runwayWindow.setTitle("Add Runway");
-
-        Label summaryLbl = new Label("Summary of parameters for the new runway at " + addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString() + " airport:");
-        summaryLbl.getStyleClass().add("label");
-        summaryLbl.getStylesheets().add("styles/global.css");
-
-        Label confirmDetailsLbl = new Label("Do you wish to confirm these details and add the runway?");
-        confirmDetailsLbl.getStyleClass().add("label");
-        confirmDetailsLbl.getStylesheets().add("styles/global.css");
-
-        // Headers of the table (column 1)
-        Label runwayDesignatorHeader = new Label("Runway Designator");
-        Label toraHeader = new Label("TORA (m)");
-        Label todaHeader = new Label("TODA (m)");
-        Label asdaHeader = new Label("ASDA (m)");
-        Label ldaHeader = new Label("LDA (m)");
-        Label displacedThresholdHeader = new Label("Displaced Threshold (m)");
-        Label clearwayHeader = new Label("Clearway (m)");
-        Label stopwayHeader = new Label("Stopway (m)");
-        VBox headers = new VBox(10);
-        headers.getChildren().addAll(runwayDesignatorHeader, toraHeader, todaHeader, asdaHeader, ldaHeader, displacedThresholdHeader, clearwayHeader, stopwayHeader);
-        headers.getStyleClass().add("sideLabel");
-        headers.getStylesheets().add("styles/global.css");
-
-        // Values for one side of the runway (column 2)
-        Label runwayDesignatorValue = new Label(runwayPair.getR1().getRunwayDesignator().toString());
-        Label toraValue = new Label(Integer.toString(runwayPair.getR1().getTORA()));
-        Label todaValue = new Label(Integer.toString(runwayPair.getR1().getTODA()));
-        Label asdaValue = new Label(Integer.toString(runwayPair.getR1().getASDA()));
-        Label ldaValue = new Label(Integer.toString(runwayPair.getR1().getLDA()));
-        Label displacedThresholdValue = new Label(Integer.toString(runwayPair.getR1().getDisplacementThreshold()));
-        Label clearwayValue = new Label(Integer.toString(runwayPair.getR1().getClearway()));
-        Label stopwayValue = new Label(Integer.toString(runwayPair.getR1().getStopway()));
-        VBox values = new VBox(10);
-        values.getChildren().addAll(runwayDesignatorValue, toraValue, todaValue, asdaValue, ldaValue, displacedThresholdValue, clearwayValue, stopwayValue);
-        values.getStyleClass().add("label");
-        values.getStylesheets().add("styles/global.css");
-
-        // Values for other side of the runway (column 3)
-        Label runwayDesignatorValue2 = new Label(runwayPair.getR2().getRunwayDesignator().toString());
-        Label toraValue2 = new Label(Integer.toString(runwayPair.getR2().getTORA()));
-        Label todaValue2 = new Label(Integer.toString(runwayPair.getR2().getTODA()));
-        Label asdaValue2 = new Label(Integer.toString(runwayPair.getR2().getASDA()));
-        Label ldaValue2 = new Label(Integer.toString(runwayPair.getR2().getLDA()));
-        Label displacedThresholdValue2 = new Label(Integer.toString(runwayPair.getR2().getDisplacementThreshold()));
-        Label clearwayValue2 = new Label(Integer.toString(runwayPair.getR2().getClearway()));
-        Label stopwayValue2 = new Label(Integer.toString(runwayPair.getR2().getStopway()));
-        VBox values2 = new VBox(10);
-        values2.getChildren().addAll(runwayDesignatorValue2, toraValue2, todaValue2, asdaValue2, ldaValue2, displacedThresholdValue2, clearwayValue2, stopwayValue2);
-        values2.getStyleClass().add("label");
-        values2.getStylesheets().add("styles/global.css");
-
-        // Entire table of values
-        HBox summaryTable = new HBox(20);
-        summaryTable.getChildren().addAll(headers, values, values2);
-        summaryTable.setAlignment(Pos.CENTER);
-
-        // Confirm and Back buttons
-        Button backBtn = new Button("Back");
-        backBtn.getStyleClass().add("primaryButton");
-        backBtn.getStylesheets().add("styles/global.css");
-        Button confirmBtn = new Button("Confirm");
-        confirmBtn.getStyleClass().add("primaryButton");
-        confirmBtn.getStylesheets().add("styles/global.css");
-        HBox buttonsBox = new HBox(10);
-        buttonsBox.getChildren().addAll(confirmBtn, backBtn);
-        buttonsBox.setAlignment(Pos.BOTTOM_RIGHT);
-        buttonsBox.setPadding(new Insets(0, 15, 10, 0));
-
-        VBox windowLayout = new VBox(20);
-        windowLayout.setPadding(new Insets(10, 0, 0, 15));
-        windowLayout.getChildren().addAll(summaryLbl, summaryTable, confirmDetailsLbl, buttonsBox);
-
-        Scene scene = new Scene(windowLayout);
-        runwayWindow.setScene(scene);
-        runwayWindow.setWidth(700);
-        runwayWindow.setHeight(430);
-        runwayWindow.showAndWait();
-    }
-
-
-    private void resetCalculationsTab() {
-        calculationsPane.getChildren().remove(viewCalculationResultsVBox);
-        calculationsPane.getChildren().add(calculationsRootBox);
-    }
-
-
-    private void switchCalculationsTabToView() {
-        centreLineRequiredLabel.setText("");
-        thresholdDistanceRequiredLabel.setText("");
-        thresholdRequiredLabel.setText("");
-        obstacleRequiredLabel.setText("");
-        calculationsPane.getChildren().remove(calculationsRootBox);
-        calculationsPane.getChildren().add(viewCalculationResultsVBox);
-    }
-
-    private void updateRunwayInfoLabels(RunwayPair runwayPair) {
-        runwayDesignatorCntLbl.setText(" " + runwayPair.getR1().getRunwayDesignator().toString());
-        runwayDesignatorLbl2.setText(" " + runwayPair.getR2().getRunwayDesignator().toString());
-        toraCntLbl.setText(" " + runwayPair.getR1().getTORA());
-        todaCntLbl.setText(" " + runwayPair.getR1().getTODA());
-        asdaCntLbl.setText(" " + runwayPair.getR1().getASDA());
-        ldaCntLbl.setText(" " + runwayPair.getR1().getLDA());
-        toraCntLbl2.setText(" " + runwayPair.getR2().getTORA());
-        todaCntLbl2.setText(" " + runwayPair.getR2().getTODA());
-        asdaCntLbl2.setText(" " + runwayPair.getR2().getASDA());
-        ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
-    }
-
-    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated) {
-        originalToda.setText(Integer.toString(original.getTODA()));
-        originalTora.setText(Integer.toString(original.getTORA()));
-        originalAsda.setText(Integer.toString(original.getASDA()));
-        originalLda.setText(Integer.toString(original.getLDA()));
-
-        recalculatedToda.setText(Integer.toString(recalculated.getTODA()));
-        recalculatedTora.setText(Integer.toString(recalculated.getTORA()));
-        recalculatedAsda.setText(Integer.toString(recalculated.getASDA()));
-        recalculatedLda.setText(Integer.toString(recalculated.getLDA()));
-    }
-
-    private void updateThresholdList(RunwayPair runwayPair) {
-        thresholdSelect.getItems().clear();
-        thresholdSelect.getItems().add(runwayPair.getR1().getRunwayDesignator().toString());
-        thresholdSelect.getItems().add(runwayPair.getR2().getRunwayDesignator().toString());
-    }
-
-    public void removeObstacle(Obstacle obstacle, ObstacleList listType) {
-
-        Map<String, Obstacle> sourceList;
-        ListView sourceLV;
-
-        switch (listType) {
-            case PREDEFINED:
-                sourceList = predefinedObstaclesSorted;
-                sourceLV = predefinedObstaclesLV;
-                addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
-                break;
-            case USER_DEFINED:
-                sourceList = userDefinedObstacles;
-                sourceLV = userDefinedObstaclesLV;
-                addNotification("Removed " + obstacle.getName() + " from the list of user-defined obstacles.");
-                break;
-            default:
-                System.err.println("unknown origin '" + listType.toString() + "'");
-                return;
-        }
-
-        sourceLV.getItems().remove(obstacle);
-        obstacleSelect.getItems().remove(obstacle);
-
-        sourceList.remove(obstacle.getName());
-        allObstaclesSorted.remove(obstacle.getName());
-
-        notifyUpdate("Obstacle removed");
-    }
-
-
-    public void updateObstaclesList() {
-        userDefinedObstaclesLV.getItems().clear();
-        userDefinedObstaclesLV.getItems().addAll(userDefinedObstacles.values());
-        predefinedObstaclesLV.getItems().clear();
-        predefinedObstaclesLV.getItems().addAll(predefinedObstaclesSorted.values());
-        obstacleSelect.getItems().clear();
-        obstacleSelect.getItems().addAll(allObstaclesSorted.keySet());
-    }
-
-    private void populatePredefinedList() {
-        ArrayList<Obstacle> obstacles = new ArrayList<>();
-        obstacles.add(new Obstacle("Boeing 747", 19.4));
-        obstacles.add(new Obstacle("Boeing 767", 16.8));
-        obstacles.add(new Obstacle("Boeing 777", 18.5));
-        obstacles.add(new Obstacle("Boeing 787", 18.5));
-        obstacles.add(new Obstacle("Airbus A320", 11.8));
-        obstacles.add(new Obstacle("Airbus A330", 17.9));
-        obstacles.add(new Obstacle("Airbus A340", 17.1));
-        obstacles.add(new Obstacle("Airbus A350", 16.9));
-        obstacles.add(new Obstacle("Airbus A380", 24.1));
-        obstacles.add(new Obstacle("Telescopic handler", 12));
-
-        for (Obstacle obstacle : obstacles) {
-            predefinedObstaclesSorted.put(obstacle.getName(), obstacle);
-            allObstaclesSorted.put(obstacle.getName(), obstacle);
-        }
-
-        updateObstaclesList();
-
-    }
-
-
-    private Boolean validateObstaclesForm() {
-
-        if (obstacleNameTxt.getText().length() < 1) {
-            return false;
-        }
-
-        try {
-            Double.parseDouble(obstacleHeightTxt.getText());
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            return false;
-        }
-
-
-        return true;
-    }
-
-    // Used for obstacle heights, distance from centreline and distance from threshold
-    public Boolean validateDoubleForm(ArrayList<String> doubleVals) {
-        for (String s : doubleVals) {
-            try {
-                Double.parseDouble(s);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // Used for TORA, Clearway, Stopway, Displaced threshold
-    private Boolean validateIntForm(ArrayList<String> intVals) {
-        for (String s : intVals) {
-            try {
-                Integer.parseInt(s);
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private String getReverseRunwayName(String originalRunway) {
-        return String.valueOf((Integer.parseInt(originalRunway) + 18) % 36);
-    }
-
-    public void addObstacle(String name, double height) {
-        Obstacle obstacle = new Obstacle(name, height);
-        addObstacle(obstacle);
-    }
-
-    private void addObstacle(Obstacle obstacle) {
-        this.userDefinedObstacles.put(obstacle.getName(), obstacle);
-        this.allObstaclesSorted.put(obstacle.getName(), obstacle);
-    }
-
-
-   public void notifyUpdate(String message) {
-        new Notification(message).show(primaryStage, primaryStage.getX(), primaryStage.getY() + primaryStage.getHeight() - Notification.HEIGHT);
-    }
-
-
-    public void addNotification(String message) {
-        numOfNotifications++;
-        notifList.add(0, message);
-        notifCount.setVisible(true);
-        notifCount.setText(Integer.toString(numOfNotifications));
-
-        AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
-        note.play();
-    }
-
-    private void setRunwayRendererParams(){
-        if (runwayRenderer == null){
-            return;
-        }
-        runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
-        runwayRenderer.setZoom(zoomSlider.getValue());
-        runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
-        runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
-    }
-
-    private void disableTooltips() {
-        highlightTodaBtn.setTooltip(null);
-        highlightToraBtn.setTooltip(null);
-        highlightAsdaBtn.setTooltip(null);
-        highlightLdaBtn.setTooltip(null);
-        addObstacleHeightTF.setTooltip(null);
-        centrelineTF.setTooltip(null);
-        distanceFromThresholdTF.setTooltip(null);
-        popAddObstacleBtn.setTooltip(null);
-        editObstacleBtn.setTooltip(null);
-        saveObstacleBtn.setTooltip(null);
-        heightEditTF.setTooltip(null);
-        airportCode.setTooltip(null);
-    }
-
-    private void enableTooltips() {
-        highlightTodaBtn.setTooltip(todaButtonTooltip);
-        highlightToraBtn.setTooltip(toraButtonTooltip);
-        highlightAsdaBtn.setTooltip(asdaButtonTooltip);
-        highlightLdaBtn.setTooltip(ldaButtonTooltip);
-        addObstacleHeightTF.setTooltip(obstacleHeightTooltip);
-        centrelineTF.setTooltip(centrelineDistTooltip);
-        distanceFromThresholdTF.setTooltip(thresholdDistTooltip);
-        popAddObstacleBtn.setTooltip(addObstacleTooltip);
-        editObstacleBtn.setTooltip(importObstaclesTooltip);
-        saveObstacleBtn.setTooltip(saveObstaclesTooltip);
-        heightEditTF.setTooltip(editObstacleHeightTooltip);
-        airportCode.setTooltip(airportCodeTooltip);
-    }
-
-    private void createTooltips() {
-        centrelineDistTooltip = new Tooltip();
-        centrelineDistTooltip.setText("Enter the obstacle's distance from the runway centreline here in metres");
-        thresholdDistTooltip = new Tooltip();
-        thresholdDistTooltip.setText("Enter the obstacle's distance from the selected runway threshold here in metres");
-        obstacleHeightTooltip = new Tooltip();
-        obstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
-        airportCodeTooltip = new Tooltip();
-        airportCodeTooltip.setText("Enter the 3-digit IATA airport code here");
-        toraButtonTooltip = new Tooltip();
-        toraButtonTooltip.setText("Click here to highlight TORA on the top-down view");
-        todaButtonTooltip = new Tooltip();
-        todaButtonTooltip.setText("Click here to highlight TODA on the top-down view");
-        asdaButtonTooltip = new Tooltip();
-        asdaButtonTooltip.setText("Click here to highlight ASDA on the top-down view");
-        ldaButtonTooltip = new Tooltip();
-        ldaButtonTooltip.setText("Click here to highlight LDA on the top-down view");
-        addObstacleTooltip = new Tooltip();
-        addObstacleTooltip.setText("Add an obstacle");
-        importObstaclesTooltip = new Tooltip();
-        importObstaclesTooltip.setText("Import obstacles");
-        saveObstaclesTooltip = new Tooltip();
-        saveObstaclesTooltip.setText("Save obstacles");
-        editObstacleHeightTooltip = new Tooltip();
-        editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
+    public void createPopups() {
+        delObstaclePopup = new DeleteObstaclePopup(this);
+        obstacleDetPopup = new ObstacleDetailsPopup(this);
+        overwriteObstaclePopup = new ObstacleOverwritePopup(this);
+        addingObstaclePopup = new AddObstaclePopup(this);
+        addingAirportPopup = new AddAirportPopup(this);
+        addingRunwayPopup = new AddRunwayPopup(this);
+        addAirportPopup = addingAirportPopup.createAddAirportPopup();
+        addRunwayPopup = addingRunwayPopup.createAddRunwayPopup();
+        addObstaclePopup = addingObstaclePopup.createAddObstaclePopup();
+        exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
     }
 
     public Boolean getEditingObstacle() {
@@ -1660,6 +1385,8 @@ public class GUI extends Application {
     public Stage getAddAirportPopup() {return addAirportPopup; }
 
     public Stage getAddRunwayPopup() {return addRunwayPopup; }
+
+    public ComboBox getAddRunwayAirportSelect() {return addRunwayAirportSelect; }
 
     public static void main(String[] args) {
         launch(args);

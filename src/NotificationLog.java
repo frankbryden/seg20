@@ -4,6 +4,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.util.ArrayList;
 
 public class NotificationLog {
@@ -15,7 +16,7 @@ public class NotificationLog {
         this.notifications = notifications;
     }
 
-    public void createNotifLog() {
+    public Stage createNotifLog() {
         Stage notifWindow = new Stage();
         notifWindow.setTitle("Notification Log");
 
@@ -44,6 +45,6 @@ public class NotificationLog {
         Scene scene = new Scene(scrollPane, WINDOW_WIDTH, 350);
 
         notifWindow.setScene(scene);
-        notifWindow.show();
+        return notifWindow;
     }
 }
