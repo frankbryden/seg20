@@ -17,7 +17,7 @@ public class NotificationLog {
         this.notifications = notifications;
     }
 
-    public Stage createNotifLog() {
+    public void createNotifLog() {
         Stage notifWindow = new Stage();
         notifWindow.getIcons().add(new Image("/rec/plane.png"));
         notifWindow.setTitle("Notification Log");
@@ -47,6 +47,6 @@ public class NotificationLog {
         Scene scene = new Scene(scrollPane, WINDOW_WIDTH, 350);
 
         notifWindow.setScene(scene);
-        return notifWindow;
+        notifWindow.show();
     }
 }

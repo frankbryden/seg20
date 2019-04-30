@@ -296,14 +296,12 @@
                                              <content>
                                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="498.0" prefWidth="698.0" stylesheets="@styles/obstacles.css">
                                                    <children>
-                                                      <Label layoutX="6.0" layoutY="24.0" prefHeight="30.0" prefWidth="333.0" text="Predefined obstacles " />
-                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="54.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
-                                                      <Label layoutX="6.0" layoutY="308.0" prefHeight="30.0" prefWidth="333.0" text="User-defined obstacles" />
-                                                      <ListView fx:id="userDefinedObstaclesLV" layoutX="6.0" layoutY="338.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="220.0" prefWidth="580.0" />
+                                                      <Label layoutX="6.0" layoutY="75.0" prefHeight="54.0" prefWidth="334.0" text="List of obstacles " />
+                                                      <ListView fx:id="predefinedObstaclesLV" layoutX="6.0" layoutY="119.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="331.0" prefWidth="580.0" />
 
-                                                      <Button fx:id="saveObstacleBtn" layoutX="549.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="editObstacleBtn" layoutX="503.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
-                                                      <Button fx:id="popAddObstacleBtn" layoutX="457.0" layoutY="303.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="saveObstacleBtn" layoutX="548.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="editObstacleBtn" layoutX="505.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button fx:id="popAddObstacleBtn" layoutX="461.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
@@ -361,15 +359,12 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@styles/global.css">
                            <children>
-                              <Label layoutX="16.0" layoutY="33.0" text="Colour scheme" />
-                              <ComboBox layoutX="245.0" layoutY="25.0" prefHeight="27.0" prefWidth="117.0" />
-                              <Button layoutX="383.0" layoutY="25.0" mnemonicParsing="false" styleClass="primaryButton" text="Apply" />
-                              <Label layoutX="16.0" layoutY="74.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
-                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="74.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="Save" />
-                              <Label layoutX="15.0" layoutY="115.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
-                              <Button layoutX="245.0" layoutY="114.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
-                              <Label layoutX="15.0" layoutY="160.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
-                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="155.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
+                              <Label layoutX="17.0" layoutY="50.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
+                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="44.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="Save" />
+                              <Label layoutX="15.0" layoutY="90.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
+                              <Button layoutX="245.0" layoutY="84.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
+                              <Label layoutX="15.0" layoutY="131.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
+                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="126.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
                            </children>
                         </AnchorPane>
                   </content>

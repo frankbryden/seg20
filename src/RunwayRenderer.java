@@ -92,14 +92,14 @@ public class RunwayRenderer {
 
 
 
-    public void drawObstacle(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String selectedTresholdName, String unselectedTresholdName){
+    public void drawObstacle(Obstacle obstacle, int distanceFromThreshold, int distanceFromCenterline, String selectedThresholdName, String unselectedThresholdName){
 
         Image planeImage;
-        int selected = Integer.parseInt( selectedTresholdName.substring(0,2) );
-        int unSelected = Integer.parseInt( unselectedTresholdName.substring(0,2) );
+        int selected = Integer.parseInt( selectedThresholdName.substring(0,2) );
+        int unSelected = Integer.parseInt( unselectedThresholdName.substring(0,2) );
         System.out.println("Draw obstacle, runways are : " + selected + unSelected);
         int objectStartX;
-        if (selectedTresholdName.equals(runwayPair.getR2().getRunwayDesignator().toString())){
+        if (selectedThresholdName.equals(runwayPair.getR2().getRunwayDesignator().toString())){
             System.out.println("using runway " + runwayPair.getR2().getRunwayDesignator().toString());
             objectStartX = runwayRenderParams.getRunwayStartX() + runwayRenderParams.getRunwayLength();
             int obstacleShift = (int) (distanceFromThreshold*1.0/runwayRenderParams.getRealLifeMaxLenR2()*1.0 * runwayRenderParams.getRunwayLength());
@@ -126,14 +126,17 @@ public class RunwayRenderer {
         int obstacleWidth = (int) ( maxWidth) * 80 / 1000;
         runwayRenderParams.setObstacleHeight(obstacleHeight);
         runwayRenderParams.setObastacleWidth(obstacleWidth);
-
+/*
         if(obstacle.getName().contains("Airbus") || obstacle.getName().contains("Boeing")){
 
             this.graphicsContext.drawImage(planeImage,objectStartX,runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth, obstacleHeight);
         }else{
             Rectangle obstacleRect = new Rectangle(objectStartX, runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth/4, obstacleHeight);
             drawRect(obstacleRect, Color.RED);
-        }
+        }*/
+
+        Rectangle obstacleRect = new Rectangle(objectStartX, runwayRenderParams.getSideOnRunwayStartY()-obstacleHeight, obstacleWidth/4, obstacleHeight);
+        drawRect(obstacleRect, Color.RED);
 
         //obstacle will not cover the take off message
         renderTakeOfMessages(maxWidth, (int) maxHeight);

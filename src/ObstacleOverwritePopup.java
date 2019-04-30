@@ -56,16 +56,13 @@ public class ObstacleOverwritePopup {
 
         confirmOverwrite.setOnAction(e -> {
 
-            gui.getAllObstaclesSorted().remove(obstacleName);
+            gui.getPredefinedObstaclesSorted().remove(obstacleName);
             Obstacle modifiedObstacle = new Obstacle(obstacleName, newHeight);
-            gui.getAllObstaclesSorted().put(obstacleName, modifiedObstacle);
+            gui.getPredefinedObstaclesSorted().put(obstacleName, modifiedObstacle);
 
             if (gui.getPredefinedObstaclesSorted().containsKey(obstacleName)) {
                 gui.getPredefinedObstaclesSorted().remove(obstacleName);
                 gui.getPredefinedObstaclesSorted().put(obstacleName, modifiedObstacle);
-            } else {
-                gui.getUserDefinedObstacles().remove(obstacleName);
-                gui.getUserDefinedObstacles().put(obstacleName, modifiedObstacle);
             }
 
             gui.updateObstaclesList();

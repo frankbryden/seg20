@@ -162,21 +162,19 @@ public class ObstacleDetailsPopup {
                     Map<String, Obstacle> obstacleList;
                     if (sourceList == GUI.ObstacleList.PREDEFINED) {
                         obstacleList = gui.getPredefinedObstaclesSorted();
-                    } else if (sourceList == GUI.ObstacleList.USER_DEFINED) {
-                        obstacleList = gui.getUserDefinedObstacles();
-                    } else {
+                    }else {
                         System.err.println("We have a problem - unknown source list " + sourceList);
                         return;
                     }
                     double currentHeight = obstacle.getHeight();
                     double newHeight = Double.parseDouble(gui.getHeightEditTF().getText());
                     obstacleList.remove(obstacle.getName());
-                    gui.getAllObstaclesSorted().remove(obstacle.getName());
+                    gui.getPredefinedObstaclesSorted().remove(obstacle.getName());
                     obstacle.setName(nameEditTF.getText());
                     obstacle.setHeight(Double.valueOf(gui.getHeightEditTF().getText()));
 
                     obstacleList.put(obstacle.getName(), obstacle);
-                    gui.getAllObstaclesSorted().put(obstacle.getName(), obstacle);
+                    gui.getPredefinedObstaclesSorted().put(obstacle.getName(), obstacle);
 
                     nameContentLabel.setText(obstacle.getName());
                     heightContentLabel.setText(Double.toString(obstacle.getHeight()));
