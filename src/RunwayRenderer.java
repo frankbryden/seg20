@@ -45,7 +45,7 @@ public class RunwayRenderer {
     private double windAngle;
 
     //used to create a gap in the lines to display a textual label
-    private final double lableWidth = 25;
+    private final double labelWidth = 55;
 
     //Dynamic rendering properties
     private boolean renderLabelLines = true;
@@ -435,14 +435,14 @@ public class RunwayRenderer {
         }
 
         // First section
-        this.graphicsContext.strokeLine(line.getStartX(), line.getStartY(), midX - lableWidth, line.getEndY());
+        this.graphicsContext.strokeLine(line.getStartX(), line.getStartY(), midX - labelWidth, line.getEndY());
         renderArrowCap((int) line.getStartX(), (int) line.getStartY(), ArrowDirection.LEFT);
 
         // Text between sections
-        this.graphicsContext.fillText(labelLine.getValue(), midX - lableWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
+        this.graphicsContext.fillText(labelLine.getValue(), midX - labelWidth + runwayRenderParams.getLabelTextMargin(), midY + runwayRenderParams.getLabelFontSize()/2);
 
         // Second section
-        this.graphicsContext.strokeLine(midX + lableWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY(), line.getEndX(), line.getEndY());
+        this.graphicsContext.strokeLine(midX + labelWidth + runwayRenderParams.getLabelTextMargin(), line.getStartY(), line.getEndX(), line.getEndY());
         renderArrowCap((int) line.getEndX(), (int) line.getEndY(), ArrowDirection.RIGHT);
     }
 
@@ -481,13 +481,13 @@ public class RunwayRenderer {
         double todaStartX = margin;
         double todaEndX = getNormalisedTODA(maxLen)*runwayLength;
         double todaY = halfVert - arrowStep;
-        double todaLabelStart = (todaEndX - todaStartX + lableWidth)/2 - lableWidth;
+        double todaLabelStart = (todaEndX - todaStartX + labelWidth)/2 - labelWidth;
 
         //TORA line
         double toraStartX = margin;
         double toraEndX = getNormalisedTORA(maxLen)*runwayLength;
         double toraY = halfVert - 2*arrowStep;
-        double toraLabelStart = (toraEndX - toraStartX + lableWidth)/2 - lableWidth;
+        double toraLabelStart = (toraEndX - toraStartX + labelWidth)/2 - labelWidth;
 
         //clear canvas before draw
         gc.clearRect(0, 0, maxWidth, maxHeight);
@@ -513,7 +513,7 @@ public class RunwayRenderer {
         gc.beginPath();
         gc.moveTo(lineStartX, lineY);
         gc.lineTo(lableStart, lineY);
-        gc.moveTo(lableStart + lableWidth, lineY);
+        gc.moveTo(lableStart + labelWidth, lineY);
         gc.lineTo(lineEndX, lineY);
         gc.stroke();
         gc.fillText(label, lableStart + 5, lineY + 5);

@@ -43,13 +43,14 @@ class AddRunwayPopup {
         Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add("primaryButton");
         TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
-        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl;
+        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl, currentlySelectedAirportLbl;
 
         runwayDesignatorLbl = new Label("Runway Designator");
         toraLbl = new Label("TORA");
         clearwayLbl = new Label("Clearway");
         stopwayLbl = new Label("Stopway");
         displacementThresholdLbl = new Label("Displaced Threshold");
+        currentlySelectedAirportLbl = new Label("")
         addRunwayAirportSelect = new ComboBox<>();
 
         addRunwayAirportSelect.setId("airportComboBox");
