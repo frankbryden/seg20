@@ -313,7 +313,7 @@ public class RunwayRenderer {
 
         //Draw stopway
         for (Rectangle stopway : stopways){
-            drawRect(stopway, Color.PINK);
+            drawRect(stopway, Color.web("#ff8080"));
         }
 
         //And the runway identifiers
@@ -386,7 +386,7 @@ public class RunwayRenderer {
 
         //Stopway
         for (Rectangle rect : stopways){
-            drawRect(rect, Color.PINK);
+            drawRect(rect, Color.web("#ff8080"));
         }
 
         //And the labels identifying the runway params
