@@ -232,11 +232,10 @@ public class GUI extends Application {
                         updateThresholdList(selectedRunwayPair);
                         currentlySelectedRunway = selectedRunwayPair;
                         runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
+                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
                         setRunwayRendererParams();
                         runwayRenderer.render();
-
-
-                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
+                        
                         runwayRendererSideView.renderSideview();
 
                         rootTabPane.setVisible(true);
@@ -884,13 +883,15 @@ public class GUI extends Application {
     }
 
     private void setRunwayRendererParams(){
-        if (runwayRenderer == null){
+        if (runwayRenderer == null || runwayRendererSideView == null){
             return;
         }
         runwayRenderer.setRenderRunwayRotated(renderRunwayRotatedChkbx.selectedProperty().get());
         runwayRenderer.setZoom(zoomSlider.getValue());
         runwayRenderer.setRenderLabelLines(renderRunwayLabelLinesChkbx.selectedProperty().get());
         runwayRenderer.setRenderWindCompass(renderWindCompass.selectedProperty().get());
+        runwayRenderer.setTopDownBackgroundColor(topDownColorPicker.getValue());
+        runwayRendererSideView.setSideOnBackgroundColor(sideOnColorPicker.getValue());
     }
 
     private void disableTooltips() {
@@ -1317,12 +1318,7 @@ public class GUI extends Application {
         viewCalculationResultsVBox.getChildren().add(calculationResultsGrid);
         viewCalculationResultsVBox.getChildren().add(calculateBackBtnVBox);
 
-        calculationsBackBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                resetCalculationsTab();
-            }
-        });
+        calculationsBackBtn.setOnMouseClicked(event -> resetCalculationsTab());
     }
 
     public void createPopups() {

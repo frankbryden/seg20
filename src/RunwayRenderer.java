@@ -346,9 +346,7 @@ public class RunwayRenderer {
             renderArrowCap((int) lines.getValue().getEndX(), (int) lines.getValue().getEndY(), windAngle - Math.PI);
         }
     }
-public void renderSideview(){
-
-
+    public void renderSideview(){
         //canvas dimensions
         int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
@@ -680,7 +678,7 @@ public void renderSideview(){
     }
 
     public void setSideOnBackgroundColor(Color sideOnBackgroundColor) {
-        System.out.println("Change ");
+        System.out.println("Change in side on background color");
         this.sideOnBackgroundColor = sideOnBackgroundColor;
         this.renderSideview();
     }

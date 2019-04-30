@@ -74,11 +74,6 @@ public class RunwayConfig {
         double p2Toda = getNormalisedTODA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Asda = getNormalisedASDA(maxLen)*runwayRenderParams.getRunwayLength();
         double p2Lda = getNormalisedLDA(maxLen)*runwayRenderParams.getRunwayLength();
-        System.out.println("ref : " + System.identityHashCode(this));
-        System.out.println("all obj : " + this.toString());
-        System.out.println("TODA : " + this.TODA);
-        System.out.println(getNormalisedTODA(this.TORA) + " * " + runwayRenderParams.getRunwayLength());
-        System.out.println("TODA LENGTH : " + p2Toda);
 
         // In both cases, we need to add the start point to the end point, as we have calculated the line LENGTH and not END X value
         if (direction == RunwayRenderer.LabelRunwayDirection.UP){
