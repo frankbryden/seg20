@@ -60,7 +60,8 @@ public class GUI extends Application {
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
             runwayThresholdLbl, breakdownCalcLbl, obstacleSelectLbl, thresholdSelectLbl, originalToda,
             originalTora, originalAsda, originalLda, recalculatedToda, recalculatedTora, recalculatedAsda, recalculatedLda, windLbl, selectedObstacleHeightLbl,
-            centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel;
+            centreLineRequiredLabel, thresholdDistanceRequiredLabel, thresholdRequiredLabel, obstacleRequiredLabel,
+            thresholdLbl;
     @FXML
     private GridPane calculationResultsGrid, runwayGrid;
     private TextArea calculationDetails;
@@ -121,6 +122,7 @@ public class GUI extends Application {
         //Parent root; // = FXMLLoader.load(getClass().getClassLoader().getResource("sample.fxml"));
 
         primaryStage.setTitle("Runway Redeclaration Tool");
+        primaryStage.getIcons().add(new Image("/rec/plane.png"));
         primaryStage.setScene(new Scene(root));
         primaryStage.show();
 
@@ -130,6 +132,8 @@ public class GUI extends Application {
             //TODO save persistent settings here
             System.out.println("closed");
         });
+
+        thresholdLbl = new Label();
 
         addObstacleNameTF = new TextField();
         addObstacleHeightTF = new TextField();
@@ -1120,7 +1124,9 @@ public class GUI extends Application {
                 Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
                 Obstacle selectedObstacle = (Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem();
 
+                //HERE
                 String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
+                updateThresholdLbl(thresholdName);
 
                 RunwayConfig runwayConfig, otherConfig;
                 RunwayPair.Side selectedSide;
@@ -1134,7 +1140,6 @@ public class GUI extends Application {
                     otherConfig = currentlySelectedRunway.getR1();
                     selectedSide = RunwayPair.Side.R2;
                 }
-
 
                 //Perform recalculations
                 Calculations calculations = new Calculations(runwayConfig);
@@ -1183,7 +1188,7 @@ public class GUI extends Application {
 
                 // Printing results into the breakdown of calculations text box
                 String resultsDetails = results.getCalculationDetails() + "\n" + results2.getCalculationDetails();
-                calculationDetails.setText(resultsDetails);
+                calculationDetails.setText(summary + "\n\n" + resultsDetails);
                 printer.setCalculations(resultsDetails);
                 printer.setCalculationsHeading(summary);
 
@@ -1230,8 +1235,8 @@ public class GUI extends Application {
         calculationResultsGrid.getStylesheets().add("styles/runwayTable.css");
         calculationResultsGrid.getStyleClass().add("paintMe");
         Label originalValuesGridLbl, recalculatedlValuesGridLbl, todaRowLbl, toraRowLbl, asdaRowLbl, ldaRowLbl;
-        originalValuesGridLbl = new Label("Original\nValues");
-        recalculatedlValuesGridLbl = new Label("Recalculated\nValues");
+        originalValuesGridLbl = new Label("Original\nvalues");
+        recalculatedlValuesGridLbl = new Label("Recalculated\nvalues");
         todaRowLbl = new Label("TODA");
         toraRowLbl = new Label("TORA");
         asdaRowLbl = new Label("ASDA");
@@ -1256,8 +1261,9 @@ public class GUI extends Application {
         //Add all the labels, col by col,  to create a table
         calculationResultsGrid.setId("smallRunwayGrid");
 
+        //HERE
         //Col 0 : the value names (TODA, TORA, ASDA, LDA)
-        calculationResultsGrid.add(new Label(), 0, 0);
+        calculationResultsGrid.add(thresholdLbl, 0, 0);
         calculationResultsGrid.add(toraRowLbl, 0, 1);
         calculationResultsGrid.add(todaRowLbl, 0, 2);
         calculationResultsGrid.add(asdaRowLbl, 0, 3);
@@ -1383,6 +1389,8 @@ public class GUI extends Application {
     public Stage getAddRunwayPopup() {return addRunwayPopup; }
 
     public ComboBox getAddRunwayAirportSelect() {return addRunwayAirportSelect; }
+
+    private void updateThresholdLbl(String thresholdName) { thresholdLbl.setText(thresholdName + "\nthreshold"); }
 
     public static void main(String[] args) {
         launch(args);

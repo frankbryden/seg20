@@ -2,6 +2,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
@@ -11,6 +12,7 @@ public class AirportErrorPopup {
 
     public static void displayAirportErrorPopup() {
         Stage errorWindow = new Stage();
+        errorWindow.getIcons().add(new Image("/rec/plane.png"));
         errorWindow.initModality(Modality.APPLICATION_MODAL);
         errorWindow.setTitle("Airport selection");
 

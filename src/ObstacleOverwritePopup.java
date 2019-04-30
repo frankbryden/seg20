@@ -2,6 +2,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.TextAlignment;
@@ -18,6 +19,7 @@ public class ObstacleOverwritePopup {
 
     public void displayOverwritePrompt(String obstacleName, double currentHeight, double newHeight) {
         Stage overwriteWindow = new Stage();
+        overwriteWindow.getIcons().add(new Image("/rec/plane.png"));
         overwriteWindow.initModality(Modality.APPLICATION_MODAL);
         overwriteWindow.setTitle("Overwrite Obstacle");
 

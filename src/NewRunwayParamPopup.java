@@ -3,6 +3,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -19,6 +20,7 @@ public class NewRunwayParamPopup {
     //TODO Make the Confirm/Cancel buttons work
     public void displayRunwayParametersPrompt(RunwayPair runwayPair) {
         Stage runwayWindow = new Stage();
+        runwayWindow.getIcons().add(new Image("/rec/plane.png"));
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
         runwayWindow.setTitle("Add Runway");
 

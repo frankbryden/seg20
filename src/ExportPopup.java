@@ -1,6 +1,7 @@
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
@@ -60,6 +61,7 @@ public class ExportPopup {
 
         stage = new Stage();
         stage.setTitle("Export Data");
+        stage.getIcons().add(new Image("/rec/plane.png"));
 
         currentExportPopupState = ExportPopupStates.MENU;
 
