@@ -8,9 +8,9 @@ import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
-public class NotificationLog {
+class NotificationLog {
 
-    private ArrayList<String> notifications;
+    private final ArrayList<String> notifications;
     private final int WINDOW_WIDTH = 270;
 
     public NotificationLog(ArrayList<String> notifications) {

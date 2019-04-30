@@ -2,10 +2,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AirportConfig {
-    private String name;
+    private final String name;
     private double latitude;
     private double longitude;
-    private Map<String, RunwayPair> runways;
+    private final Map<String, RunwayPair> runways;
 
     public AirportConfig(String name){
         this.name = name;
@@ -41,8 +41,7 @@ public class AirportConfig {
     @Override
     public String toString(){
         StringBuilder sb = new StringBuilder();
-        sb.append("Airport name : " + getName());
-        sb.append("\n");
+        sb.append("Airport name : ").append(getName()).append("\n");
         for(String runwayPairName : this.runways.keySet()){
             sb.append(this.runways.get(runwayPairName).toString()).append("\n");
         }

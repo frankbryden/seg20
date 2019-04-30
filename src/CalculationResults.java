@@ -1,6 +1,6 @@
 public class CalculationResults {
-    private RunwayConfig recalculatedParams;
-    private String calculationDetails;
+    private final RunwayConfig recalculatedParams;
+    private final String calculationDetails;
 
     public CalculationResults(RunwayConfig recalculatedParams, String calculationDetails) {
         this.recalculatedParams = recalculatedParams;

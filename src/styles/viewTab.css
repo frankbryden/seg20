@@ -19,7 +19,7 @@
 .color-picker{
     -fx-background-color: #ffffff;
     -fx-border-color: -fx-primary-color;
-    -fx-pref-width: 37.5px;
+    -fx-pref-width: 38px;
     -fx-border-radius: 0px;
 }
 

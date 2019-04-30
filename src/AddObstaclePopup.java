@@ -7,16 +7,22 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AddObstaclePopup {
+class AddObstaclePopup {
 
-    private GUI gui;
+    //TODO fix to make independent self-sufficient class
+
+    private final GUI gui;
+
+    private Popup popup;
 
     public AddObstaclePopup(GUI gui) {
         this.gui = gui;
+        this.popup = createAddObstaclePopup();
     }
 
     public Popup createAddObstaclePopup() {
@@ -92,99 +98,101 @@ public class AddObstaclePopup {
         rootBox.getStyleClass().add("popup");
         rootBox.getStylesheets().add("styles/layoutStyles.css");
 
-        addObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                // Checking for empty name and height fields
-                if (gui.getAddObstacleNameTF().getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                             Enter obstacle name");
-                    if (!rootBox.getChildren().contains(emptyNameBox)) {
-                        rootBox.getChildren().add(0, emptyNameBox);
-                    }
-                    gui.getAddObstacleNameTF().setPromptText("");
-                } else {
-                    if (rootBox.getChildren().contains(emptyNameBox)) {
-                        rootBox.getChildren().remove(emptyNameBox);
-                    }
-                    nameRequiredLbl.setText("");
+        addObstacleBtn.setOnMouseClicked(event -> {
+            // Checking for empty name and height fields
+            if (gui.getAddObstacleNameTF().getText().isEmpty()) {
+                nameRequiredLbl.setText("                                             Enter obstacle name");
+                if (!rootBox.getChildren().contains(emptyNameBox)) {
+                    rootBox.getChildren().add(0, emptyNameBox);
                 }
-                if (gui.getAddObstacleHeightTF().getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                             Enter obstacle height");
-                    if (rootBox.getChildren().contains(emptyNameBox)) {
-                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
-                            rootBox.getChildren().add(2, emptyHeightBox);
-                        }
-                    } else {
-                        if (!rootBox.getChildren().contains(emptyHeightBox)) {
-                            rootBox.getChildren().add(1, emptyHeightBox);
-                        }
-                    }
-                    gui.getAddObstacleHeightTF().setPromptText("");
-                } else {
-                    if (rootBox.getChildren().contains(emptyHeightBox)) {
-                        rootBox.getChildren().remove(emptyHeightBox);
-                    }
-                    heightRequiredLbl.setText("");
-                }
-
-                // Checking for valid obstacle name and valid obstacle height
-                if (gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getAddObstacleHeightTF().getText()))) && !gui.getAddObstacleNameTF().getText().isEmpty()) {
-                    boolean matchFound = false;
-                    for (String obstacleName : gui.getPredefinedObstaclesSorted().keySet()) {
-                        if (gui.getAddObstacleNameTF().getText().equals(obstacleName)) {
-                            gui.getOverwriteObstaclePopup().displayOverwritePrompt(obstacleName, gui.getPredefinedObstaclesSorted().get(obstacleName).getHeight(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
-                            matchFound = true;
-                            break;
-                        }
-                    }
-
-                    if (!matchFound) {
-                        System.out.println("Add obstacle");
-                        gui.addObstacle(gui.getAddObstacleNameTF().getText(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
-                        gui.addNotification("Added " + gui.getAddObstacleNameTF().getText() + " to the list of obstacles.");
-                        gui.getAddObstacleNameTF().clear();
-                        gui.getAddObstacleHeightTF().clear();
-                        gui.getAddObstacleNameTF().setPromptText("");
-                        gui.getAddObstacleHeightTF().setPromptText("");
-                        gui.updateObstaclesList();
-                        gui.getAddObstaclePopup().hide();
-
-                        //notify user obstacle was added
-                        gui.notifyUpdate("Obstacle added");
-
-                    }
-
-                } else if (!gui.getAddObstacleHeightTF().getText().isEmpty() && !gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getAddObstacleHeightTF().getText())))) {
-                    gui.getAddObstacleHeightTF().clear();
-                    gui.getAddObstacleHeightTF().setPromptText("Invalid obstacle height!");
-                }
-
-            }
-        });
-
-        cancelBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+                gui.getAddObstacleNameTF().setPromptText("");
+            } else {
                 if (rootBox.getChildren().contains(emptyNameBox)) {
                     rootBox.getChildren().remove(emptyNameBox);
                 }
+                nameRequiredLbl.setText("");
+            }
+            if (gui.getAddObstacleHeightTF().getText().isEmpty()) {
+                heightRequiredLbl.setText("                                             Enter obstacle height");
+                if (rootBox.getChildren().contains(emptyNameBox)) {
+                    if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                        rootBox.getChildren().add(2, emptyHeightBox);
+                    }
+                } else {
+                    if (!rootBox.getChildren().contains(emptyHeightBox)) {
+                        rootBox.getChildren().add(1, emptyHeightBox);
+                    }
+                }
+                gui.getAddObstacleHeightTF().setPromptText("");
+            } else {
                 if (rootBox.getChildren().contains(emptyHeightBox)) {
                     rootBox.getChildren().remove(emptyHeightBox);
                 }
-                nameRequiredLbl.setText("");
                 heightRequiredLbl.setText("");
-                gui.getAddObstacleNameTF().clear();
-                gui.getAddObstacleNameTF().setPromptText("");
-                gui.getAddObstacleHeightTF().clear();
-                gui.getAddObstacleHeightTF().setPromptText("");
-                gui.getAddObstaclePopup().hide();
             }
+
+            // Checking for valid obstacle name and valid obstacle height
+            if (gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getAddObstacleHeightTF().getText()))) && !gui.getAddObstacleNameTF().getText().isEmpty()) {
+                boolean matchFound = false;
+                for (String obstacleName : gui.getPredefinedObstaclesSorted().keySet()) {
+                    if (gui.getAddObstacleNameTF().getText().equals(obstacleName)) {
+                        gui.getOverwriteObstaclePopup().displayOverwritePrompt(obstacleName, gui.getPredefinedObstaclesSorted().get(obstacleName).getHeight(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
+                        matchFound = true;
+                        break;
+                    }
+                }
+
+                if (!matchFound) {
+                    System.out.println("Add obstacle");
+                    gui.addObstacle(gui.getAddObstacleNameTF().getText(), Double.parseDouble(gui.getAddObstacleHeightTF().getText()));
+                    gui.addNotification("Added " + gui.getAddObstacleNameTF().getText() + " to the list of obstacles.");
+                    gui.getAddObstacleNameTF().clear();
+                    gui.getAddObstacleHeightTF().clear();
+                    gui.getAddObstacleNameTF().setPromptText("");
+                    gui.getAddObstacleHeightTF().setPromptText("");
+                    gui.updateObstaclesList();
+                    hide();
+                    //notify user obstacle was added
+                    gui.notifyUpdate("Obstacle added");
+
+                }
+
+            } else if (!gui.getAddObstacleHeightTF().getText().isEmpty() && !gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getAddObstacleHeightTF().getText())))) {
+                gui.getAddObstacleHeightTF().clear();
+                gui.getAddObstacleHeightTF().setPromptText("Invalid obstacle height!");
+            }
+
+        });
+
+        cancelBtn.setOnMouseClicked(event -> {
+            rootBox.getChildren().remove(emptyNameBox);
+            rootBox.getChildren().remove(emptyHeightBox);
+            nameRequiredLbl.setText("");
+            heightRequiredLbl.setText("");
+            gui.getAddObstacleNameTF().clear();
+            gui.getAddObstacleNameTF().setPromptText("");
+            gui.getAddObstacleHeightTF().clear();
+            gui.getAddObstacleHeightTF().setPromptText("");
+            hide();
         });
 
         popup.getContent().add(rootBox);
 
 
         return popup;
+    }
+
+    void show(Stage primaryStage){
+        this.popup.show(primaryStage);
+    }
+
+    void hide(){
+        popup.hide();
+    }
+
+    void center(double x, double y){
+        popup.setAnchorX(x - popup.getWidth());
+        popup.setAnchorY(y - popup.getHeight());
     }
 
 

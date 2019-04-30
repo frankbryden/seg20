@@ -23,15 +23,17 @@ import javafx.scene.image.ImageView;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-public class Printer {
-    private Stage primaryStage;
+class Printer {
+    private final Stage primaryStage;
     private String calculationsHeading;
     private String calculations;
     //This might be a bit confusing. It solves a slightly weird kinda frustrating problem
     //DM me if you have any questions about is - Frankie
     private Pair<Pane, Node> originalRecalculatedPane;
     private Canvas runway;
-    private Font headerFont, titleFont, subtitleFont;
+    private final Font headerFont;
+    private final Font titleFont;
+    private final Font subtitleFont;
 
     private int currentPageCount;
     /*

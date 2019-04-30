@@ -16,12 +16,18 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class AddRunwayPopup {
+class AddRunwayPopup {
 
-    private GUI gui;
+    private final GUI gui;
+    //TODO fix to make independent self-sufficient class
+    private Stage addRunwayStage;
+    private AirportConfig currentlySelectedAirportConfig;
+    private ComboBox<String> addRunwayAirportSelect;
+
 
     public AddRunwayPopup(GUI gui) {
         this.gui = gui;
+        this.addRunwayStage = createAddRunwayPopup();
     }
 
     public Stage createAddRunwayPopup() {
@@ -44,9 +50,10 @@ public class AddRunwayPopup {
         clearwayLbl = new Label("Clearway");
         stopwayLbl = new Label("Stopway");
         displacementThresholdLbl = new Label("Displaced Threshold");
+        addRunwayAirportSelect = new ComboBox<>();
 
-        gui.getAddRunwayAirportSelect().setId("airportComboBox");
-        gui.getAddRunwayAirportSelect().setVisibleRowCount(10);
+        addRunwayAirportSelect.setId("airportComboBox");
+        addRunwayAirportSelect.setVisibleRowCount(10);
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
@@ -92,7 +99,7 @@ public class AddRunwayPopup {
         HBox airportSelection = new HBox(30);
         airportSelection.setPadding(new Insets(10, 12, 15, 15));
         airportSelection.getChildren().add(selectAirportLbl);
-        airportSelection.getChildren().add(gui.getAddRunwayAirportSelect());
+        airportSelection.getChildren().add(addRunwayAirportSelect);
 
 
         VBox addRunwayRoot = new VBox(20);
@@ -129,70 +136,85 @@ public class AddRunwayPopup {
         });
 
         //On confirm button, add the airport to the list of known airports
-        confirmButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (gui.validateIntForm(new ArrayList<String>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))) {
-                    System.out.println("valid form");
+        confirmButton.setOnMouseClicked(event -> {
+            if (gui.validateIntForm(new ArrayList<>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))) {
+                System.out.println("valid form");
 
-                    // Working out runway values for one side of the runway
-                    String runwayDesignator = runwayDesignatorTF.getText();
-                    int TORA = Integer.parseInt(toraTF.getText());
-                    int TODA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(clearwayTF.getText());
-                    int ASDA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(stopwayTF.getText());
-                    int LDA = Integer.parseInt(toraTF.getText()) - Integer.parseInt(displacementThresholdTF.getText());
-                    int displacedThreshold = Integer.parseInt(displacementThresholdTF.getText());
-                    int clearway = Integer.parseInt(clearwayTF.getText());
-                    int stopway = Integer.parseInt(stopwayTF.getText());
+                // Working out runway values for one side of the runway
+                String runwayDesignator = runwayDesignatorTF.getText();
+                int TORA = Integer.parseInt(toraTF.getText());
+                int TODA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(clearwayTF.getText());
+                int ASDA = Integer.parseInt(toraTF.getText()) + Integer.parseInt(stopwayTF.getText());
+                int LDA = Integer.parseInt(toraTF.getText()) - Integer.parseInt(displacementThresholdTF.getText());
+                int displacedThreshold = Integer.parseInt(displacementThresholdTF.getText());
+                int clearway = Integer.parseInt(clearwayTF.getText());
+                int stopway = Integer.parseInt(stopwayTF.getText());
 
-                    // Working out runway values but for the other side of the runway
-                    String runwayDesignator2 = runwayDesignatorTF2.getText();
-                    int TORA2 = Integer.parseInt(toraTF2.getText());
-                    int TODA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(clearwayTF2.getText());
-                    int ASDA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(stopwayTF2.getText());
-                    int LDA2 = Integer.parseInt(toraTF2.getText()) - Integer.parseInt(displacementThresholdTF2.getText());
-                    int displacedThreshold2 = Integer.parseInt(displacementThresholdTF2.getText());
-                    int clearway2 = Integer.parseInt(clearwayTF2.getText());
-                    int stopway2 = Integer.parseInt(stopwayTF2.getText());
+                // Working out runway values but for the other side of the runway
+                String runwayDesignator2 = runwayDesignatorTF2.getText();
+                int TORA2 = Integer.parseInt(toraTF2.getText());
+                int TODA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(clearwayTF2.getText());
+                int ASDA2 = Integer.parseInt(toraTF2.getText()) + Integer.parseInt(stopwayTF2.getText());
+                int LDA2 = Integer.parseInt(toraTF2.getText()) - Integer.parseInt(displacementThresholdTF2.getText());
+                int displacedThreshold2 = Integer.parseInt(displacementThresholdTF2.getText());
+                int clearway2 = Integer.parseInt(clearwayTF2.getText());
+                int stopway2 = Integer.parseInt(stopwayTF2.getText());
 
-                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
-                    r1.setClearway(clearway);
-                    r1.setStopway(stopway);
-                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
-                    r1.setClearway(clearway2);
-                    r1.setStopway(stopway2);
-                    RunwayPair runwayPair = new RunwayPair(r1, r2);
+                RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
+                r1.setClearway(clearway);
+                r1.setStopway(stopway);
+                RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
+                r1.setClearway(clearway2);
+                r1.setStopway(stopway2);
+                RunwayPair runwayPair = new RunwayPair(r1, r2);
 
-                    // Show the prompt that shows the summary of the runway values
-                    NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
-                    runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
+                // Show the prompt that shows the summary of the runway values
+                NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
+                runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
 
-                    AirportConfig selectedAirport = gui.getAirportConfigs().get(gui.getAddRunwayAirportSelect().getSelectionModel().getSelectedItem().toString());
-                    System.out.println(selectedAirport.toString());
+                AirportConfig selectedAirport = gui.getAirportConfigs().get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
+                System.out.println(selectedAirport.toString());
 
-                    selectedAirport.addRunwayPair(runwayPair);
-                    gui.getAirportConfigs().put(selectedAirport.getName(), selectedAirport);
-                    System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
-                    gui.getAddRunwayPopup().hide();
-                    gui.updateAirportSelects();
-                } else {
-                    System.err.println("Invalid form");
-                }
-
+                selectedAirport.addRunwayPair(runwayPair);
+                gui.getAirportConfigs().put(selectedAirport.getName(), selectedAirport);
+                System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
+                gui.getAddRunwayPopup().hide();
+                gui.updateAirportSelects();
+            } else {
+                System.err.println("Invalid form");
             }
+
         });
 
         //Simply close the popup, discarding the data
-        cancelButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                gui.getAddRunwayPopup().hide();
-            }
-        });
+        cancelButton.setOnMouseClicked(event -> gui.getAddRunwayPopup().hide());
 
         stage.setScene(scene);
         stage.setWidth(700);
         stage.setHeight(390);
         return stage;
+    }
+
+    //Selects currently selected Airport if non-null
+    void selectAirportConfig(){
+        if (currentlySelectedAirportConfig != null){
+
+        }
+    }
+
+    void clearAirportList(){
+        addRunwayAirportSelect.getItems().clear();
+    }
+
+    void addAirportToList(String name){
+        addRunwayAirportSelect.getItems().add(name);
+    }
+
+    void show(){
+        addRunwayStage.show();
+    }
+
+    void hide (){
+        addRunwayStage.hide();
     }
 }

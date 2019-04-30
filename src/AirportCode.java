@@ -1,5 +1,5 @@
-public class AirportCode {
-    public String code;
+class AirportCode {
+    public final String code;
 
     public AirportCode(String code){
         this.code = code.toUpperCase();

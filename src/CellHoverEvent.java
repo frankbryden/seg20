@@ -2,7 +2,7 @@ import javafx.event.Event;
 import javafx.event.EventType;
 
 
-public class CellHoverEvent extends ObstacleCellEvent {
+class CellHoverEvent extends ObstacleCellEvent {
     public static final EventType<CellHoverEvent> CELL_HOVER_EVENT_TYPE = new EventType<>(EventType.ROOT, "CELL_HOVER");
 
 

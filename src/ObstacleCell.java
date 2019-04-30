@@ -11,7 +11,7 @@ import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 
-public class ObstacleCell extends ListCell<Obstacle> {
+class ObstacleCell extends ListCell<Obstacle> {
 
     @FXML
     private HBox rootBox;

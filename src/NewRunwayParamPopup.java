@@ -9,9 +9,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class NewRunwayParamPopup {
+class NewRunwayParamPopup {
 
-    private GUI gui;
+    private final GUI gui;
 
     public NewRunwayParamPopup(GUI gui) {
         this.gui = gui;
