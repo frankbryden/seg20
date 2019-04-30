@@ -7,8 +7,8 @@ import javafx.stage.Popup;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-public class Notification extends Popup {
-    String message;
+class Notification extends Popup {
+    private final String message;
     private static final int showTime = 2400; //ms
     public static final int HEIGHT = 70;
     private static final int MARGIN = 50;

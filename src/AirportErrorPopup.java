@@ -8,7 +8,7 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AirportErrorPopup {
+class AirportErrorPopup {
 
     public static void displayAirportErrorPopup() {
         Stage errorWindow = new Stage();

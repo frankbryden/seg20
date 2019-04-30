@@ -13,15 +13,15 @@ import java.awt.*;
 import java.util.List;
 
 public class RunwayRenderer {
-    private RunwayPair runwayPair;
-    private GraphicsContext graphicsContext;
+    private final RunwayPair runwayPair;
+    private final GraphicsContext graphicsContext;
     // Draw labels above or below the runway. UP implies landing left to right, and down implies landing right to left
     public enum LabelRunwayDirection {UP, DOWN}
     // Each param line needs an arrow cap on each end. Used to tell which end (therefore which way to draw the cap)
     private enum ArrowDirection {LEFT, RIGHT}
     public enum RunwayParams {TORA, TODA, ASDA, LDA, NONE}
     private static final Color RUNWAY_COLOR = Color.web("rgb(60, 67, 79)");
-    private RunwayRenderParams runwayRenderParams;
+    private final RunwayRenderParams runwayRenderParams;
 
     //Tranform properties
     private int rotation;
@@ -45,7 +45,7 @@ public class RunwayRenderer {
     private double windAngle;
 
     //used to create a gap in the lines to display a textual label
-    private double lableWidth = 25;
+    private final double lableWidth = 25;
 
     //Dynamic rendering properties
     private boolean renderLabelLines = true;
@@ -141,7 +141,7 @@ public class RunwayRenderer {
 
     }
 
-    public void initParams(){
+    private void initParams(){
         //canvas dimensions
         int maxWidth = (int) this.graphicsContext.getCanvas().getWidth();
         double maxHeight = this.graphicsContext.getCanvas().getHeight();
@@ -398,7 +398,7 @@ public class RunwayRenderer {
         this.graphicsContext.fillText(runwayPair.getR2().getRunwayDesignator().toString(), graphicsContext.getCanvas().getWidth() - 90 , maxHeight /2 + 20);
     }
 
-    public void renderTakeOfMessages(int maxWidth, int maxHeight){
+    private void renderTakeOfMessages(int maxWidth, int maxHeight){
         Line directionLeft = new Line(maxWidth , maxHeight - maxHeight/30 , maxWidth - maxWidth/7, maxHeight - maxHeight/30);
         this.graphicsContext.moveTo(directionLeft.getStartX(), directionLeft.getStartY());
         this.graphicsContext.lineTo(directionLeft.getEndX(), directionLeft.getEndY());
@@ -420,7 +420,7 @@ public class RunwayRenderer {
         this.graphicsContext.fillText("Landing and take-off in this direction",maxWidth/20 ,maxWidth/20);
     }
 
-    public void renderParamLine(Pair<Line, String> labelLine){
+    private void renderParamLine(Pair<Line, String> labelLine){
         Line line = labelLine.getKey();
         int midX = (int) (line.getStartX() + line.getEndX())/2;
         int midY = (int) (line.getStartY() + line.getEndY())/2;
@@ -536,7 +536,7 @@ public class RunwayRenderer {
         return clearways;
     }
 
-    public void drawRect(Rectangle rect, Color color){
+    private void drawRect(Rectangle rect, Color color){
         this.graphicsContext.setFill(color);
         this.graphicsContext.fillRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
     }

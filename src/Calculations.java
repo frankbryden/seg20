@@ -1,6 +1,6 @@
 
-public class Calculations {
-    private RunwayConfig originalConfig;
+class Calculations {
+    private final RunwayConfig originalConfig;
     private final int RESA = 240;
     private final int STRIP_END = 60;
     private final int BLAST_PROTECTION = 300;

@@ -17,29 +17,29 @@ public class ExportPopup {
     private Stage stage;
 
     //Airports
-    private Map<String, AirportConfig> airportConfigs;
-    private ComboBox airportsCombo;
+    private final Map<String, AirportConfig> airportConfigs;
+    private ComboBox<String> airportsCombo;
 
     //Obstacles
-    private Map<String, Obstacle> obstacles;
-    private ComboBox obstaclesCombo;
+    private final Map<String, Obstacle> obstacles;
+    private ComboBox<String> obstaclesCombo;
 
     //Buttons
     private Button confirmButton;
     private Button cancelButton;
 
     //Datatype and instance to keep track of state
-    private enum ExportPopupStates {MENU, AIRPORTS, OBSTACLES};
+    private enum ExportPopupStates {MENU, AIRPORTS, OBSTACLES}
     private ExportPopupStates currentExportPopupState;
 
     //Label for error messages
     private Label errorMessageLbl;
 
     //We need a handle to the primaryStage so as to block all input while the filechooser dialog is open
-    private Stage primaryStage;
+    private final Stage primaryStage;
 
     //We need a fileIO instance for exporting. We'll get this from GUI during creation.
-    private FileIO fileIO;
+    private final FileIO fileIO;
 
     public ExportPopup(Stage primaryStage, Map<String, AirportConfig> airportConfigs, Map<String, Obstacle> obstacles, FileIO fileIO) {
         this.primaryStage = primaryStage;
@@ -97,10 +97,10 @@ public class ExportPopup {
         //Above is the initial menu, which then leads to one of 2 menus : Airport export, or Obstacle export
 
         //Airports first, they're cooler
-        airportsCombo = new ComboBox();
+        airportsCombo = new ComboBox<>();
 
         //Obstacles second, they're just an inconvenience
-        obstaclesCombo = new ComboBox();
+        obstaclesCombo = new ComboBox<>();
 
         setupListeners();
     }
@@ -114,12 +114,16 @@ public class ExportPopup {
         confirmButton.setOnMouseClicked(event -> {
             switch (currentExportPopupState){
                 case MENU:
-                    clearView();
-                    nextButtonToExport();
                     if (airportsRadio.selectedProperty().get()){
                         showAirportView();
+                        clearView();
+                        nextButtonToExport();
                     } else if (obstaclesRadio.selectedProperty().get()){
                         showObstacleView();
+                        clearView();
+                        nextButtonToExport();
+                    } else {
+                        showErrorMessage("No option selected.");
                     }
                     break;
                 case AIRPORTS:
@@ -132,7 +136,7 @@ public class ExportPopup {
                         fileIO.write(airportConfigs.get(selectedAirportName), outFile.getPath());
                     } else {
                         //TODO show some kind of error message to user - could you do that please Jasmine? like what you did so well with the create runway and airport forms
-                        //TODO acutally, could that do the job? what do you think?
+                        //TODO actually, could that do the job? what do you think?
                         System.err.println("No airport currently selected");
                         showErrorMessage("No airport selected.");
                     }
@@ -235,12 +239,12 @@ public class ExportPopup {
         rootPane.getChildren().remove(errorMessageLbl);
     }
 
-    public void updateAirportCombo(){
+    private void updateAirportCombo(){
         this.airportsCombo.getItems().clear();
         this.airportsCombo.getItems().addAll(airportConfigs.keySet().stream().sorted().collect(Collectors.toList()));
     }
 
-    public void updateObstacleCombo(){
+    private void updateObstacleCombo(){
         System.out.println("Updating the obstacles combo");
         System.out.println(obstacles.keySet());
         this.obstaclesCombo.getItems().clear();

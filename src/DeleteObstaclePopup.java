@@ -9,9 +9,9 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class DeleteObstaclePopup {
+class DeleteObstaclePopup {
 
-    private GUI gui;
+    private final GUI gui;
 
     public DeleteObstaclePopup(GUI gui) {
         this.gui = gui;

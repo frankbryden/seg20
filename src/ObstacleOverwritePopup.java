@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 public class ObstacleOverwritePopup {
 
-    private GUI gui;
+    private final GUI gui;
 
     public ObstacleOverwritePopup(GUI gui) {
         this.gui = gui;

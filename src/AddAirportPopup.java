@@ -11,9 +11,9 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
-public class AddAirportPopup {
+class AddAirportPopup {
 
-    private GUI gui;
+    private final GUI gui;
 
     public AddAirportPopup(GUI gui) {
         this.gui = gui;
@@ -30,13 +30,14 @@ public class AddAirportPopup {
         Button cancelButton = new Button("Cancel");
         TextField airportName;
         Label airportNameLbl, airportCodeLbl;
-        ListView airportSuggestions;
+        ListView<String> airportSuggestions;
+
         airportNameLbl = new Label("Airport Name");
         airportCodeLbl = new Label("Airport Code");
         airportName = new TextField();
         airportName.setEditable(false);
 
-        airportSuggestions = new ListView();
+        airportSuggestions = new ListView<>();
         airportSuggestions.setMaxHeight(100);
 
         //Add auto-completion to the airport code

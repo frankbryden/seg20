@@ -11,7 +11,7 @@ public class RunwayConfig {
     private int LDA;
     private int CLEARWAY;
     private int STOPWAY;
-    private int displacementThreshold;
+    private final int displacementThreshold;
     private RunwayDesignator runwayDesignator;
     private RunwayPair parent;
     private RunwayPair.Side side;
@@ -129,31 +129,31 @@ public class RunwayConfig {
 
 
     //Normalised values - used for graphics
-    public double getNormalisedTORA(int maxVal){
+    private double getNormalisedTORA(int maxVal){
         return this.TORA / (maxVal*1.0);
     }
 
-    public double getNormalisedTODA(int maxVal){
+    private double getNormalisedTODA(int maxVal){
         return this.TODA / (maxVal*1.0);
     }
 
-    public double getNormalisedASDA(int maxVal){
+    private double getNormalisedASDA(int maxVal){
         return this.ASDA / (maxVal*1.0);
     }
 
-    public double getNormalisedLDA(int maxVal){
+    private double getNormalisedLDA(int maxVal){
         return this.LDA / (maxVal*1.0);
     }
 
-    public double getNormalisedClearway(int maxVal){
+    private double getNormalisedClearway(int maxVal){
         return this.CLEARWAY / (maxVal * 1.0);
     }
 
-    public double getNormalisedStopway(int maxVal){
+    private double getNormalisedStopway(int maxVal){
         return this.STOPWAY / (maxVal * 1.0);
     }
 
-    public double getNormalisedDisplacementThreshold(int maxVal){
+    private double getNormalisedDisplacementThreshold(int maxVal){
         return this.displacementThreshold / (maxVal * 1.0);
     }
 

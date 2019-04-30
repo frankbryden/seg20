@@ -2,9 +2,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class RunwayDesignator {
-    enum Direction {L, R, C, NONE};
+    enum Direction {L, R, C, NONE}
     public int angle;
-    public Direction direction;
+    private Direction direction;
 
     public String getDirection(){
 

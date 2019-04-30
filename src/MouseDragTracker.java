@@ -1,9 +1,9 @@
 import java.awt.*;
 
 public class MouseDragTracker {
-    private Point lastMousePos;
-    private Point delta;
-    private static MouseDragTracker ourInstance = new MouseDragTracker();
+    private final Point lastMousePos;
+    private final Point delta;
+    private static final MouseDragTracker ourInstance = new MouseDragTracker();
 
     public static MouseDragTracker getInstance() {
         return ourInstance;

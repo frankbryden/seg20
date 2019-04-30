@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 
-public class ObstacleDetailsPopup {
+class ObstacleDetailsPopup {
 
-    private GUI gui;
+    private final GUI gui;
 
     public ObstacleDetailsPopup(GUI gui){
         this.gui = gui;
@@ -115,117 +115,106 @@ public class ObstacleDetailsPopup {
         System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 
-        returnButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
+        returnButton.setOnMouseClicked(event13 -> detailsPopUp.hide());
+
+
+        saveButton.setOnMouseClicked(event12 -> {
+            // Checking for empty name and height fields
+            if (nameEditTF.getText().isEmpty()) {
+                nameRequiredLbl.setText("                                       Enter obstacle name");
+                if (!box.getChildren().contains(emptyNameBox)) {
+                    box.getChildren().add(1, emptyNameBox);
+                }
+                nameEditTF.setPromptText("");
+            } else {
+                if (box.getChildren().contains(emptyNameBox)) {
+                    box.getChildren().remove(emptyNameBox);
+                }
+                nameRequiredLbl.setText("");
+            }
+            if (gui.getHeightEditTF().getText().isEmpty()) {
+                heightRequiredLbl.setText("                                       Enter obstacle height");
+                if (box.getChildren().contains(emptyNameBox)) {
+                    if (!box.getChildren().contains(emptyHeightBox)) {
+                        box.getChildren().add(3, emptyHeightBox);
+                    }
+                } else {
+                    if (!box.getChildren().contains(emptyHeightBox)) {
+                        box.getChildren().add(2, emptyHeightBox);
+                    }
+                }
+                gui.getHeightEditTF().setPromptText("");
+            } else {
+                if (box.getChildren().contains(emptyHeightBox)) {
+                    box.getChildren().remove(emptyHeightBox);
+                }
+                heightRequiredLbl.setText("");
+            }
+            if (gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getHeightEditTF().getText()))) && !nameEditTF.getText().isEmpty()) {
+                System.out.println("Add -edited- obstacle");
+                Map<String, Obstacle> obstacleList;
+                if (sourceList == GUI.ObstacleList.PREDEFINED) {
+                    obstacleList = gui.getPredefinedObstaclesSorted();
+                } else if (sourceList == GUI.ObstacleList.USER_DEFINED) {
+                    obstacleList = gui.getUserDefinedObstacles();
+                } else {
+                    System.err.println("We have a problem - unknown source list " + sourceList);
+                    return;
+                }
+                double currentHeight = obstacle.getHeight();
+                double newHeight = Double.parseDouble(gui.getHeightEditTF().getText());
+                obstacleList.remove(obstacle.getName());
+                gui.getAllObstaclesSorted().remove(obstacle.getName());
+                obstacle.setName(nameEditTF.getText());
+                obstacle.setHeight(Double.valueOf(gui.getHeightEditTF().getText()));
+
+                obstacleList.put(obstacle.getName(), obstacle);
+                gui.getAllObstaclesSorted().put(obstacle.getName(), obstacle);
+
+                nameContentLabel.setText(obstacle.getName());
+                heightContentLabel.setText(Double.toString(obstacle.getHeight()));
+
+                gui.notifyUpdate("Obstacle edited");
+                gui.addNotification("Edited details of " + obstacle.getName() + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
+
+                gui.updateObstaclesList();
                 detailsPopUp.hide();
+
+            } else if (!gui.getHeightEditTF().getText().isEmpty() && !gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getHeightEditTF().getText())))) {
+                gui.getHeightEditTF().clear();
+                gui.getHeightEditTF().setPromptText("Invalid obstacle height!");
             }
         });
 
+        editButton.setOnMouseClicked(event1 -> {
+            gui.setEditingObstacle(!gui.getEditingObstacle());
+            if (gui.getEditingObstacle() == true) {
+                //Edit mode
 
-        saveButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                // Checking for empty name and height fields
-                if (nameEditTF.getText().isEmpty()) {
-                    nameRequiredLbl.setText("                                       Enter obstacle name");
-                    if (!box.getChildren().contains(emptyNameBox)) {
-                        box.getChildren().add(1, emptyNameBox);
-                    }
-                    nameEditTF.setPromptText("");
-                } else {
-                    if (box.getChildren().contains(emptyNameBox)) {
-                        box.getChildren().remove(emptyNameBox);
-                    }
-                    nameRequiredLbl.setText("");
-                }
-                if (gui.getHeightEditTF().getText().isEmpty()) {
-                    heightRequiredLbl.setText("                                       Enter obstacle height");
-                    if (box.getChildren().contains(emptyNameBox)) {
-                        if (!box.getChildren().contains(emptyHeightBox)) {
-                            box.getChildren().add(3, emptyHeightBox);
-                        }
-                    } else {
-                        if (!box.getChildren().contains(emptyHeightBox)) {
-                            box.getChildren().add(2, emptyHeightBox);
-                        }
-                    }
-                    gui.getHeightEditTF().setPromptText("");
-                } else {
-                    if (box.getChildren().contains(emptyHeightBox)) {
-                        box.getChildren().remove(emptyHeightBox);
-                    }
-                    heightRequiredLbl.setText("");
-                }
-                if (gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getHeightEditTF().getText()))) && !nameEditTF.getText().isEmpty()) {
-                    System.out.println("Add -edited- obstacle");
-                    Map<String, Obstacle> obstacleList;
-                    if (sourceList == GUI.ObstacleList.PREDEFINED) {
-                        obstacleList = gui.getPredefinedObstaclesSorted();
-                    } else if (sourceList == GUI.ObstacleList.USER_DEFINED) {
-                        obstacleList = gui.getUserDefinedObstacles();
-                    } else {
-                        System.err.println("We have a problem - unknown source list " + sourceList);
-                        return;
-                    }
-                    double currentHeight = obstacle.getHeight();
-                    double newHeight = Double.parseDouble(gui.getHeightEditTF().getText());
-                    obstacleList.remove(obstacle.getName());
-                    gui.getAllObstaclesSorted().remove(obstacle.getName());
-                    obstacle.setName(nameEditTF.getText());
-                    obstacle.setHeight(Double.valueOf(gui.getHeightEditTF().getText()));
+                nameLabel.setText("Name");
+                heightLabel.setText("Height");
 
-                    obstacleList.put(obstacle.getName(), obstacle);
-                    gui.getAllObstaclesSorted().put(obstacle.getName(), obstacle);
+                nameHBox.setSpacing(55);
+                heightHBox.setSpacing(46);
+                subBox.setSpacing(138);
 
-                    nameContentLabel.setText(obstacle.getName());
-                    heightContentLabel.setText(Double.toString(obstacle.getHeight()));
+                nameHBox.getChildren().remove(nameContentLabel);
+                nameHBox.getChildren().add(nameEditTF);
 
-                    gui.notifyUpdate("Obstacle edited");
-                    gui.addNotification("Edited details of " + obstacle.getName() + ". Modified height from " + currentHeight + "m to " + newHeight + "m.");
+                heightHBox.getChildren().remove(heightContentLabel);
+                heightHBox.getChildren().add(gui.getHeightEditTF());
 
-                    gui.updateObstaclesList();
-                    detailsPopUp.hide();
+                nameEditTF.setText(obstacle.getName());
+                gui.getHeightEditTF().setText(Double.toString(obstacle.getHeight()));
 
-                } else if (!gui.getHeightEditTF().getText().isEmpty() && !gui.validateDoubleForm(new ArrayList<>(Arrays.asList(gui.getHeightEditTF().getText())))) {
-                    gui.getHeightEditTF().clear();
-                    gui.getHeightEditTF().setPromptText("Invalid obstacle height!");
-                }
-            }
-        });
+                detailsLabel.setText("Edit obstacle details");
 
-        editButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                gui.setEditingObstacle(!gui.getEditingObstacle());
-                if (gui.getEditingObstacle() == true) {
-                    //Edit mode
+                subBox.getChildren().remove(returnButton);
+                subBox.getChildren().remove(editButton);
+                subBox.getChildren().add(saveButton);
+                subBox.getChildren().add(returnButton);
 
-                    nameLabel.setText("Name");
-                    heightLabel.setText("Height");
-
-                    nameHBox.setSpacing(55);
-                    heightHBox.setSpacing(46);
-                    subBox.setSpacing(138);
-
-                    nameHBox.getChildren().remove(nameContentLabel);
-                    nameHBox.getChildren().add(nameEditTF);
-
-                    heightHBox.getChildren().remove(heightContentLabel);
-                    heightHBox.getChildren().add(gui.getHeightEditTF());
-
-                    nameEditTF.setText(obstacle.getName());
-                    gui.getHeightEditTF().setText(Double.toString(obstacle.getHeight()));
-
-                    detailsLabel.setText("Edit obstacle details");
-
-                    subBox.getChildren().remove(returnButton);
-                    subBox.getChildren().remove(editButton);
-                    subBox.getChildren().add(saveButton);
-                    subBox.getChildren().add(returnButton);
-
-                    returnButton.setText("Cancel");
-                }
+                returnButton.setText("Cancel");
             }
         });
 

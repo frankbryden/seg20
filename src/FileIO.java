@@ -15,15 +15,15 @@ import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.util.*;
 
-public class FileIO {
+class FileIO {
 
-    private DocumentBuilderFactory documentBuilderFactory;
+    private final DocumentBuilderFactory documentBuilderFactory;
     private DocumentBuilder documentBuilder = null;
     private Document document;
     private Element root;
 
     //This file chooser will be used by the GUI and ExportPopup classes. Basically anyone that needs a file chooser dialog.
-    public FileChooser fileChooser;
+    public final FileChooser fileChooser;
 
     public FileIO(){
         fileChooser = new FileChooser();
@@ -107,7 +107,7 @@ public class FileIO {
         return new Obstacle(name, height);
     }
 
-    public RunwayConfig parseRunwayConfig(Node runwayConfigNode){
+    private RunwayConfig parseRunwayConfig(Node runwayConfigNode){
         int tora, toda, asda, lda, displacementThreshold;
         tora = toda = asda = lda = displacementThreshold = -1;
         RunwayDesignator runwayDesignator = null;
@@ -182,7 +182,7 @@ public class FileIO {
         write(Arrays.asList(obstacle), filePath);
     }
 
-    public void write(Element root, String filePath){
+    private void write(Element root, String filePath){
         try {
             Transformer tr = TransformerFactory.newInstance().newTransformer();
             tr.setOutputProperty(OutputKeys.METHOD, "xml");
@@ -263,9 +263,6 @@ public class FileIO {
         return airportDB;
     }
 
-    public void write(String filePath){
-
-    }
 
     private BufferedReader readRecFile(String filePath){
         InputStreamReader isr;
@@ -274,7 +271,7 @@ public class FileIO {
         System.out.println("Reading file " + filePath);
         if (!modeJAR){
             File file = new File(filePath);
-            FileInputStream fis = null;
+            FileInputStream fis;
             try {
                 fis = new FileInputStream(file);
             } catch (FileNotFoundException e) {
@@ -305,7 +302,7 @@ public class FileIO {
     }
 
 
-    public Element createRunwayConfigData(RunwayConfig runwayConfig){
+    private Element createRunwayConfigData(RunwayConfig runwayConfig){
         Element parent = document.createElement("RunwayConfig");
         //Add designator
         Element designator = document.createElement("designator");

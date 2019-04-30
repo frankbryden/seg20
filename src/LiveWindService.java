@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LiveWindService extends Service<Map<String, Double>> {
+class LiveWindService extends Service<Map<String, Double>> {
     private double latitude, longitude;
 
     public void setLatitude(double latitude) {
@@ -25,7 +25,7 @@ public class LiveWindService extends Service<Map<String, Double>> {
     protected Task<Map<String, Double>> createTask() {
         return new Task<Map<String, Double>>() {
             @Override
-            protected Map<String, Double> call() throws Exception {
+            protected Map<String, Double> call() {
                 System.out.println("we're just gonna get some data here");
                 String apiKey = "473ade203bfbbf2d4346749e61a37a95";
                 String urlString = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude + "&lon=" + longitude + "&appid=" + apiKey;

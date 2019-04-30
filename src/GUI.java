@@ -2,10 +2,8 @@ import javafx.animation.Animation;
 import javafx.animation.RotateTransition;
 import javafx.animation.TranslateTransition;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
+import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Bounds;
@@ -17,21 +15,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.control.Button;
+import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
-import javafx.scene.text.TextAlignment;
-import javafx.stage.Modality;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -39,22 +31,22 @@ import javafx.util.Pair;
 
 import java.awt.*;
 import java.io.File;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class GUI extends Application {
     @FXML
     private Button loadAirportBtn, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
-            editObstacleBtn, saveObstacleBtn, saveObstaclesBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn;
+            editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn;
     @FXML
     private Pane calculationsPane;
     @FXML
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF,
             heightEditTF;
     @FXML
-    private ListView userDefinedObstaclesLV, predefinedObstaclesLV;
+    private ListView<Obstacle> userDefinedObstaclesLV, predefinedObstaclesLV;
     @FXML
-    private ComboBox thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
+    private ComboBox<String> thresholdSelect, addRunwayAirportSelect, airportSelect, runwaySelect;
     private FileIO fileIO;
     @FXML
     private Label runwayDesignatorLbl, toraLbl, todaLbl, asdaLbl, ldaLbl, centrelineDistanceLbl, runwayDesignatorCntLbl, runwayDesignatorLbl2, toraCntLbl, toraCntLbl2, todaCntLbl, todaCntLbl2, asdaCntLbl, asdaCntLbl2, ldaCntLbl, ldaCntLbl2,
@@ -68,7 +60,6 @@ public class GUI extends Application {
     private VBox calculationsRootBox, viewCalculationResultsVBox;
     private HBox centerlineHBox, thresholdHBox, obstacleSelectHBox, thresholdSelectHBox, heightHBox;
     private Map<String, AirportConfig> airportConfigs;
-    private Popup addObstaclePopup;
     private Map<String, Obstacle> userDefinedObstacles, predefinedObstaclesSorted, allObstaclesSorted;
     private Stage addAirportPopup, addRunwayPopup;
     private ExportPopup exportPopup;
@@ -84,7 +75,7 @@ public class GUI extends Application {
     private RunwayRenderer runwayRendererSideView;
     @FXML
     private BorderPane canvasBorderPane, tabsBox;
-    private ComboBox obstacleSelect;
+    private ComboBox<String> obstacleSelect;
     private Boolean editingObstacle;
     private Stage primaryStage;
     private Printer printer;
@@ -105,7 +96,7 @@ public class GUI extends Application {
     private DeleteObstaclePopup delObstaclePopup;
     private ObstacleDetailsPopup obstacleDetPopup;
     private ObstacleOverwritePopup overwriteObstaclePopup;
-    private AddObstaclePopup addingObstaclePopup;
+    private AddObstaclePopup addObstaclePopup;
     private AddAirportPopup addingAirportPopup;
     private AddRunwayPopup addingRunwayPopup;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
@@ -140,7 +131,7 @@ public class GUI extends Application {
         airportCode = new TextField();
         heightEditTF = new TextField();
 
-        addRunwayAirportSelect = new ComboBox();
+        addRunwayAirportSelect = new ComboBox<>();
 
         notifList = new ArrayList<>();
         notifCount.setVisible(false);
@@ -215,7 +206,6 @@ public class GUI extends Application {
             double percentage = (currentVal - RunwayRenderer.MIN_ZOOM) / (RunwayRenderer.MAX_ZOOM - RunwayRenderer.MIN_ZOOM);
             int roundedPercentage = (int) (percentage * 100);
             int leftPercentage = roundedPercentage;
-            int rightPercentage = 100 - leftPercentage;
             String style = String.format("-fx-background-color: linear-gradient(to right, #1b88bb %d%%, #ffffff %d%%);", leftPercentage, leftPercentage);
             trackPane.setStyle(style);
         });
@@ -224,40 +214,37 @@ public class GUI extends Application {
 
 
         runwaySelect.setId("runwayComboBox");
-        runwaySelect.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-            @Override
-            public void changed(ObservableValue observable, Object oldValue, Object newValue) {
-                System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
-                AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
-                for (String runwayPairName : ac.getRunways().keySet()) {
-                    if (runwayPairName.equals(newValue)) {
-                        RunwayPair selectedRunwayPair = ac.getRunways().get(runwayPairName);
-                        updateRunwayInfoLabels(selectedRunwayPair);
-                        updateThresholdList(selectedRunwayPair);
-                        currentlySelectedRunway = selectedRunwayPair;
-                        runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
-                        runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
-                        setRunwayRendererParams();
-                        runwayRenderer.render();
-                        
-                        runwayRendererSideView.renderSideview();
+        runwaySelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Currently selected airport : " + airportSelect.getSelectionModel().selectedItemProperty().getValue());
+            AirportConfig ac = airportConfigs.get(airportSelect.getSelectionModel().selectedItemProperty().getValue());
+            for (String runwayPairName : ac.getRunways().keySet()) {
+                if (runwayPairName.equals(newValue)) {
+                    RunwayPair selectedRunwayPair = ac.getRunways().get(runwayPairName);
+                    updateRunwayInfoLabels(selectedRunwayPair);
+                    updateThresholdList(selectedRunwayPair);
+                    currentlySelectedRunway = selectedRunwayPair;
+                    runwayRenderer = new RunwayRenderer(currentlySelectedRunway, canvas.getGraphicsContext2D());
+                    runwayRendererSideView = new RunwayRenderer(currentlySelectedRunway, canvasSideView.getGraphicsContext2D(), true);
+                    setRunwayRendererParams();
+                    runwayRenderer.render();
 
-                        rootTabPane.setVisible(true);
-                        tabsBox.setStyle("-fx-background-color: #1b88bb");
+                    runwayRendererSideView.renderSideview();
+
+                    rootTabPane.setVisible(true);
+                    tabsBox.setStyle("-fx-background-color: #1b88bb");
 
 
-                        LiveWindService liveWindService = new LiveWindService();
-                        liveWindService.setLatitude(ac.getLatitude());
-                        liveWindService.setLongitude(ac.getLongitude());
-                        liveWindService.setOnSucceeded(t -> {
-                            Map<String, Double> result = (HashMap<String, Double>) t.getSource().getValue();
-                            System.out.println("We have a result!");
-                            windLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
-                            runwayRenderer.setWindAngle(result.get("direction"));
-                        });
-                        liveWindService.start();
-                        break;
-                    }
+                    LiveWindService liveWindService = new LiveWindService();
+                    liveWindService.setLatitude(ac.getLatitude());
+                    liveWindService.setLongitude(ac.getLongitude());
+                    liveWindService.setOnSucceeded(t -> {
+                        Map<String, Double> result = (Map<String, Double>) t.getSource().getValue();
+                        System.out.println("We have a result!");
+                        windLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
+                        runwayRenderer.setWindAngle(result.get("direction"));
+                    });
+                    liveWindService.start();
+                    break;
                 }
             }
         });
@@ -265,13 +252,11 @@ public class GUI extends Application {
 
         airportSelect.setId("airportComboBox");
         airportSelect.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Here");
-            System.out.println((String) newValue);
             if (newValue == null) {
                 System.out.println("Selection cleared");
                 return;
             }
-            updateRunwaySelect((String) newValue);
+            updateRunwaySelect(newValue);
         });
 
 
@@ -292,14 +277,10 @@ public class GUI extends Application {
         popAddObstacle.setFitWidth(iconSize);
         popAddObstacleBtn.setGraphic(popAddObstacle);
 
-        popAddObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
-                addObstaclePopup.show(primaryStage);
-                addObstaclePopup.setAnchorX(bounds.getMaxX() - addObstaclePopup.getWidth() / 2);
-                addObstaclePopup.setAnchorY(bounds.getMinY() - addObstaclePopup.getHeight());
-            }
+        popAddObstacleBtn.setOnMouseClicked(event -> {
+            Bounds bounds = popAddObstacleBtn.localToScreen(popAddObstacleBtn.getBoundsInLocal());
+            addObstaclePopup.show(primaryStage);
+            addObstaclePopup.center(bounds.getMaxX(), bounds.getMinY());
         });
 
         ImageView editObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/load.png")));
@@ -307,22 +288,19 @@ public class GUI extends Application {
         editObstacleImgView.setFitHeight(iconSize);
         editObstacleBtn.setGraphic(editObstacleImgView);
 
-        editObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                File file = fileIO.fileChooser.showOpenDialog(primaryStage);
-                if (file == null) {
-                    return;
-                }
-                Collection<Obstacle> importedObstacles = fileIO.readObstacles(file.getPath());
-                importedObstacles.forEach(obstacle -> {
-                    addObstacle(obstacle);
-                });
-                updateObstaclesList();
-
-                notifyUpdate("Obstacles imported");
-                addNotification("Imported obstacles into the list of user-defined obstacles.");
+        editObstacleBtn.setOnMouseClicked(event -> {
+            File file = fileIO.fileChooser.showOpenDialog(primaryStage);
+            if (file == null) {
+                return;
             }
+            Collection<Obstacle> importedObstacles = fileIO.readObstacles(file.getPath());
+            importedObstacles.forEach(obstacle -> {
+                addObstacle(obstacle);
+            });
+            updateObstaclesList();
+
+            notifyUpdate("Obstacles imported");
+            addNotification("Imported obstacles into the list of user-defined obstacles.");
         });
 
         ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
@@ -336,29 +314,20 @@ public class GUI extends Application {
         saveObstacleBtn.setGraphic(saveObstacleImgView);
 
         //TODO only save if there are obstacles to save - also show error message or notif or something
-        saveObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
 
+        saveObstacleBtn.setOnMouseClicked(event -> {
+            System.out.println("Save obstacles");
+            File file = fileIO.fileChooser.showSaveDialog(primaryStage);
+            if (file != null) {
+                fileIO.write(userDefinedObstacles.values(), file.getPath());
+                notifyUpdate("Obstacles saved");
+                addNotification("Saved list of user-defined obstacles.");
             }
-        });
 
-        saveObstacleBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Save obstacles");
-                File file = fileIO.fileChooser.showSaveDialog(primaryStage);
-                if (file != null) {
-                    fileIO.write(userDefinedObstacles.values(), file.getPath());
-                    notifyUpdate("Obstacles saved");
-                    addNotification("Saved list of user-defined obstacles.");
-                }
+            /*userDefinedObstaclesLV.getItems().forEach((name) -> {
+                System.out.println(name);
+            });*/
 
-                /*userDefinedObstaclesLV.getItems().forEach((name) -> {
-                    System.out.println(name);
-                });*/
-
-            }
         });
 
         // Button in Settings tab for enabling/disabling tooltips
@@ -422,46 +391,37 @@ public class GUI extends Application {
         });
         canvas.heightProperty().bind(canvasBorderPane.heightProperty());*/
 
-        canvas.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
-            public void handle(ScrollEvent event) {
-                if (runwayRenderer == null){
-                    return;
-                }
-                runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
-                if (event.getDeltaY() > 0) {
-                    runwayRenderer.incZoom();
-                } else if (event.getDeltaY() < 0) {
-                    runwayRenderer.decZoom();
-                }
-                zoomSlider.setValue(runwayRenderer.getZoom());
-                //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
+        canvas.setOnScroll(event -> {
+            if (runwayRenderer == null){
+                return;
             }
+            runwayRenderer.setMouseLocation((int) event.getX(), (int) event.getY());
+            if (event.getDeltaY() > 0) {
+                runwayRenderer.incZoom();
+            } else if (event.getDeltaY() < 0) {
+                runwayRenderer.decZoom();
+            }
+            zoomSlider.setValue(runwayRenderer.getZoom());
+            //runwayRenderer.updateZoom((int) (event.getDeltaY()/2));
         });
 
-        canvas.setOnMousePressed(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
-                /*double currentAngle = runwayRenderer.getWindAngle();
-                System.out.println("Current angle = " + currentAngle);
-                currentAngle += Math.PI/4;
-                System.out.println("After addition = " + currentAngle);
-                runwayRenderer.setWindAngle(currentAngle);*/
-            }
+        canvas.setOnMousePressed(event -> {
+            MouseDragTracker.getInstance().startDrag((int) event.getX(), (int) event.getY());
+            /*double currentAngle = runwayRenderer.getWindAngle();
+            System.out.println("Current angle = " + currentAngle);
+            currentAngle += Math.PI/4;
+            System.out.println("After addition = " + currentAngle);
+            runwayRenderer.setWindAngle(currentAngle);*/
         });
 
 
-        canvas.setOnMouseDragged(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                if (runwayRenderer == null){
-                    return;
-                }
-                MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
-                Point delta = MouseDragTracker.getInstance().getDelta();
-                runwayRenderer.translate(delta.x, delta.y);
+        canvas.setOnMouseDragged(event -> {
+            if (runwayRenderer == null){
+                return;
             }
+            MouseDragTracker.getInstance().dragging((int) event.getX(), (int) event.getY());
+            Point delta = MouseDragTracker.getInstance().getDelta();
+            runwayRenderer.translate(delta.x, delta.y);
         });
 
         predefinedObstaclesLV.getStyleClass().add("obstacleList");
@@ -504,7 +464,7 @@ public class GUI extends Application {
                 System.out.println("Obstacle in user-defined list was selected, has now been deselected");
             }
 
-            obstacleSelect.setValue(((Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem()).getName());
+            obstacleSelect.setValue(predefinedObstaclesLV.getSelectionModel().getSelectedItem().getName());
 
         });
 
@@ -548,43 +508,31 @@ public class GUI extends Application {
         landTransition.setFromY(-900);
         landTransition.setToY(0);
 
-        takeOffTransition.statusProperty().addListener(new ChangeListener<Animation.Status>() {
-            @Override
-            public void changed(ObservableValue<? extends Animation.Status> observable, Animation.Status oldValue, Animation.Status newValue) {
-                System.out.println("Finished running take off transition");
-                if (newValue == Animation.Status.STOPPED) {
-                    tabPane.getSelectionModel().select(1);
-                }
+        takeOffTransition.statusProperty().addListener((observable, oldValue, newValue) -> {
+            System.out.println("Finished running take off transition");
+            if (newValue == Animation.Status.STOPPED) {
+                tabPane.getSelectionModel().select(1);
             }
         });
 
-        tabPane.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                if ((int) newValue == 0) {
-                    landTransition.play();
-                }
+        tabPane.getSelectionModel().selectedIndexProperty().addListener((observable, oldValue, newValue) -> {
+            if ((int) newValue == 0) {
+                landTransition.play();
             }
         });
         //planePane.setBackground(new Background(new BackgroundFill(Color.web("#ff1290"), CornerRadii.EMPTY, Insets.EMPTY)));
 
-        primaryStage.widthProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double newVal = (double) newValue;
-                planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
-                System.out.println(planeImg.getX());
-            }
+        primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> {
+            double newVal = (double) newValue;
+            planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
+            System.out.println(planeImg.getX());
         });
 
-        primaryStage.heightProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                double newVal = (double) newValue;
-                System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
-                planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
-                System.out.println(planeImg.getY());
-            }
+        primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double newVal = (double) newValue;
+            System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
+            planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
+            System.out.println(planeImg.getY());
         });
 
         //Listeners for the print and export button on the top right side of the GUI
@@ -618,25 +566,22 @@ public class GUI extends Application {
             notifWindow.show();
         });
 
-        loadAirportBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                System.out.println("Click !");
-                File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
-                if (xmlFileToLoad == null) {
-                    System.err.println("User did not select a file");
-                    return;
-                }
-                //setTabMinHeight(double v)
-                takeOffTransition.play();
-                System.out.println("Loading " + xmlFileToLoad.getName());
-                AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
-                airportConfigs.put(ac.getName(), ac);
-                updateAirportSelects();
-
-                notifyUpdate("Airport config loaded");
-                //tabPane.getSelectionModel().select(1);
+        loadAirportBtn.setOnMouseClicked(event -> {
+            System.out.println("Click !");
+            File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
+            if (xmlFileToLoad == null) {
+                System.err.println("User did not select a file");
+                return;
             }
+            //setTabMinHeight(double v)
+            takeOffTransition.play();
+            System.out.println("Loading " + xmlFileToLoad.getName());
+            AirportConfig ac = fileIO.read(xmlFileToLoad.getPath());
+            airportConfigs.put(ac.getName(), ac);
+            updateAirportSelects();
+
+            notifyUpdate("Airport config loaded");
+            //tabPane.getSelectionModel().select(1);
         });
 
         startBtn.setOnMouseClicked(event -> {
@@ -694,7 +639,7 @@ public class GUI extends Application {
         runwaySelect.getSelectionModel().select(runwaySelect.getItems().indexOf(selectedRunwayPair));
     }
 
-    public void updateRunwaySelect(String airportName) {
+    private void updateRunwaySelect(String airportName) {
         runwaySelect.getItems().clear();
         runwaySelect.getItems().addAll(airportConfigs.get(airportName).getRunways().keySet());
     }
@@ -733,7 +678,7 @@ public class GUI extends Application {
         ldaCntLbl2.setText(" " + runwayPair.getR2().getLDA());
     }
 
-    public void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated) {
+    private void updateCalculationResultsView(RunwayConfig original, RunwayConfig recalculated) {
         originalToda.setText(Integer.toString(original.getTODA()));
         originalTora.setText(Integer.toString(original.getTORA()));
         originalAsda.setText(Integer.toString(original.getASDA()));
@@ -773,7 +718,7 @@ public class GUI extends Application {
         }
 
         sourceLV.getItems().remove(obstacle);
-        obstacleSelect.getItems().remove(obstacle);
+        obstacleSelect.getItems().remove(obstacle.getName());
 
         sourceList.remove(obstacle.getName());
         allObstaclesSorted.remove(obstacle.getName());
@@ -957,28 +902,27 @@ public class GUI extends Application {
         editObstacleHeightTooltip.setText("Enter the obstacle's height here in metres");
     }
 
-    public void createCalculationsSelectionView() {
+    private void createCalculationsSelectionView() {
         final int HBOX_SPACING = 5;
         Insets calculationsInsets = new Insets(5, 20, 0, 0);
         calculationsPane.getStylesheets().add("styles/global.css");
         calculationsPane.getStylesheets().add("styles/calculations.css");
 
-        obstacleSelect = new ComboBox();
+        obstacleSelect = new ComboBox<>();
         obstacleSelect.setVisibleRowCount(10);
         obstacleSelect.setId("obstacleComboBox");
 
-        obstacleSelect.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+        obstacleSelect.getSelectionModel().selectedItemProperty().addListener((options, oldValue, selectedObstacleName) -> {
                     if (obstacleSelect.getSelectionModel().isEmpty()) {
                         selectedObstacleHeightTF.clear();
                     } else {
-                        String selectedObstacleName = (String) newValue;
                         selectedObstacleHeightTF.setText(allObstaclesSorted.get(selectedObstacleName).getHeight() + "m");
                     }
 
                 }
         );
 
-        thresholdSelect = new ComboBox();
+        thresholdSelect = new ComboBox<>();
         thresholdSelect.setVisibleRowCount(5);
         thresholdSelect.setId("thresholdComboBox");
         centrelineDistanceLbl = new Label("Distance from runway centreline");
@@ -1122,12 +1066,11 @@ public class GUI extends Application {
                 centrelineTF.setPromptText("Invalid centreline distance!");
             } else {
                 // If everything is filled in and valid, start calculations
-                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem().toString();
+                String obstacleName = obstacleSelect.getSelectionModel().getSelectedItem();
                 Obstacle currentlySelectedObstacle = allObstaclesSorted.get(obstacleName);
-                Obstacle selectedObstacle = (Obstacle) predefinedObstaclesLV.getSelectionModel().getSelectedItem();
 
                 //HERE
-                String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem().toString();
+                String thresholdName = thresholdSelect.getSelectionModel().getSelectedItem();
                 updateThresholdLbl(thresholdName);
 
                 RunwayConfig runwayConfig, otherConfig;
@@ -1150,7 +1093,7 @@ public class GUI extends Application {
                 int distanceFromCenterline = Integer.valueOf(centrelineTF.getText());
 
                 // We take the greater TORA to be the length of the runway
-                int runwayLength = 0;
+                int runwayLength;
                 if (runwayConfig.getTORA() > otherConfig.getTORA()) {
                     runwayLength = runwayConfig.getTORA();
                 } else {
@@ -1161,10 +1104,10 @@ public class GUI extends Application {
 
 
                 // I compare the distances from each threshold. Whichever threshold the obstacle is closer to, that logical runway is used for taking off away
-                CalculationResults results = null;
-                CalculationResults results2 = null;
-                RunwayConfig recalculatedParams = null;
-                RunwayConfig recalculatedParams2 = null;
+                CalculationResults results;
+                CalculationResults results2;
+                RunwayConfig recalculatedParams;
+                RunwayConfig recalculatedParams2;
                 if (distanceFromThreshold < distanceFromOtherThreshold) {
                     // Closer to runwayConfig so runwayConfig is used for taking off away
                     results = calculations.recalculateParams(currentlySelectedObstacle, distanceFromThreshold, distanceFromCenterline, "AWAY", runwayLength);
@@ -1228,7 +1171,7 @@ public class GUI extends Application {
         });
     }
 
-    public void createCalculationsResultView() {
+    private void createCalculationsResultView() {
         breakdownCalcLbl = new Label("Breakdown of the calculations: ");
         calculationDetails = new TextArea();
         calculationDetails.setEditable(false);
@@ -1329,68 +1272,65 @@ public class GUI extends Application {
         calculationsBackBtn.setOnMouseClicked(event -> resetCalculationsTab());
     }
 
-    public void createPopups() {
+    private void createPopups() {
         delObstaclePopup = new DeleteObstaclePopup(this);
         obstacleDetPopup = new ObstacleDetailsPopup(this);
         overwriteObstaclePopup = new ObstacleOverwritePopup(this);
-        addingObstaclePopup = new AddObstaclePopup(this);
+        addObstaclePopup = new AddObstaclePopup(this);
         addingAirportPopup = new AddAirportPopup(this);
         addingRunwayPopup = new AddRunwayPopup(this);
         addAirportPopup = addingAirportPopup.createAddAirportPopup();
         addRunwayPopup = addingRunwayPopup.createAddRunwayPopup();
-        addObstaclePopup = addingObstaclePopup.createAddObstaclePopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, userDefinedObstacles, fileIO);
     }
 
-    public Boolean getEditingObstacle() {
+    Boolean getEditingObstacle() {
         return editingObstacle;
     }
 
-    public void setEditingObstacle(Boolean editingObstacle) {
+    void setEditingObstacle(Boolean editingObstacle) {
         this.editingObstacle = editingObstacle;
     }
 
-    public TextField getHeightEditTF() {
+    TextField getHeightEditTF() {
         return heightEditTF;
     }
 
-    public Map<String, Obstacle> getUserDefinedObstacles() {
+    Map<String, Obstacle> getUserDefinedObstacles() {
         return userDefinedObstacles;
     }
 
-    public Map<String, Obstacle> getPredefinedObstaclesSorted() {
+    Map<String, Obstacle> getPredefinedObstaclesSorted() {
         return predefinedObstaclesSorted;
     }
 
-    public Map<String, Obstacle> getAllObstaclesSorted() {
+    Map<String, Obstacle> getAllObstaclesSorted() {
         return allObstaclesSorted;
     }
 
-    public TextField getAddObstacleNameTF() {
+    TextField getAddObstacleNameTF() {
         return addObstacleNameTF;
     }
 
-    public TextField getAddObstacleHeightTF() {
+    TextField getAddObstacleHeightTF() {
         return addObstacleHeightTF;
     }
 
-    public Popup getAddObstaclePopup() {
+    AddObstaclePopup getAddObstaclePopup() {
         return addObstaclePopup;
     }
 
-    public ObstacleOverwritePopup getOverwriteObstaclePopup() { return overwriteObstaclePopup; }
+    ObstacleOverwritePopup getOverwriteObstaclePopup() { return overwriteObstaclePopup; }
 
-    public TextField getAirportCode() { return airportCode; }
+    TextField getAirportCode() { return airportCode; }
 
-    public AirportDatabase getAirportDB() { return airportDB; }
+    AirportDatabase getAirportDB() { return airportDB; }
 
-    public Map<String, AirportConfig> getAirportConfigs() {return airportConfigs; }
+    Map<String, AirportConfig> getAirportConfigs() {return airportConfigs; }
 
-    public Stage getAddAirportPopup() {return addAirportPopup; }
+    Stage getAddAirportPopup() {return addAirportPopup; }
 
-    public Stage getAddRunwayPopup() {return addRunwayPopup; }
-
-    public ComboBox getAddRunwayAirportSelect() {return addRunwayAirportSelect; }
+    Stage getAddRunwayPopup() {return addRunwayPopup; }
 
     private void updateThresholdLbl(String thresholdName) { thresholdLbl.setText(thresholdName + "\nthreshold"); }
 

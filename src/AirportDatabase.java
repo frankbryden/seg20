@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AirportDatabase {
-    private Map<AirportCode, String> codeToNameMap;
+    private final Map<AirportCode, String> codeToNameMap;
 
     public AirportDatabase(){
         this.codeToNameMap = new FileIO().readAirportDB("out.csv");
