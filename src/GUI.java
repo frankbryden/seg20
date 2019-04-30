@@ -631,6 +631,8 @@ public class GUI extends Application {
     }
 
     public void updateAirportSelects() {
+        String selectedAirportName = (String) airportSelect.getSelectionModel().getSelectedItem();
+        String selectedRunwayPair = (String) runwaySelect.getSelectionModel().getSelectedItem();
         runwaySelect.getItems().clear();
         airportSelect.getItems().clear();
         addRunwayAirportSelect.getItems().clear();
@@ -643,14 +645,14 @@ public class GUI extends Application {
             airportSelect.getItems().add(name);
             addRunwayAirportSelect.getItems().add(name);
         }
+
+        airportSelect.getSelectionModel().select(airportSelect.getItems().indexOf(selectedAirportName));
+        runwaySelect.getSelectionModel().select(runwaySelect.getItems().indexOf(selectedRunwayPair));
     }
 
     public void updateRunwaySelect(String airportName) {
         runwaySelect.getItems().clear();
-        AirportConfig ac = airportConfigs.get(airportName);
-        for (String runwayPairName : ac.getRunways().keySet()) {
-            runwaySelect.getItems().add(runwayPairName);
-        }
+        runwaySelect.getItems().addAll(airportConfigs.get(airportName).getRunways().keySet());
     }
 
     private void clearErrorLabels(){
