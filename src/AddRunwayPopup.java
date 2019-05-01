@@ -50,7 +50,7 @@ class AddRunwayPopup {
         clearwayLbl = new Label("Clearway");
         stopwayLbl = new Label("Stopway");
         displacementThresholdLbl = new Label("Displaced Threshold");
-        currentlySelectedAirportLbl = new Label("")
+        currentlySelectedAirportLbl = new Label("");
         addRunwayAirportSelect = new ComboBox<>();
 
         addRunwayAirportSelect.setId("airportComboBox");

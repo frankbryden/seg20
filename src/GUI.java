@@ -239,7 +239,6 @@ public class GUI extends Application {
                     liveWindService.setLongitude(ac.getLongitude());
                     liveWindService.setOnSucceeded(t -> {
                         Map<String, Double> result = (Map<String, Double>) t.getSource().getValue();
-                        System.out.println("We have a result!");
                         windLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
                         runwayRenderer.setWindAngle(result.get("direction"));
                     });
@@ -301,7 +300,7 @@ public class GUI extends Application {
             updateObstaclesList();
 
             notifyUpdate("Obstacles imported");
-            addNotification("Imported obstacles into the list of user-defined obstacles.");
+            addNotification("Imported obstacles into the list of obstacles.");
         });
 
         ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
@@ -314,15 +313,18 @@ public class GUI extends Application {
         saveObstacleImgView.setFitWidth(iconSize);
         saveObstacleBtn.setGraphic(saveObstacleImgView);
 
-        //TODO only save if there are obstacles to save - also show error message or notif or something
-
         saveObstacleBtn.setOnMouseClicked(event -> {
-            System.out.println("Save obstacles");
-            File file = fileIO.fileChooser.showSaveDialog(primaryStage);
-            if (file != null) {
-                fileIO.write(predefinedObstaclesSorted.values(), file.getPath());
-                notifyUpdate("Obstacles saved");
-                addNotification("Saved list of user-defined obstacles.");
+            if (!predefinedObstaclesSorted.keySet().isEmpty()) {
+                System.out.println("Save obstacles");
+                File file = fileIO.fileChooser.showSaveDialog(primaryStage);
+                if (file != null) {
+                    fileIO.write(predefinedObstaclesSorted.values(), file.getPath());
+                    notifyUpdate("Obstacles saved");
+                    addNotification("Saved list of obstacles.");
+                }
+            } else {
+                System.out.println("No obstacles to save");
+                SaveObstacleErrorPopup.displaySavePrompt();
             }
         });
 
@@ -474,7 +476,6 @@ public class GUI extends Application {
         landTransition.setToY(0);
 
         takeOffTransition.statusProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Finished running take off transition");
             if (newValue == Animation.Status.STOPPED) {
                 tabPane.getSelectionModel().select(1);
             }
@@ -490,14 +491,11 @@ public class GUI extends Application {
         primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> {
             double newVal = (double) newValue;
             planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
-            System.out.println(planeImg.getX());
         });
 
         primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> {
             double newVal = (double) newValue;
-            System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
             planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
-            System.out.println(planeImg.getY());
         });
         //Listeners for the print and export button on the top right side of the GUI
         Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
@@ -530,7 +528,6 @@ public class GUI extends Application {
         });
 
         loadAirportBtn.setOnMouseClicked(event -> {
-            System.out.println("Click !");
             File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
             if (xmlFileToLoad == null) {
                 System.err.println("User did not select a file");
@@ -670,7 +667,7 @@ public class GUI extends Application {
             case PREDEFINED:
                 sourceList = predefinedObstaclesSorted;
                 sourceLV = predefinedObstaclesLV;
-                addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
+                addNotification("Removed " + obstacle.getName() + " from the list of obstacles.");
                 break;
             default:
                 System.err.println("unknown origin '" + listType.toString() + "'");
@@ -1080,7 +1077,6 @@ public class GUI extends Application {
                 RunwayPair runwayPair = new RunwayPair(recalculatedParams, recalculatedParams2);
                 updateRunwayInfoLabels(runwayPair);
 
-                System.out.println("calculation details");
                 System.out.println(results.getCalculationDetails());
                 System.out.println(results2.getCalculationDetails());
 
@@ -1094,7 +1090,6 @@ public class GUI extends Application {
                 printer.setCalculations(resultsDetails);
                 printer.setCalculationsHeading(summary);
 
-                System.out.println(recalculatedParams.toString());
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 //updateCalculationResultsView(otherConfig, recalculatedParams2);
 
