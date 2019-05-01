@@ -115,6 +115,7 @@ class AddAirportPopup {
                 gui.getAddRunwayPopup().setCurrentlySelectedAirport(airportConfig);
                 gui.setAirportSelectSelectedAirport(airportConfig);
                 gui.getAddRunwayPopup().show();
+                gui.addNotification("Added " + airportName.getText() + " to the list of airports.");
             } else {
                 AirportErrorPopup.displayAirportErrorPopup();
             }

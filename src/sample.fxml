@@ -302,6 +302,7 @@
                                                       <Button fx:id="saveObstacleBtn" layoutX="548.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                       <Button fx:id="editObstacleBtn" layoutX="505.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                       <Button fx:id="popAddObstacleBtn" layoutX="461.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
+                                                      <Button layoutX="6.0" layoutY="21.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="189.0" styleClass="primaryButton" text="Add obstacle to runway" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>

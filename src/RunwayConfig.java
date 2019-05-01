@@ -111,10 +111,10 @@ public class RunwayConfig {
         }
 
         ArrayList<Pair<Line, String>> lines = new ArrayList<>();
-        lines.add(new Pair<>(toraLine, "TORA:" + TORA + "m"));
-        lines.add(new Pair<>(todaLine, "TODA:" + TODA + "m"));
-        lines.add(new Pair<>(asdaLine, "ASDA:" + ASDA + "m"));
-        lines.add(new Pair<>(ldaLine, "LDA:"   + LDA  + "m"));
+        lines.add(new Pair<>(toraLine, "TORA: " + TORA + "m"));
+        lines.add(new Pair<>(todaLine, "TODA: " + TODA + "m"));
+        lines.add(new Pair<>(asdaLine, "ASDA: " + ASDA + "m"));
+        lines.add(new Pair<>(ldaLine, "LDA: "   + LDA  + "m"));
         return lines;
     }
 
