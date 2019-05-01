@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Font;
 
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 class ObstacleCell extends ListCell<Obstacle> {
 
@@ -45,6 +46,7 @@ class ObstacleCell extends ListCell<Obstacle> {
 
     private void styleComponents(){
         contentLbl.setFont(new Font(9));
+        System.out.println(rootBox.getParent());
     }
 
     private void setupListeners(){
@@ -60,7 +62,11 @@ class ObstacleCell extends ListCell<Obstacle> {
 
         rootBox.setOnMouseEntered(event -> {
             //System.out.println("Hovering over " + obstacle.getName());
+            rootBox.getStyleClass().add(":selected");
             fireEvent(new CellHoverEvent(obstacle, CellHoverEvent.CELL_HOVER_EVENT_TYPE));
+        });
+        rootBox.setOnMouseExited(event -> {
+            rootBox.getStyleClass().remove(":selected");
         });
     }
 

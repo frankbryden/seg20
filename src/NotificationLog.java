@@ -5,6 +5,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 import java.util.ArrayList;
 
@@ -12,13 +13,18 @@ class NotificationLog {
 
     private final ArrayList<String> notifications;
     private final int WINDOW_WIDTH = 270;
+    private Stage notifWindow;
+    private double x, y;
 
-    public NotificationLog(ArrayList<String> notifications) {
+    public NotificationLog(ArrayList<String> notifications, double x, double y) {
         this.notifications = notifications;
+        this.x = x;
+        this.y = y;
+        this.createNotifLog();
     }
 
     public void createNotifLog() {
-        Stage notifWindow = new Stage();
+        notifWindow = new Stage(StageStyle.UNDECORATED);
         notifWindow.getIcons().add(new Image("/rec/plane.png"));
         notifWindow.setTitle("Notification Log");
 
@@ -47,6 +53,25 @@ class NotificationLog {
         Scene scene = new Scene(scrollPane, WINDOW_WIDTH, 350);
 
         notifWindow.setScene(scene);
+
+    }
+
+    public void show(){
         notifWindow.show();
+        notifWindow.setX(x - notifWindow.getWidth()/2);
+        notifWindow.setY(y);
+
+    }
+
+    public void hide(){
+        notifWindow.hide();
+    }
+
+    public void toggle(){
+        if (notifWindow.isShowing()){
+            hide();
+        } else {
+            show();
+        }
     }
 }

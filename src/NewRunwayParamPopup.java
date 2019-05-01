@@ -24,7 +24,7 @@ class NewRunwayParamPopup {
         runwayWindow.initModality(Modality.APPLICATION_MODAL);
         runwayWindow.setTitle("Add Runway");
 
-        Label summaryLbl = new Label("Summary of parameters for the new runway at " + gui.getAddRunwayPopup().getAddRunwayAirportSelect().getSelectionModel().getSelectedItem().toString() + " airport:");
+        Label summaryLbl = new Label("Summary of parameters for the new runway at " + gui.getAddRunwayPopup().getCurrentlySelectedAirport().getName() + " airport:");
         summaryLbl.getStyleClass().add("label");
         summaryLbl.getStylesheets().add("styles/global.css");
 
@@ -95,10 +95,22 @@ class NewRunwayParamPopup {
         windowLayout.setPadding(new Insets(10, 0, 0, 15));
         windowLayout.getChildren().addAll(summaryLbl, summaryTable, confirmDetailsLbl, buttonsBox);
 
+        confirmBtn.setOnMouseClicked(event -> {
+            gui.getAddRunwayPopup().getCurrentlySelectedAirport().addRunwayPair(runwayPair);
+            System.out.println("Added runway");
+            gui.updateAirportSelects();
+            runwayWindow.hide();
+        });
+
+        backBtn.setOnMouseClicked(event -> {
+            runwayWindow.hide();
+        });
+
         Scene scene = new Scene(windowLayout);
         runwayWindow.setScene(scene);
         runwayWindow.setWidth(700);
         runwayWindow.setHeight(430);
         runwayWindow.showAndWait();
     }
+
 }

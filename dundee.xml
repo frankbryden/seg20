@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><AirportConfiguration>
+    <name>Dundee Airport</name>
+    <RunwayPair>
+        <RunwayConfig>
+            <designator>10</designator>
+            <TORA>8787</TORA>
+            <TODA>8874</TODA>
+            <ASDA>8874</ASDA>
+            <LDA>8700</LDA>
+        </RunwayConfig>
+        <RunwayConfig>
+            <designator>28</designator>
+            <TORA>8787</TORA>
+            <TODA>8874</TODA>
+            <ASDA>8874</ASDA>
+            <LDA>8700</LDA>
+        </RunwayConfig>
+    </RunwayPair>
+</AirportConfiguration>

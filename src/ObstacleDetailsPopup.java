@@ -104,8 +104,8 @@ class ObstacleDetailsPopup {
         detailsPopUp.getContent().add(box);
 
         Bounds boundsInScene = gui.getObstacleListView().localToScene(gui.getObstacleListView().getBoundsInLocal());
-        detailsPopUp.setX(boundsInScene.getMinX() - 70);
-        detailsPopUp.setY(boundsInScene.getMinY() + boundsInScene.getHeight()/2);
+        detailsPopUp.setX(primaryStage.getX() + boundsInScene.getMinX());
+        detailsPopUp.setY(primaryStage.getY() + boundsInScene.getMinY() + boundsInScene.getHeight()/4);
         System.out.println("Size of window is " + primaryStage.getWidth() + " by " + primaryStage.getHeight());
         detailsPopUp.show(primaryStage);
 
