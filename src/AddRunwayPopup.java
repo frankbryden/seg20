@@ -138,7 +138,7 @@ class AddRunwayPopup {
 
         //On confirm button, add the airport to the list of known airports
         confirmButton.setOnMouseClicked(event -> {
-            if (gui.validateIntForm(new ArrayList<>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())))) {
+            if (gui.validateIntForm(new ArrayList<>(Arrays.asList(toraTF.getText(), clearwayTF.getText(), stopwayTF.getText(), displacementThresholdTF.getText(), toraTF2.getText(), clearwayTF2.getText(), stopwayTF2.getText(), displacementThresholdTF2.getText())), "")) {
                 System.out.println("valid form");
 
                 // Working out runway values for one side of the runway

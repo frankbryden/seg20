@@ -729,7 +729,7 @@ public class GUI extends Application {
         return true;
     }
 
-    // Used for obstacle heights, distance from centreline and distance from threshold
+    // Used for obstacle heights
     public Boolean validateDoubleForm(ArrayList<String> doubleVals) {
         for (String s : doubleVals) {
             try {
@@ -737,21 +737,32 @@ public class GUI extends Application {
             } catch (NumberFormatException e) {
                 return false;
             }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 150) {
                 return false;
             }
         }
         return true;
     }
 
-    // Used for TORA, Clearway, Stopway, Displaced threshold
-    public Boolean validateIntForm(ArrayList<String> intVals) {
+    // Used for TORA, Clearway, Stopway, Displaced threshold, distance from centreline and distance from threshold
+    public Boolean validateIntForm(ArrayList<String> intVals, String component) {
         for (String s : intVals) {
             try {
                 Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 return false;
             }
+            if (component.equals("Centreline")) {
+                if (Integer.parseInt(s) > 1000 || Integer.parseInt(s) < -1000) {
+                    return false;
+                }
+            }
+            if (component.equals("Threshold")) {
+                if (Integer.parseInt(s) < 0 || Integer.parseInt(s) > 4000) {
+                    return false;
+                }
+            }
+
         }
         return true;
     }
@@ -968,7 +979,7 @@ public class GUI extends Application {
                     centreLineRequiredLabel.setText("      Enter centreline distance");
                 } else {
                     centreLineRequiredLabel.setText("");
-                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+                    if (!validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                         centrelineTF.clear();
                         centrelineTF.setPromptText("Invalid centreline distance!");
                     } else {
@@ -981,7 +992,7 @@ public class GUI extends Application {
                     thresholdDistanceRequiredLabel.setText("      Enter threshold distance");
                 } else {
                     thresholdDistanceRequiredLabel.setText("");
-                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+                    if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold")) {
                         distanceFromThresholdTF.clear();
                         distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
                     } else {
@@ -1000,18 +1011,18 @@ public class GUI extends Application {
                 }
 
                 // If everything is filled in, check if the user input to distance from threshold and centreline is valid
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText()))) && !validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold") && !validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                 clearErrorLabels();
                 centrelineTF.clear();
                 distanceFromThresholdTF.clear();
                 centrelineTF.setPromptText("Invalid centreline distance!");
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold")) {
                 clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 distanceFromThresholdTF.clear();
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                 clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 centrelineTF.clear();
