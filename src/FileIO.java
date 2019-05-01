@@ -263,10 +263,30 @@ class FileIO {
         return airportDB;
     }
 
+    public String readManual(){
+        BufferedReader br = readRecFile("manual.html");
+        if (br == null){
+            System.err.println("br is null;");
+            return null;
+        }
+        StringBuilder contents = new StringBuilder();
+        String line;
+        while (true){
+            try {
+                line = br.readLine();
+                contents.append(line);
+            } catch (IOException e) {
+                e.printStackTrace();
+                break;
+            }
+        }
+        return contents.toString();
+    }
+
 
     private BufferedReader readRecFile(String filePath){
         InputStreamReader isr;
-        boolean modeJAR = false;
+        boolean modeJAR = true;
         System.out.println("Current directory : \n" + System.getProperty("user.dir"));
         System.out.println("Reading file " + filePath);
         if (!modeJAR){
@@ -280,7 +300,8 @@ class FileIO {
             }
             isr = new InputStreamReader(fis);
         } else {
-            isr = new InputStreamReader(getClass().getResourceAsStream(filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
+            //System.out.println(getClass().getResourceAsStream(filePath).toString());
+            isr = new InputStreamReader(getClass().getResourceAsStream("/" + filePath));//new InputStreamReader(fis);//getClass().getResourceAsStream(filePath));
         }
 
         return new BufferedReader(isr);

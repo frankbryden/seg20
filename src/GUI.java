@@ -24,12 +24,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
 
 import java.awt.*;
 import java.io.File;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 
@@ -76,6 +78,8 @@ public class GUI extends Application {
     private RunwayRenderer runwayRendererSideView;
     @FXML
     private BorderPane canvasBorderPane, tabsBox;
+    @FXML
+    private WebView helpWebView;
     private ComboBox<String> obstacleSelect;
     private Boolean editingObstacle;
     private Stage primaryStage;
@@ -339,13 +343,18 @@ public class GUI extends Application {
 
         // Button in Settings tab for enabling/disabling tooltips
         manageTooltipsBtn.setOnMouseClicked(event -> {
+            String message;
             if (manageTooltipsBtn.getText().equals("Disable tooltips")) {
                 manageTooltipsBtn.setText("Enable tooltips");
+                message = "Tooltips disabled";
                 disableTooltips();
             } else {
                 manageTooltipsBtn.setText("Disable tooltips");
                 enableTooltips();
+                message = "Tooltips enabled";
             }
+            notifyUpdate(message);
+            addNotification(message);
         });
 
         highlightTodaBtn.setOnMouseClicked(event -> {
@@ -456,6 +465,10 @@ public class GUI extends Application {
             }
             rootTabPane.getSelectionModel().select(3);
         });
+
+        //TODO fill webvciew
+        File f = new File("manual.html");
+        helpWebView.getEngine().load(f.toURI().toString());
 
         populatePredefinedList();
 
