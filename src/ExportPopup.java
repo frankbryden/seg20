@@ -116,11 +116,9 @@ public class ExportPopup {
                 case MENU:
                     if (airportsRadio.selectedProperty().get()){
                         showAirportView();
-                        clearView();
                         nextButtonToExport();
                     } else if (obstaclesRadio.selectedProperty().get()){
                         showObstacleView();
-                        clearView();
                         nextButtonToExport();
                     } else {
                         showErrorMessage("No option selected.");
@@ -128,7 +126,7 @@ public class ExportPopup {
                     break;
                 case AIRPORTS:
                     //TODO export airports
-                    String selectedAirportName = (String) airportsCombo.getSelectionModel().getSelectedItem();
+                    String selectedAirportName = airportsCombo.getSelectionModel().getSelectedItem();
                     if (selectedAirportName != null){
                         System.out.println("Exporting airport " + selectedAirportName);
                         File outFile = fileIO.fileChooser.showSaveDialog(primaryStage);
@@ -242,6 +240,7 @@ public class ExportPopup {
     private void updateAirportCombo(){
         this.airportsCombo.getItems().clear();
         this.airportsCombo.getItems().addAll(airportConfigs.keySet().stream().sorted().collect(Collectors.toList()));
+        System.out.println("Airport combo has " + airportsCombo.getItems().size() + " airports");
     }
 
     private void updateObstacleCombo(){

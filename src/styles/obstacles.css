@@ -27,6 +27,10 @@
     -fx-text-fill: #ffffff;
 }
 
+.obstacleCell:selected .label{
+    -fx-text-fill: #ffffff;
+}
+
 
 .obstacleList .list-cell:filled:selected{
     -fx-background-color: -fx-primary-color;

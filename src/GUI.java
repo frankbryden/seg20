@@ -39,7 +39,7 @@ public class GUI extends Application {
     private Button loadAirportBtn, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
             editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn;
     @FXML
-    private Pane calculationsPane;
+    private Pane calculationsPane, notifBtnPane, printBtnPane, exportBtnPane;
     @FXML
     private TextField obstacleNameTxt, obstacleHeightTxt, centrelineTF, distanceFromThresholdTF, addObstacleNameTF, addObstacleHeightTF, airportCode, selectedObstacleHeightTF,
             heightEditTF;
@@ -100,6 +100,7 @@ public class GUI extends Application {
     private AddObstaclePopup addObstaclePopup;
     private AddAirportPopup addingAirportPopup;
     private AddRunwayPopup addingRunwayPopup;
+    private NotificationLog notificationLog;
     private VBox calculateBackBtnVBox;
     public enum ObstacleList {USER_DEFINED, PREDEFINED}
 
@@ -122,6 +123,7 @@ public class GUI extends Application {
         this.primaryStage = primaryStage;
         addRunwayPopup = new AddRunwayPopup(this);
 
+
         primaryStage.setOnCloseRequest(event -> {
             //TODO save persistent settings here
             System.out.println("closed");
@@ -136,6 +138,9 @@ public class GUI extends Application {
 
         notifList = new ArrayList<>();
         notifCount.setVisible(false);
+
+        Bounds localBounds = notifBtnPane.getParent().localToScene(notifBtnPane.getBoundsInLocal());
+        notificationLog = new NotificationLog(notifList, primaryStage.getX() + notifBtnPane.getLayoutX(), primaryStage.getY() + localBounds.getMaxY() + notifBtnPane.getHeight() + 17);
 
         fileIO = new FileIO();
 
@@ -232,6 +237,8 @@ public class GUI extends Application {
 
                     rootTabPane.setVisible(true);
                     tabsBox.setStyle("-fx-background-color: #1b88bb");
+
+                    addRunwayPopup.setCurrentlySelectedAirport(ac);
 
 
                     LiveWindService liveWindService = new LiveWindService();
@@ -500,9 +507,6 @@ public class GUI extends Application {
             System.out.println(planeImg.getY());
         });
         //Listeners for the print and export button on the top right side of the GUI
-        Pane printBtnPane = (Pane) primaryStage.getScene().lookup("#printBtnPane");
-        Pane exportBtnPane = (Pane) primaryStage.getScene().lookup("#exportBtnPane");
-        Pane notifBtnPane = (Pane) primaryStage.getScene().lookup("#notifBtnPane");
 
         //set cursor to make pane look like a button - not sure what the difference between HAND and OPEN_HAND is (there is a difference lol) look the same under xfce ubuntu
         printBtnPane.setCursor(Cursor.HAND);
@@ -525,8 +529,7 @@ public class GUI extends Application {
             notifCount.setText("");
             notifCount.setVisible(false);
 
-            NotificationLog log = new NotificationLog(notifList);
-            log.createNotifLog();
+            notificationLog.toggle();
         });
 
         loadAirportBtn.setOnMouseClicked(event -> {
@@ -1242,6 +1245,10 @@ public class GUI extends Application {
         exportPopup = new ExportPopup(primaryStage, airportConfigs, predefinedObstaclesSorted, fileIO);
     }
 
+    void setAirportSelectSelectedAirport(AirportConfig ac){
+        airportSelect.getSelectionModel().select(ac.getName());
+    }
+
     Boolean getEditingObstacle() {
         return editingObstacle;
     }
@@ -1254,11 +1261,11 @@ public class GUI extends Application {
         return heightEditTF;
     }
 
-    public Map<String, Obstacle> getPredefinedObstaclesSorted() {
+    Map<String, Obstacle> getPredefinedObstaclesSorted() {
         return predefinedObstaclesSorted;
     }
 
-    public TextField getAddObstacleNameTF() {
+    TextField getAddObstacleNameTF() {
         return addObstacleNameTF;
     }
 

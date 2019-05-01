@@ -15,7 +15,7 @@ import java.util.Arrays;
 class AddObstaclePopup {
 
     //TODO fix to make independent self-sufficient class
-
+    private static final String ERROR_MESSAGE_SPACING = "\t\t\t\t\t";
     private final GUI gui;
 
     private Popup popup;
@@ -101,7 +101,7 @@ class AddObstaclePopup {
         addObstacleBtn.setOnMouseClicked(event -> {
             // Checking for empty name and height fields
             if (gui.getAddObstacleNameTF().getText().isEmpty()) {
-                nameRequiredLbl.setText("                                             Enter obstacle name");
+                nameRequiredLbl.setText(ERROR_MESSAGE_SPACING  + "Enter obstacle name");
                 if (!rootBox.getChildren().contains(emptyNameBox)) {
                     rootBox.getChildren().add(0, emptyNameBox);
                 }
@@ -113,7 +113,7 @@ class AddObstaclePopup {
                 nameRequiredLbl.setText("");
             }
             if (gui.getAddObstacleHeightTF().getText().isEmpty()) {
-                heightRequiredLbl.setText("                                             Enter obstacle height");
+                heightRequiredLbl.setText(ERROR_MESSAGE_SPACING + "Enter obstacle height");
                 if (rootBox.getChildren().contains(emptyNameBox)) {
                     if (!rootBox.getChildren().contains(emptyHeightBox)) {
                         rootBox.getChildren().add(2, emptyHeightBox);

@@ -1,4 +1,3 @@
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -6,10 +5,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -22,7 +21,8 @@ class AddRunwayPopup {
     //TODO fix to make independent self-sufficient class
     private Stage addRunwayStage;
     private AirportConfig currentlySelectedAirportConfig;
-    private ComboBox<String> addRunwayAirportSelect;
+    private Label currentlySelectedAirportLbl;
+    private TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
 
 
     public AddRunwayPopup(GUI gui) {
@@ -37,24 +37,22 @@ class AddRunwayPopup {
         stage.setTitle("Add Runway");
 
         //Components for the popups
-        Label selectAirportLbl = new Label("Select airport");
+        Label selectAirportLbl = new Label("Adding runway to");
         Button confirmButton = new Button("Continue");
         confirmButton.getStyleClass().add("primaryButton");
         Button cancelButton = new Button("Cancel");
         cancelButton.getStyleClass().add("primaryButton");
-        TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
-        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl, currentlySelectedAirportLbl;
+        Label runwayDesignatorLbl, toraLbl, clearwayLbl, stopwayLbl, displacementThresholdLbl;
 
         runwayDesignatorLbl = new Label("Runway Designator");
         toraLbl = new Label("TORA");
         clearwayLbl = new Label("Clearway");
         stopwayLbl = new Label("Stopway");
         displacementThresholdLbl = new Label("Displaced Threshold");
-        currentlySelectedAirportLbl = new Label("")
-        addRunwayAirportSelect = new ComboBox<>();
+        currentlySelectedAirportLbl = new Label();
+        currentlySelectedAirportLbl.setStyle("-fx-font-weight: bold");
 
-        addRunwayAirportSelect.setId("airportComboBox");
-        addRunwayAirportSelect.setVisibleRowCount(10);
+        //this.currentlySelectedAirportLbl.setId("airportComboBox");
 
         runwayDesignatorTF = new TextField();
         toraTF = new TextField();
@@ -100,7 +98,7 @@ class AddRunwayPopup {
         HBox airportSelection = new HBox(30);
         airportSelection.setPadding(new Insets(10, 12, 15, 15));
         airportSelection.getChildren().add(selectAirportLbl);
-        airportSelection.getChildren().add(addRunwayAirportSelect);
+        airportSelection.getChildren().add(currentlySelectedAirportLbl);
 
 
         VBox addRunwayRoot = new VBox(20);
@@ -172,15 +170,16 @@ class AddRunwayPopup {
                 // Show the prompt that shows the summary of the runway values
                 NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
                 runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
+                stage.hide();
 
-                AirportConfig selectedAirport = gui.getAirportConfigs().get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
+                /*irportConfig selectedAirport = gui.getAirportConfigs().get(currentlySelectedAirportLbl.getSelectionModel().getSelectedItem().toString());
                 System.out.println(selectedAirport.toString());
 
                 selectedAirport.addRunwayPair(runwayPair);
                 gui.getAirportConfigs().put(selectedAirport.getName(), selectedAirport);
                 System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
                 gui.getAddRunwayPopup().hide();
-                gui.updateAirportSelects();
+                gui.updateAirportSelects();*/
             } else {
                 System.err.println("Invalid form");
             }
@@ -203,19 +202,42 @@ class AddRunwayPopup {
         }
     }
 
-    ComboBox<String> getAddRunwayAirportSelect(){
-        return addRunwayAirportSelect;
+    void clearValues(){
+        runwayDesignatorTF.clear();
+        toraTF.clear();
+        clearwayTF.clear();
+        stopwayTF.clear();
+        displacementThresholdTF.clear();
+        runwayDesignatorTF2.clear();
+        toraTF2.clear();
+        clearwayTF2.clear();
+        stopwayTF2.clear();
+        displacementThresholdTF2.clear();
+    }
+
+    Label getCurrentlySelectedAirportLbl(){
+        return currentlySelectedAirportLbl;
     }
 
     void clearAirportList(){
-        addRunwayAirportSelect.getItems().clear();
+        //currentlySelectedAirportLbl.getItems().clear();
     }
 
     void addAirportToList(String name){
-        addRunwayAirportSelect.getItems().add(name);
+        //currentlySelectedAirportLbl.getItems().add(name);
+    }
+
+    public AirportConfig getCurrentlySelectedAirport() {
+        return currentlySelectedAirportConfig;
+    }
+
+    void setCurrentlySelectedAirport(AirportConfig ac){
+        this.currentlySelectedAirportConfig = ac;
+        currentlySelectedAirportLbl.setText(ac.getName());
     }
 
     void show(){
+        clearValues();
         addRunwayStage.show();
     }
 
