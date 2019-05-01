@@ -36,7 +36,8 @@ import java.util.List;
 public class GUI extends Application {
     @FXML
     private Button loadAirportBtn, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
-            editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn;
+            editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn,
+            addObstacleToRunwayBtn;
     @FXML
     private Pane calculationsPane, notifBtnPane, printBtnPane, exportBtnPane;
     @FXML
@@ -446,13 +447,14 @@ public class GUI extends Application {
         predefinedObstaclesLV.addEventHandler(CellHoverEvent.CELL_HOVER_EVENT_TYPE, event -> {
 
         });
-
-        predefinedObstaclesLV.setOnMouseClicked(click -> {
+        
+        addObstacleToRunwayBtn.setOnMouseClicked(click -> {
             Obstacle selectedItem = predefinedObstaclesLV.getSelectionModel().getSelectedItem();
             if(selectedItem != null){
                 obstacleSelect.setValue(selectedItem.getName());
                 updateObstacleDetailsPane(selectedItem.getName(), selectedItem.getHeight());
             }
+            rootTabPane.getSelectionModel().select(3);
         });
 
         populatePredefinedList();
