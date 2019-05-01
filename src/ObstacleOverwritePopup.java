@@ -31,10 +31,10 @@ public class ObstacleOverwritePopup {
         overwriteLabel.getStylesheets().add("styles/global.css");
 
         if (gui.getPredefinedObstaclesSorted().containsKey(obstacleName)) {
-            overwriteLabel.setText(obstacleName + " already exists in the list of predefined obstacles. Do you wish to overwrite " +
+            overwriteLabel.setText(obstacleName + " already exists in the list of obstacles. Do you wish to overwrite " +
                     "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
         } else {
-            overwriteLabel.setText(obstacleName + " already exists in the list of user-defined obstacles. Do you wish to overwrite " +
+            overwriteLabel.setText(obstacleName + " already exists in the list of obstacles. Do you wish to overwrite " +
                     "the current height of " + currentHeight + "m with a new height of " + newHeight + "m?");
         }
 

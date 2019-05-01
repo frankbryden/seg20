@@ -246,7 +246,6 @@ public class GUI extends Application {
                     liveWindService.setLongitude(ac.getLongitude());
                     liveWindService.setOnSucceeded(t -> {
                         Map<String, Double> result = (Map<String, Double>) t.getSource().getValue();
-                        System.out.println("We have a result!");
                         windLbl.setText("Wind speed:  " + result.get("speed") + "km/h");
                         runwayRenderer.setWindAngle(result.get("direction"));
                     });
@@ -308,7 +307,7 @@ public class GUI extends Application {
             updateObstaclesList();
 
             notifyUpdate("Obstacles imported");
-            addNotification("Imported obstacles into the list of user-defined obstacles.");
+            addNotification("Imported obstacles into the list of obstacles.");
         });
 
         ImageView deleteObstacleImgView = new ImageView(new Image(getClass().getResourceAsStream("/rec/delete.png")));
@@ -321,15 +320,18 @@ public class GUI extends Application {
         saveObstacleImgView.setFitWidth(iconSize);
         saveObstacleBtn.setGraphic(saveObstacleImgView);
 
-        //TODO only save if there are obstacles to save - also show error message or notif or something
-
         saveObstacleBtn.setOnMouseClicked(event -> {
-            System.out.println("Save obstacles");
-            File file = fileIO.fileChooser.showSaveDialog(primaryStage);
-            if (file != null) {
-                fileIO.write(predefinedObstaclesSorted.values(), file.getPath());
-                notifyUpdate("Obstacles saved");
-                addNotification("Saved list of user-defined obstacles.");
+            if (!predefinedObstaclesSorted.keySet().isEmpty()) {
+                System.out.println("Save obstacles");
+                File file = fileIO.fileChooser.showSaveDialog(primaryStage);
+                if (file != null) {
+                    fileIO.write(predefinedObstaclesSorted.values(), file.getPath());
+                    notifyUpdate("Obstacles saved");
+                    addNotification("Saved list of obstacles.");
+                }
+            } else {
+                System.out.println("No obstacles to save");
+                SaveObstacleErrorPopup.displaySavePrompt();
             }
         });
 
@@ -481,7 +483,6 @@ public class GUI extends Application {
         landTransition.setToY(0);
 
         takeOffTransition.statusProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println("Finished running take off transition");
             if (newValue == Animation.Status.STOPPED) {
                 tabPane.getSelectionModel().select(1);
             }
@@ -497,14 +498,11 @@ public class GUI extends Application {
         primaryStage.widthProperty().addListener((observable, oldValue, newValue) -> {
             double newVal = (double) newValue;
             planeImg.setLayoutX(planePane.getWidth() - planeImg.getFitWidth());
-            System.out.println(planeImg.getX());
         });
 
         primaryStage.heightProperty().addListener((observable, oldValue, newValue) -> {
             double newVal = (double) newValue;
-            System.out.println("TRIGGERED old : " + oldValue + " and new val " + newValue);
             planeImg.setLayoutY(planePane.getHeight() - 1.4 * planeImg.getFitHeight());
-            System.out.println(planeImg.getY());
         });
         //Listeners for the print and export button on the top right side of the GUI
 
@@ -533,7 +531,6 @@ public class GUI extends Application {
         });
 
         loadAirportBtn.setOnMouseClicked(event -> {
-            System.out.println("Click !");
             File xmlFileToLoad = fileIO.fileChooser.showOpenDialog(primaryStage);
             if (xmlFileToLoad == null) {
                 System.err.println("User did not select a file");
@@ -673,7 +670,7 @@ public class GUI extends Application {
             case PREDEFINED:
                 sourceList = predefinedObstaclesSorted;
                 sourceLV = predefinedObstaclesLV;
-                addNotification("Removed " + obstacle.getName() + " from the list of predefined obstacles.");
+                addNotification("Removed " + obstacle.getName() + " from the list of obstacles.");
                 break;
             default:
                 System.err.println("unknown origin '" + listType.toString() + "'");
@@ -735,7 +732,7 @@ public class GUI extends Application {
         return true;
     }
 
-    // Used for obstacle heights, distance from centreline and distance from threshold
+    // Used for obstacle heights
     public Boolean validateDoubleForm(ArrayList<String> doubleVals) {
         for (String s : doubleVals) {
             try {
@@ -743,21 +740,32 @@ public class GUI extends Application {
             } catch (NumberFormatException e) {
                 return false;
             }
-            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 9999) {
+            if (Double.parseDouble(s) < 1 || Double.parseDouble(s) > 150) {
                 return false;
             }
         }
         return true;
     }
 
-    // Used for TORA, Clearway, Stopway, Displaced threshold
-    public Boolean validateIntForm(ArrayList<String> intVals) {
+    // Used for TORA, Clearway, Stopway, Displaced threshold, distance from centreline and distance from threshold
+    public Boolean validateIntForm(ArrayList<String> intVals, String component) {
         for (String s : intVals) {
             try {
                 Integer.parseInt(s);
             } catch (NumberFormatException e) {
                 return false;
             }
+            if (component.equals("Centreline")) {
+                if (Integer.parseInt(s) > 1000 || Integer.parseInt(s) < -1000) {
+                    return false;
+                }
+            }
+            if (component.equals("Threshold")) {
+                if (Integer.parseInt(s) < 0 || Integer.parseInt(s) > 4000) {
+                    return false;
+                }
+            }
+
         }
         return true;
     }
@@ -974,7 +982,7 @@ public class GUI extends Application {
                     centreLineRequiredLabel.setText("      Enter centreline distance");
                 } else {
                     centreLineRequiredLabel.setText("");
-                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+                    if (!validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                         centrelineTF.clear();
                         centrelineTF.setPromptText("Invalid centreline distance!");
                     } else {
@@ -987,7 +995,7 @@ public class GUI extends Application {
                     thresholdDistanceRequiredLabel.setText("      Enter threshold distance");
                 } else {
                     thresholdDistanceRequiredLabel.setText("");
-                    if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+                    if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold")) {
                         distanceFromThresholdTF.clear();
                         distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
                     } else {
@@ -1006,18 +1014,18 @@ public class GUI extends Application {
                 }
 
                 // If everything is filled in, check if the user input to distance from threshold and centreline is valid
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText()))) && !validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold") && !validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                 clearErrorLabels();
                 centrelineTF.clear();
                 distanceFromThresholdTF.clear();
                 centrelineTF.setPromptText("Invalid centreline distance!");
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(distanceFromThresholdTF.getText())), "Threshold")) {
                 clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 distanceFromThresholdTF.clear();
                 distanceFromThresholdTF.setPromptText("Invalid threshold distance!");
-            } else if (!validateDoubleForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())))) {
+            } else if (!validateIntForm(new ArrayList<>(Arrays.asList(centrelineTF.getText())), "Centreline")) {
                 clearErrorLabels();
                 thresholdDistanceRequiredLabel.setText("");
                 centrelineTF.clear();
@@ -1083,7 +1091,6 @@ public class GUI extends Application {
                 RunwayPair runwayPair = new RunwayPair(recalculatedParams, recalculatedParams2);
                 updateRunwayInfoLabels(runwayPair);
 
-                System.out.println("calculation details");
                 System.out.println(results.getCalculationDetails());
                 System.out.println(results2.getCalculationDetails());
 
@@ -1097,7 +1104,6 @@ public class GUI extends Application {
                 printer.setCalculations(resultsDetails);
                 printer.setCalculationsHeading(summary);
 
-                System.out.println(recalculatedParams.toString());
                 updateCalculationResultsView(runwayConfig, recalculatedParams);
                 //updateCalculationResultsView(otherConfig, recalculatedParams2);
 

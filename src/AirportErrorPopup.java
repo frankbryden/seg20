@@ -14,7 +14,7 @@ class AirportErrorPopup {
         Stage errorWindow = new Stage();
         errorWindow.getIcons().add(new Image("/rec/plane.png"));
         errorWindow.initModality(Modality.APPLICATION_MODAL);
-        errorWindow.setTitle("Airport selection");
+        errorWindow.setTitle("Adding airport error");
 
         Label errorLabel = new Label("Please enter a valid 3-digit IATA airport code and then select an airport in order to continue.");
         errorLabel.setWrapText(true);
