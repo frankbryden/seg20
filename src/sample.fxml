@@ -24,8 +24,9 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -377,8 +378,7 @@
                      <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                            <children>
-                              <Label layoutX="22.0" layoutY="42.0" prefHeight="23.0" prefWidth="207.0" text="View help manual" />
-                              <Button fx:id="viewManualBtn" layoutX="219.0" layoutY="36.0" mnemonicParsing="false" styleClass="primaryButton" text="View" />
+                              <WebView fx:id="helpWebView" layoutX="14.0" layoutY="20.0" prefHeight="680.0" prefWidth="1319.0" />
                            </children></AnchorPane>
                      </content>
                   </Tab>
