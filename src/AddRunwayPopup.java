@@ -161,26 +161,30 @@ class AddRunwayPopup {
                 int clearway2 = Integer.parseInt(clearwayTF2.getText());
                 int stopway2 = Integer.parseInt(stopwayTF2.getText());
 
-                RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
-                r1.setClearway(clearway);
-                r1.setStopway(stopway);
-                RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
-                r1.setClearway(clearway2);
-                r1.setStopway(stopway2);
-                RunwayPair runwayPair = new RunwayPair(r1, r2);
+                if(LDA >= 0 && LDA2 >= 0) {
 
-                // Show the prompt that shows the summary of the runway values
-                NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
-                runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
 
-                AirportConfig selectedAirport = gui.getAirportConfigs().get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
-                System.out.println(selectedAirport.toString());
+                    RunwayConfig r1 = new RunwayConfig(new RunwayDesignator(runwayDesignator), TORA, TODA, ASDA, LDA, displacedThreshold);
+                    r1.setClearway(clearway);
+                    r1.setStopway(stopway);
+                    RunwayConfig r2 = new RunwayConfig(new RunwayDesignator(runwayDesignator2), TORA2, TODA2, ASDA2, LDA2, displacedThreshold2);
+                    r1.setClearway(clearway2);
+                    r1.setStopway(stopway2);
+                    RunwayPair runwayPair = new RunwayPair(r1, r2);
 
-                selectedAirport.addRunwayPair(runwayPair);
-                gui.getAirportConfigs().put(selectedAirport.getName(), selectedAirport);
-                System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
-                gui.getAddRunwayPopup().hide();
-                gui.updateAirportSelects();
+                    // Show the prompt that shows the summary of the runway values
+                    NewRunwayParamPopup runwayParamPopup = new NewRunwayParamPopup(gui);
+                    runwayParamPopup.displayRunwayParametersPrompt(runwayPair);
+
+                    AirportConfig selectedAirport = gui.getAirportConfigs().get(addRunwayAirportSelect.getSelectionModel().getSelectedItem().toString());
+                    System.out.println(selectedAirport.toString());
+
+                    selectedAirport.addRunwayPair(runwayPair);
+                    gui.getAirportConfigs().put(selectedAirport.getName(), selectedAirport);
+                    System.out.println("add runway with name " + runwayDesignatorTF.getText() + " and TORA " + toraTF.getText());
+                    gui.getAddRunwayPopup().hide();
+                    gui.updateAirportSelects();
+                }
             } else {
                 System.err.println("Invalid form");
             }

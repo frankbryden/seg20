@@ -25,10 +25,6 @@ class ObstacleDetailsPopup {
 
     public void showObstacleDetails(Obstacle obstacle, ListView listView, MouseEvent event, Stage primaryStage, GUI.ObstacleList sourceList) {
 
-        gui.setEditingObstacle(false);
-
-        //TODO rework sorting of the obstacles
-
         Popup detailsPopUp = new Popup();
 
         VBox box = new VBox(100);
@@ -38,12 +34,12 @@ class ObstacleDetailsPopup {
 
         HBox subBox = new HBox(100);
 
-        Label detailsLabel = new Label("Overview of obstacle details");
-        Label nameLabel = new Label("Name:");
+        Label detailsLabel = new Label("Edit obstacle details");
+        Label nameLabel = new Label("Name");
         Label nameContentLabel = new Label(obstacle.getName());
         TextField nameEditTF = new TextField();
         nameEditTF.setPrefWidth(240);
-        Label heightLabel = new Label("Height:");
+        Label heightLabel = new Label("Height");
         Label heightContentLabel = new Label(obstacle.getHeight() + "m");
         gui.getHeightEditTF().setPrefWidth(240);
 
@@ -52,6 +48,9 @@ class ObstacleDetailsPopup {
         nameEditTF.getStylesheets().add("styles/obstacles.css");
         gui.getHeightEditTF().getStyleClass().add("redErrorPromptText");
         gui.getHeightEditTF().getStylesheets().add("styles/obstacles.css");
+
+        nameEditTF.setText(obstacle.getName());
+        gui.getHeightEditTF().setText(Double.toString(obstacle.getHeight()));
 
         // Content for error messages
         Label nameRequiredLbl = new Label("");
@@ -78,27 +77,24 @@ class ObstacleDetailsPopup {
         heightContentLabel.getStyleClass().add("popUpText");
         heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
 
-        Button returnButton = new Button("Go back");
-        Button editButton = new Button("Edit details");
+        Button returnButton = new Button("Cancel");
         Button saveButton = new Button("Save changes");
 
         // Styling of buttons in the obstacle details popup
         returnButton.getStyleClass().add("primaryButton");
         returnButton.getStylesheets().add("styles/global.css");
-        editButton.getStyleClass().add("primaryButton");
-        editButton.getStylesheets().add("styles/global.css");
         saveButton.getStyleClass().add("primaryButton");
         saveButton.getStylesheets().add("styles/global.css");
 
         HBox nameHBox = new HBox(20);
         nameHBox.getChildren().add(nameLabel);
-        nameHBox.getChildren().add(nameContentLabel);
+        nameHBox.getChildren().add(nameEditTF);
 
         HBox heightHBox = new HBox(13.5);
         heightHBox.getChildren().add(heightLabel);
-        heightHBox.getChildren().add(heightContentLabel);
+        heightHBox.getChildren().add(gui.getHeightEditTF());
 
-        subBox.getChildren().add(editButton);
+        subBox.getChildren().add(saveButton);
         subBox.getChildren().add(returnButton);
         box.getChildren().add(detailsLabel);
         box.getChildren().add(nameHBox);
@@ -107,10 +103,6 @@ class ObstacleDetailsPopup {
 
         detailsPopUp.getContent().add(box);
 
-        /*Node eventSource = (Node) event.getSource();
-        Bounds sourceNodeBounds = eventSource.localToScreen(eventSource.getBoundsInLocal());*/
-        /*detailsPopUp.setX(primaryStage.getWidth() / 2);
-        detailsPopUp.setY(primaryStage.getHeight() / 2);*/
         Bounds boundsInScene = gui.getObstacleListView().localToScene(gui.getObstacleListView().getBoundsInLocal());
         detailsPopUp.setX(boundsInScene.getMinX() - 70);
         detailsPopUp.setY(boundsInScene.getMinY() + boundsInScene.getHeight()/2);
@@ -187,40 +179,6 @@ class ObstacleDetailsPopup {
             }
         });
 
-        editButton.setOnMouseClicked(event1 -> {
-            gui.setEditingObstacle(!gui.getEditingObstacle());
-            if (gui.getEditingObstacle() == true) {
-                //Edit mode
-
-                nameLabel.setText("Name");
-                heightLabel.setText("Height");
-
-                nameHBox.setSpacing(55);
-                heightHBox.setSpacing(46);
-                subBox.setSpacing(138);
-
-                nameHBox.getChildren().remove(nameContentLabel);
-                nameHBox.getChildren().add(nameEditTF);
-
-                heightHBox.getChildren().remove(heightContentLabel);
-                heightHBox.getChildren().add(gui.getHeightEditTF());
-
-                nameEditTF.setText(obstacle.getName());
-                gui.getHeightEditTF().setText(Double.toString(obstacle.getHeight()));
-
-                detailsLabel.setText("Edit obstacle details");
-
-                subBox.getChildren().remove(returnButton);
-                subBox.getChildren().remove(editButton);
-                subBox.getChildren().add(saveButton);
-                subBox.getChildren().add(returnButton);
-
-                returnButton.setText("Cancel");
-            }
-        });
-
-
     }
-
 
 }

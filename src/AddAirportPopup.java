@@ -113,6 +113,7 @@ class AddAirportPopup {
                 gui.updateAirportSelects();
                 gui.getAddAirportPopup().hide();
                 gui.getAddRunwayPopup().show();
+                gui.addNotification("Added " + airportName.getText() + " to the list of airports.");
             } else {
                 AirportErrorPopup.displayAirportErrorPopup();
             }

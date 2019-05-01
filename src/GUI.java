@@ -77,7 +77,6 @@ public class GUI extends Application {
     @FXML
     private BorderPane canvasBorderPane, tabsBox;
     private ComboBox<String> obstacleSelect;
-    private Boolean editingObstacle;
     private Stage primaryStage;
     private Printer printer;
     private AirportDatabase airportDB;
@@ -756,12 +755,16 @@ public class GUI extends Application {
                 if (Integer.parseInt(s) > 1000 || Integer.parseInt(s) < -1000) {
                     return false;
                 }
-            }
-            if (component.equals("Threshold")) {
+            } else if (component.equals("Threshold")) {
                 if (Integer.parseInt(s) < 0 || Integer.parseInt(s) > 4000) {
                     return false;
                 }
+            } else {
+                if (Integer.parseInt(s) < 0 ) {
+                    return false;
+                }
             }
+
 
         }
         return true;
@@ -1246,14 +1249,6 @@ public class GUI extends Application {
         addingRunwayPopup = new AddRunwayPopup(this);
         addAirportPopup = addingAirportPopup.createAddAirportPopup();
         exportPopup = new ExportPopup(primaryStage, airportConfigs, predefinedObstaclesSorted, fileIO);
-    }
-
-    Boolean getEditingObstacle() {
-        return editingObstacle;
-    }
-
-    void setEditingObstacle(Boolean editingObstacle) {
-        this.editingObstacle = editingObstacle;
     }
 
     TextField getHeightEditTF() {
