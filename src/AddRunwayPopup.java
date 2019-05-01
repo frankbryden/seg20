@@ -23,6 +23,7 @@ class AddRunwayPopup {
     private AirportConfig currentlySelectedAirportConfig;
     private Label currentlySelectedAirportLbl;
     private TextField runwayDesignatorTF, toraTF, clearwayTF, stopwayTF, displacementThresholdTF, runwayDesignatorTF2, toraTF2, clearwayTF2, stopwayTF2, displacementThresholdTF2;
+    private ArrayList<TextField> textFields;
 
 
     public AddRunwayPopup(GUI gui) {
@@ -64,6 +65,17 @@ class AddRunwayPopup {
         clearwayTF2 = new TextField();
         stopwayTF2 = new TextField();
         displacementThresholdTF2 = new TextField();
+
+        textFields = new ArrayList<>();
+        textFields.add(runwayDesignatorTF);
+        textFields.add(toraTF);
+        textFields.add(clearwayTF);
+        textFields.add(stopwayTF);
+        textFields.add(displacementThresholdTF);
+        textFields.add(toraTF2);
+        textFields.add(clearwayTF2);
+        textFields.add(stopwayTF2);
+        textFields.add(displacementThresholdTF2);
 
         //VBox containing confirm and cancel button
         HBox hbox = new HBox(10);
@@ -182,6 +194,7 @@ class AddRunwayPopup {
                 gui.updateAirportSelects();*/
             } else {
                 System.err.println("Invalid form");
+                highlightProblematicTFs();
             }
 
         });
@@ -203,16 +216,16 @@ class AddRunwayPopup {
     }
 
     void clearValues(){
-        runwayDesignatorTF.clear();
-        toraTF.clear();
-        clearwayTF.clear();
-        stopwayTF.clear();
-        displacementThresholdTF.clear();
-        runwayDesignatorTF2.clear();
-        toraTF2.clear();
-        clearwayTF2.clear();
-        stopwayTF2.clear();
-        displacementThresholdTF2.clear();
+        textFields.forEach(TextField::clear);
+    }
+
+    void highlightProblematicTFs(){
+        textFields.forEach(tf -> {
+            if (tf.getText().length() == 0){
+                //tf.setStyle("-fx-fill: red");
+                tf.setStyle("-fx-control-inner-background: #ff8800");
+            }
+        });
     }
 
     Label getCurrentlySelectedAirportLbl(){
