@@ -24,7 +24,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.media.AudioClip;
 import javafx.scene.paint.Color;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
@@ -70,7 +69,7 @@ public class GUI extends Application {
     @FXML
     private TabPane tabPane, rootTabPane;
     @FXML
-    private Pane planePane;
+    private Pane planePane, obstacleDetailsPane;
     private ImageView planeImg;
     private RunwayRenderer runwayRenderer;
     private RunwayRenderer runwayRendererSideView;
@@ -93,6 +92,7 @@ public class GUI extends Application {
     private int numOfNotifications;
     @FXML
     private Label notifCount;
+    private Label nameContentLabel, heightContentLabel;
     private ArrayList<String> notifList;
     private DeleteObstaclePopup delObstaclePopup;
     private ObstacleDetailsPopup obstacleDetPopup;
@@ -451,6 +451,7 @@ public class GUI extends Application {
             Obstacle selectedItem = predefinedObstaclesLV.getSelectionModel().getSelectedItem();
             if(selectedItem != null){
                 obstacleSelect.setValue(selectedItem.getName());
+                updateObstacleDetailsPane(selectedItem.getName(), selectedItem.getHeight());
             }
         });
 
@@ -569,6 +570,8 @@ public class GUI extends Application {
 
         updateAirportSelects();
 
+        populateObstacleDetails();
+
         printer = new Printer(primaryStage);
         printer.setRunway(canvas);
         printer.setOriginalRecalculatedPane(new Pair<>(viewCalculationResultsVBox, calculationResultsGrid));
@@ -581,6 +584,71 @@ public class GUI extends Application {
         Region region = new Region();
         HBox.setHgrow(region, Priority.ALWAYS);
         return region;
+    }
+
+    private void populateObstacleDetails(){
+
+        VBox box = new VBox(100);
+        box.getStyleClass().add("popup");
+        box.getStylesheets().add("styles/global.css");
+        box.getStylesheets().add("styles/layoutStyles.css");
+
+        Label detailsLabel = new Label("Overview of obstacle details");
+        Label nameLabel = new Label("Name:");
+        nameContentLabel = new Label("Jasmine");//TODO set obstacle.getName());
+        TextField nameEditTF = new TextField();
+        nameEditTF.setPrefWidth(240);
+        Label heightLabel = new Label("Height:");
+        heightContentLabel = new Label("10m");//TODO set obstacle.getHeight() + "m");
+
+
+        // Styling of name and height text fields to show red prompt text
+        nameEditTF.getStyleClass().add("redErrorPromptText");
+        nameEditTF.getStylesheets().add("styles/obstacles.css");
+
+        // Content for error messages
+        Label nameRequiredLbl = new Label("");
+        nameRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        nameRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyNameBox = new HBox();
+        emptyNameBox.getChildren().add(nameRequiredLbl);
+        Label heightRequiredLbl = new Label("");
+        heightRequiredLbl.getStyleClass().add("fieldRequiredLabel");
+        heightRequiredLbl.getStylesheets().add("styles/calculations.css");
+        HBox emptyHeightBox = new HBox();
+        emptyHeightBox.getChildren().add(heightRequiredLbl);
+
+        // Styling of labels in the obstacle details popup
+        detailsLabel.getStyleClass().add("popUpTitles");
+        detailsLabel.getStylesheets().add("styles/layoutStyles.css");
+        detailsLabel.setStyle("-fx-font-size: 16px");
+        nameLabel.getStyleClass().add("popUpTitles");
+        nameLabel.getStylesheets().add("styles/layoutStyles.css");
+        nameContentLabel.getStyleClass().add("popUpText");
+        nameContentLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightLabel.getStyleClass().add("popUpTitles");
+        heightLabel.getStylesheets().add("styles/layoutStyles.css");
+        heightContentLabel.getStyleClass().add("popUpText");
+        heightContentLabel.getStylesheets().add("styles/layoutStyles.css");
+
+        HBox nameHBox = new HBox(20);
+        nameHBox.getChildren().add(nameLabel);
+        nameHBox.getChildren().add(nameContentLabel);
+
+        HBox heightHBox = new HBox(13.5);
+        heightHBox.getChildren().add(heightLabel);
+        heightHBox.getChildren().add(heightContentLabel);
+
+        box.getChildren().add(detailsLabel);
+        box.getChildren().add(nameHBox);
+        box.getChildren().add(heightHBox);
+
+        obstacleDetailsPane.getChildren().add(box);
+    }
+
+    private void updateObstacleDetailsPane(String obstacleName, double obstacleHeight){
+        nameContentLabel.setText(obstacleName);
+        heightContentLabel.setText(String.valueOf(obstacleHeight) + "m");
     }
 
     public void updateAirportSelects() {

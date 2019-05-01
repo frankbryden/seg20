@@ -25,7 +25,7 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -303,6 +303,7 @@
                                                       <Button fx:id="editObstacleBtn" layoutX="505.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                       <Button fx:id="popAddObstacleBtn" layoutX="461.0" layoutY="87.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="37.0" styleClass="imageButton" />
                                                       <Button layoutX="6.0" layoutY="21.0" mnemonicParsing="false" prefHeight="42.0" prefWidth="189.0" styleClass="primaryButton" text="Add obstacle to runway" />
+                                                      <Pane fx:id="obstacleDetailsPane" layoutX="6.0" layoutY="470.0" prefHeight="168.0" prefWidth="555.0" />
                                                    </children>
                                                 </AnchorPane>
                                              </content>
