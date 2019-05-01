@@ -38,7 +38,7 @@ import java.util.List;
 public class GUI extends Application {
     @FXML
     private Button loadAirportBtn, addObstacleBtn, addAirportBtn, addRunwayBtn, calculateBtn, calculationsBackBtn, popAddObstacleBtn,
-            editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, saveSettingsBtn, startBtn, manageTooltipsBtn, viewManualBtn,
+            editObstacleBtn, saveObstacleBtn, highlightAsdaBtn, highlightToraBtn, highlightTodaBtn, highlightLdaBtn, startBtn, manageTooltipsBtn, viewManualBtn,
             addObstacleToRunwayBtn;
     @FXML
     private Pane calculationsPane, notifBtnPane, printBtnPane, exportBtnPane;
@@ -387,12 +387,7 @@ public class GUI extends Application {
             addRunwayPopup.show();
         });
 
-        //Settings tab
-        saveSettingsBtn.setOnMouseClicked(value -> {
-            System.out.println("Clicked on save settings");
-            //new Notification("hey").show(primaryStage, 10, 10);
 
-        });
 
         createCalculationsSelectionView();
         createCalculationsResultView();
@@ -466,9 +461,19 @@ public class GUI extends Application {
             rootTabPane.getSelectionModel().select(3);
         });
 
+        predefinedObstaclesLV.setOnMouseClicked(event -> {
+            Obstacle selectedItem = predefinedObstaclesLV.getSelectionModel().getSelectedItem();
+            if(selectedItem != null){
+                obstacleSelect.setValue(selectedItem.getName());
+                updateObstacleDetailsPane(selectedItem.getName(), selectedItem.getHeight());
+            }
+        });
+
         //TODO fill webvciew
         File f = new File("manual.html");
-        helpWebView.getEngine().load(f.toURI().toString());
+
+        //helpWebView.getEngine().load(f.toURI().toString());
+        helpWebView.getEngine().load(getClass().getResource("/manual.html").toExternalForm());
 
         populatePredefinedList();
 
@@ -610,11 +615,11 @@ public class GUI extends Application {
 
         Label detailsLabel = new Label("Overview of obstacle details");
         Label nameLabel = new Label("Name:");
-        nameContentLabel = new Label("Jasmine");//TODO set obstacle.getName());
+        nameContentLabel = new Label("");//TODO set obstacle.getName());
         TextField nameEditTF = new TextField();
         nameEditTF.setPrefWidth(240);
         Label heightLabel = new Label("Height:");
-        heightContentLabel = new Label("10m");//TODO set obstacle.getHeight() + "m");
+        heightContentLabel = new Label("");//TODO set obstacle.getHeight() + "m");
 
 
         // Styling of name and height text fields to show red prompt text

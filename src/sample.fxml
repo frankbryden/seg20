@@ -26,7 +26,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.201" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1366.0" style="-fx-border-color: black;" stylesheets="@styles/global.css">
          <children>
@@ -364,12 +364,8 @@
                   <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" stylesheets="@styles/global.css">
                            <children>
-                              <Label layoutX="15.0" layoutY="50.0" prefHeight="23.0" prefWidth="207.0" text="Save current settings" />
-                              <Button fx:id="saveSettingsBtn" layoutX="245.0" layoutY="44.0" mnemonicParsing="false" prefHeight="34.0" prefWidth="56.0" styleClass="primaryButton" text="Save" />
-                              <Label layoutX="15.0" layoutY="90.0" prefHeight="23.0" prefWidth="211.0" text="Load settings from file" />
-                              <Button layoutX="245.0" layoutY="84.0" mnemonicParsing="false" styleClass="primaryButton" text="Load" />
-                              <Label layoutX="15.0" layoutY="131.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
-                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="126.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
+                              <Label layoutX="15.0" layoutY="41.0" prefHeight="23.0" prefWidth="211.0" text="Enable/disable tooltips" />
+                              <Button fx:id="manageTooltipsBtn" layoutX="245.0" layoutY="36.0" mnemonicParsing="false" styleClass="primaryButton" text="Disable tooltips" />
                            </children>
                         </AnchorPane>
                   </content>
