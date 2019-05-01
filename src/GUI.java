@@ -795,6 +795,8 @@ public class GUI extends Application {
         notifCount.setVisible(true);
         notifCount.setText(Integer.toString(numOfNotifications));
 
+        notificationLog.addNotif(message);
+
         AudioClip note = new AudioClip(this.getClass().getResource("light.wav").toString());
         note.play();
     }

@@ -1,3 +1,4 @@
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -15,6 +16,7 @@ class NotificationLog {
     private final int WINDOW_WIDTH = 270;
     private Stage notifWindow;
     private double x, y;
+    private VBox rootBox;
 
     public NotificationLog(ArrayList<String> notifications, double x, double y) {
         this.notifications = notifications;
@@ -30,7 +32,7 @@ class NotificationLog {
 
         ScrollPane scrollPane = new ScrollPane();
 
-        VBox rootBox = new VBox();
+        rootBox = new VBox();
         rootBox.getStylesheets().add("styles/notifications.css");
         rootBox.setStyle("-fx-background-color: #1B88BB;");
 
@@ -39,14 +41,6 @@ class NotificationLog {
         notifLbl.getStyleClass().add("notifHeader");
 
         rootBox.getChildren().add(notifLbl);
-
-        for (String notif : notifications) {
-            Button notification = new Button(notif);
-            notification.getStyleClass().add("notification");
-            notification.setPrefWidth(WINDOW_WIDTH - 2);
-            notification.setWrapText(true);
-            rootBox.getChildren().add(notification);
-        }
 
         scrollPane.setContent(rootBox);
 
@@ -61,6 +55,15 @@ class NotificationLog {
         notifWindow.setX(x - notifWindow.getWidth()/2);
         notifWindow.setY(y);
 
+    }
+
+
+    void addNotif(String notif) {
+        Button notification = new Button(notif);
+        notification.getStyleClass().add("notification");
+        notification.setPrefWidth(WINDOW_WIDTH - 2);
+        notification.setWrapText(true);
+        rootBox.getChildren().add(notification);
     }
 
     public void hide(){
